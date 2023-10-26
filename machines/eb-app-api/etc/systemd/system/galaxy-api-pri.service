@@ -1,0 +1,14 @@
+[Unit]
+Description=Galaxy Private API
+After=network-online.target
+
+[Service]
+User=api-pri
+Group=api-pri
+WorkingDirectory=/home/api/galaxy
+ExecStart=deno run --allow-net --allow-env index-pri.ts
+Restart=always
+RestartSec=2s
+
+[Install]
+WantedBy=multi-user.target

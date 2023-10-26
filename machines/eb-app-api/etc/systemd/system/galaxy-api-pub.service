@@ -1,0 +1,14 @@
+[Unit]
+Description=Galaxy Public API
+After=network-online.target
+
+[Service]
+User=api-pub
+Group=api-pub
+WorkingDirectory=/home/api/galaxy
+ExecStart=deno run --allow-net --allow-env index-pub.ts
+Restart=always
+RestartSec=2s
+
+[Install]
+WantedBy=multi-user.target

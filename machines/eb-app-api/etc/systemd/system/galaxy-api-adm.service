@@ -1,0 +1,14 @@
+[Unit]
+Description=Galaxy Admin API
+After=network-online.target
+
+[Service]
+User=api-adm
+Group=api-adm
+WorkingDirectory=/home/api/galaxy
+ExecStart=deno run --allow-net --allow-env index-adm.ts
+Restart=always
+RestartSec=2s
+
+[Install]
+WantedBy=multi-user.target
