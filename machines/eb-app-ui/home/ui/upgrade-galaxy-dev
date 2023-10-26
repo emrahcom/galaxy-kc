@@ -1,0 +1,61 @@
+#!/usr/bin/bash
+set -e
+
+REMOTE="https://github.com/emrahcom/galaxy-kc.git"
+[[ -n "$BRANCH" ]] || BRANCH="main"
+LOCAL="/tmp/galaxy"
+UI="$LOCAL/machines/eb-app-ui/home/ui"
+APP="$UI/galaxy-dev"
+
+# clone
+cat <<EOF
+
+BRANCH: $BRANCH
+
+EOF
+
+rm -rf $LOCAL
+git clone --depth=1 --branch $BRANCH $REMOTE $LOCAL
+
+# upgrade this script
+cp $UI/upgrade-galaxy-dev /home/ui/
+
+# get GALAXY FQDN
+[[ -z "$GALAXY_FQDN" ]] && \
+    GALAXY_FQDN=$(ack "^export const APP =" \
+               /home/ui/galaxy-dev/src/lib/config.ts | \
+               cut -d'"' -f2 | cut -d '/' -f3)
+if [[ -z "$GALAXY_FQDN" ]]; then
+    echo "error: GALAXY_FQDN is not found"
+    exit 1
+else
+   echo "GALAXY_FQDN: $GALAXY_FQDN"
+fi
+
+# set FQDN
+sed -i "s/___GALAXY_FQDN___/$GALAXY_FQDN/" $APP/src/lib/config.ts
+cat $APP/src/lib/config.ts
+
+# upgrade app
+rm -rf /tmp/galaxy-dev.old
+mv /home/ui/galaxy-dev /tmp/galaxy-dev.old
+cp -arp $APP /home/ui/
+
+# node modules
+[[ -d "/tmp/galaxy-dev.old/node_modules" ]] && \
+    cp -arp /tmp/galaxy-dev.old/node_modules /home/ui/galaxy-dev/
+cd /home/ui/galaxy-dev
+yarn install
+
+# linter
+yarn run check
+yarn run lint
+
+# warning
+cat <<EOF
+
+DONT FORGET TO BUILD THE APPLICATION
+
+  cd /home/ui/galaxy-dev
+  yarn run build
+EOF
