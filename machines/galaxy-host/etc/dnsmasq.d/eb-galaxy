@@ -1,0 +1,4 @@
+address=/eb-postgres/172.22.22.11
+address=/eb-app-api/172.22.22.12
+address=/eb-app-ui/172.22.22.13
+address=/eb-reverse-proxy/172.22.22.14
