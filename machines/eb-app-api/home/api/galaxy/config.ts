@@ -16,8 +16,8 @@ export const MAX_LIST_SIZE = 100;
 
 // keycloak
 export const KEYCLOAK_ORIGIN = Deno.env.get("KEYCLOAK_ORIGIN") ||
-  "https://ucs-sso-ng.mydomain.corp";
-export const KEYCLOAK_REALM = Deno.env.get("KEYCLOAK_REALM") || "ucs";
+  "___KEYCLOAK_ORIGIN___";
+export const KEYCLOAK_REALM = Deno.env.get("KEYCLOAK_REALM") ||
+  "___KEYCLOAK_REALM___";
 export const KEYCLOAK_CLIENT_ID = Deno.env.get("KEYCLOAK_CLIENT_ID") || 
-  "galaxy";
-export const KEYCLOAK_MODE = Deno.env.get("KEYCLOAK_MODE") || "query";
+  "___KEYCLOAK_CLIENT_ID___";
