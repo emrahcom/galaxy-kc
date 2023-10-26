@@ -9,7 +9,7 @@ set -e
 #   systemctl stop galaxy-api-adm.service
 # ------------------------------------------------------------------------------
 
-REMOTE="https://github.com/emrahcom/galaxy.git"
+REMOTE="https://github.com/emrahcom/galaxy-kc.git"
 [[ -n "$BRANCH" ]] || BRANCH="main"
 LOCAL="/tmp/galaxy"
 API="$LOCAL/machines/eb-app-api/home/api"
@@ -18,7 +18,7 @@ APP="$API/galaxy"
 # get DB_PASSWD
 [[ -z "$DB_PASSWD" ]] && \
     DB_PASSWD=$(ack "^export const DB_PASSWD =" /home/api/galaxy/config.ts | \
-                cut -d'"' -f2)
+                cut -d'"' -f4)
 if [[ -z "$DB_PASSWD" ]]; then
     echo "error: DB_PASSWD is not found"
     exit 1
