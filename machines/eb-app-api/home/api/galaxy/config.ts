@@ -5,8 +5,8 @@ export const PORT_PRIVATE = 8001;
 export const PORT_PUBLIC = 8002;
 
 // database
-export const DB_NAME = Deno.env.get("DB_NAME") || "galaxy";;
-export const DB_USER = Deno.env.get("DB_USER") || "galaxy";;
+export const DB_NAME = Deno.env.get("DB_NAME") || "galaxy";
+export const DB_USER = Deno.env.get("DB_USER") || "galaxy";
 export const DB_PASSWD = Deno.env.get("DB_PASSWD") || "___DB_PASSWD___";
 export const DB_HOST = Deno.env.get("DB_HOST") || "eb-postgres";
 export const DB_PORT = Number(Deno.env.get("DB_PORT") || 5432);
@@ -19,5 +19,5 @@ export const KEYCLOAK_ORIGIN = Deno.env.get("KEYCLOAK_ORIGIN") ||
   "___KEYCLOAK_ORIGIN___";
 export const KEYCLOAK_REALM = Deno.env.get("KEYCLOAK_REALM") ||
   "___KEYCLOAK_REALM___";
-export const KEYCLOAK_CLIENT_ID = Deno.env.get("KEYCLOAK_CLIENT_ID") || 
+export const KEYCLOAK_CLIENT_ID = Deno.env.get("KEYCLOAK_CLIENT_ID") ||
   "___KEYCLOAK_CLIENT_ID___";

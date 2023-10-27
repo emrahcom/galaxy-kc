@@ -1,4 +1,7 @@
-import { KRATOS } from "../../config.ts";
+//import { KRATOS } from "../../config.ts";
+// FIX ME
+// this will switch to another auth method
+const KRATOS = "http://127.0.0.1";
 
 // -----------------------------------------------------------------------------
 export async function getIdentityId(req: Request): Promise<string | undefined> {
