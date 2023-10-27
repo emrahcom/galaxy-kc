@@ -231,7 +231,7 @@ su -l ui <<EOSS
 EOSS
 EOS
 
-sed -i "s/___GALAXY_FQDN___/$GALAXY_FQDN/g" \
+sed -i "s~___GALAXY_FQDN___~$GALAXY_FQDN~g" \
     $ROOTFS/home/ui/galaxy-dev/src/lib/config.ts
 
 # ------------------------------------------------------------------------------
