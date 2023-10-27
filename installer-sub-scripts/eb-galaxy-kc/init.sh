@@ -32,7 +32,7 @@ fi
 if [[ "$SKIP_DNS_CHECK" != true ]]; then
   if [[ -z "$(dig +short $GALAXY_FQDN)" ]]; then
     cat <<EOF
-Error: Unresolvable APP_FQDN: $GALAXY_FQDN
+Error: Unresolvable GALAXY_FQDN: $GALAXY_FQDN
 
 If this is a test setup and you don't have a resolvable GALAXY_FQDN,
 please set SKIP_DNS_CHECK before installation
