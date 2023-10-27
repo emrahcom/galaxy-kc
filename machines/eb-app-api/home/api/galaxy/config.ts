@@ -13,11 +13,3 @@ export const DB_PORT = Number(Deno.env.get("DB_PORT") || 5432);
 export const DB_POOL_SIZE = 8;
 export const DEFAULT_LIST_SIZE = 10;
 export const MAX_LIST_SIZE = 100;
-
-// keycloak
-export const KEYCLOAK_ORIGIN = Deno.env.get("KEYCLOAK_ORIGIN") ||
-  "___KEYCLOAK_ORIGIN___";
-export const KEYCLOAK_REALM = Deno.env.get("KEYCLOAK_REALM") ||
-  "___KEYCLOAK_REALM___";
-export const KEYCLOAK_CLIENT_ID = Deno.env.get("KEYCLOAK_CLIENT_ID") ||
-  "___KEYCLOAK_CLIENT_ID___";
