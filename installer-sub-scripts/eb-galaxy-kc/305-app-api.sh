@@ -176,7 +176,7 @@ cp -arp home/api/upgrade-galaxy $ROOTFS/home/api/
 cp -arp home/api/galaxy $ROOTFS/home/api/
 rm -rf $ROOTFS/home/api/galaxy/database
 rm -rf $ROOTFS/home/api/galaxy/test
-sed -i "s~___DB_PASSWD___~$DB_GALAXY_PASSWD~" $ROOTFS/home/api/galaxy/config.ts
+sed -i "s/___DB_PASSWD___/$DB_GALAXY_PASSWD/" $ROOTFS/home/api/galaxy/config.ts
 
 lxc-attach -n $MACH -- zsh <<EOS
 set -e
