@@ -177,12 +177,6 @@ cp -arp home/api/galaxy $ROOTFS/home/api/
 rm -rf $ROOTFS/home/api/galaxy/database
 rm -rf $ROOTFS/home/api/galaxy/test
 sed -i "s~___DB_PASSWD___~$DB_GALAXY_PASSWD~" $ROOTFS/home/api/galaxy/config.ts
-sed -i "s~___KEYCLOAK_ORIGIN___~$KEYCLOAK_ORIGIN~" \
-    $ROOTFS/home/api/galaxy/config.ts
-sed -i "s~___KEYCLOAK_REALM___~$KEYCLOAK_REALM~" \
-    $ROOTFS/home/api/galaxy/config.ts
-sed -i "s~___KEYCLOAK_CLIENT_ID___~$KEYCLOAK_CLIENT_ID~" \
-    $ROOTFS/home/api/galaxy/config.ts
 
 lxc-attach -n $MACH -- zsh <<EOS
 set -e
