@@ -17,13 +17,57 @@ APP="$API/galaxy"
 
 # get DB_PASSWD
 [[ -z "$DB_PASSWD" ]] && \
-    DB_PASSWD=$(ack "^export const DB_PASSWD =" /home/api/galaxy/config.ts | \
-                cut -d'"' -f4)
+    DB_PASSWD=$(ack "^export const DB_PASSWD =" \
+        /home/api/galaxy/config.ts | cut -d'"' -f2)
 if [[ -z "$DB_PASSWD" ]]; then
     echo "error: DB_PASSWD is not found"
     exit 1
 else
     echo "DB_PASSWD: $DB_PASSWD"
+fi
+
+# get GALAXY_FQDN
+[[ -z "$GALAXY_FQDN" ]] && \
+    GALAXY_FQDN=$(ack "^export const GALAXY_FQDN =" \
+        /home/api/galaxy/config.ts | cut -d'"' -f2)
+if [[ -z "$GALAXY_FQDN" ]]; then
+    echo "error: GALAXY_FQDN is not found"
+    exit 1
+else
+    echo "GALAXY_FQDN: $GALAXY_FQDN"
+fi
+
+# get KEYCLOAK_ORIGIN
+[[ -z "$KEYCLOAK_ORIGIN" ]] && \
+    KEYCLOAK_ORIGIN=$(ack "^export const KEYCLOAK_ORIGIN =" \
+        /home/api/galaxy/config.ts | cut -d'"' -f2)
+if [[ -z "$KEYCLOAK_ORIGIN" ]]; then
+    echo "error: KEYCLOAK_ORIGIN is not found"
+    exit 1
+else
+    echo "KEYCLOAK_ORIGIN: $KEYCLOAK_ORIGIN"
+fi
+
+# get KEYCLOAK_REALM
+[[ -z "$KEYCLOAK_REALM" ]] && \
+    KEYCLOAK_REALM=$(ack "^export const KEYCLOAK_REALM =" \
+        /home/api/galaxy/config.ts | cut -d'"' -f2)
+if [[ -z "$KEYCLOAK_REALM" ]]; then
+    echo "error: KEYCLOAK_REALM is not found"
+    exit 1
+else
+    echo "KEYCLOAK_REALM: $KEYCLOAK_REALM"
+fi
+
+# get KEYCLOAK_CLIENT_ID
+[[ -z "$KEYCLOAK_CLIENT_ID" ]] && \
+    KEYCLOAK_CLIENT_ID=$(ack "^export const KEYCLOAK_CLIENT_ID =" \
+        /home/api/galaxy/config.ts | cut -d'"' -f2)
+if [[ -z "$KEYCLOAK_CLIENT_ID" ]]; then
+    echo "error: KEYCLOAK_CLIENT_ID is not found"
+    exit 1
+else
+    echo "KEYCLOAK_CLIENT_ID: $KEYCLOAK_CLIENT_ID"
 fi
 
 # clone
@@ -36,7 +80,13 @@ EOF
 rm -rf $LOCAL
 git clone --depth=1 --branch $BRANCH $REMOTE $LOCAL
 
-sed -i "s/___DB_PASSWD___/$DB_PASSWD/" $APP/config.ts
+sed -i \
+  -e "s~DB_PASSWD =.*~DB_PASSWD = \"$DB_PASSWD\"~" \
+  -e "s~GALAXY_FQDN =.*~GALAXY_FQDN = \"$GALAXY_FQDN\"~" \
+  -e "s~KEYCLOAK_ORIGIN =.*~KEYCLOAK_ORIGIN = \"$KEYCLOAK_ORIGIN\"~" \
+  -e "s~KEYCLOAK_REALM =.*~KEYCLOAK_REALM = \"$KEYCLOAK_REALM\"~" \
+  -e "s~KEYCLOAK_CLIENT_ID =.*~KEYCLOAK_CLIENT_ID = \"$KEYCLOAK_CLIENT_ID\"~" \
+  $APP/config.ts
 cat $APP/config.ts
 
 # upgrade app
