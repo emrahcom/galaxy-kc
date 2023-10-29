@@ -22,7 +22,7 @@ cp $UI/upgrade-galaxy-dev /home/ui/
 
 # get GALAXY FQDN
 [[ -z "$GALAXY_FQDN" ]] && \
-    GALAXY_FQDN=$(ack "^export const APP =" \
+    GALAXY_FQDN=$(ack "^export const GALAXY_FQDN =" \
         /home/ui/galaxy-dev/src/lib/config.ts | \
         cut -d'"' -f2)
 if [[ -z "$GALAXY_FQDN" ]]; then
