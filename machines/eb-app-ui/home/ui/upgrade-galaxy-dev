@@ -24,7 +24,7 @@ cp $UI/upgrade-galaxy-dev /home/ui/
 [[ -z "$GALAXY_FQDN" ]] && \
     GALAXY_FQDN=$(ack "^export const APP =" \
         /home/ui/galaxy-dev/src/lib/config.ts | \
-        cut -d'"' -f2 | cut -d '/' -f3)
+        cut -d'"' -f2)
 if [[ -z "$GALAXY_FQDN" ]]; then
     echo "error: GALAXY_FQDN is not found"
     exit 1
@@ -36,7 +36,7 @@ fi
 [[ -z "$KEYCLOAK_ORIGIN" ]] && \
     KEYCLOAK_ORIGIN=$(ack "^export const KEYCLOAK_ORIGIN =" \
         /home/ui/galaxy-dev/src/lib/config.ts | \
-        cut -d'"' -f2 | cut -d '/' -f3)
+        cut -d'"' -f2)
 if [[ -z "$KEYCLOAK_ORIGIN" ]]; then
     echo "error: KEYCLOAK_ORIGIN is not found"
     exit 1
@@ -48,7 +48,7 @@ fi
 [[ -z "$KEYCLOAK_REALM" ]] && \
     KEYCLOAK_REALM=$(ack "^export const KEYCLOAK_REALM =" \
         /home/ui/galaxy-dev/src/lib/config.ts | \
-        cut -d'"' -f2 | cut -d '/' -f3)
+        cut -d'"' -f2)
 if [[ -z "$KEYCLOAK_REALM" ]]; then
     echo "error: KEYCLOAK_REALM is not found"
     exit 1
@@ -60,7 +60,7 @@ fi
 [[ -z "$KEYCLOAK_CLIENT_ID" ]] && \
     KEYCLOAK_CLIENT_ID=$(ack "^export const KEYCLOAK_CLIENT_ID =" \
         /home/ui/galaxy-dev/src/lib/config.ts | \
-        cut -d'"' -f2 | cut -d '/' -f3)
+        cut -d'"' -f2)
 if [[ -z "$KEYCLOAK_CLIENT_ID" ]]; then
     echo "error: KEYCLOAK_CLIENT_ID is not found"
     exit 1
