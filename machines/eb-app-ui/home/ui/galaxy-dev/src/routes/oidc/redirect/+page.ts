@@ -1,5 +1,5 @@
 import {
-  APP,
+  GALAXY_FQDN,
   KEYCLOAK_CLIENT_ID,
   KEYCLOAK_ORIGIN,
   KEYCLOAK_REALM,
@@ -11,7 +11,7 @@ export async function load() {
     `${KEYCLOAK_ORIGIN}/realms/${KEYCLOAK_REALM}` +
     `/protocol/openid-connect/auth?client_id=${KEYCLOAK_CLIENT_ID}` +
     `&response_type=code&scope=openid&prompt=login` +
-    `&redirect_uri=https://${APP}/oidc/validate`;
+    `&redirect_uri=https://${GALAXY_FQDN}/oidc/validate`;
 
   window.location.href = `${target}`;
 }
