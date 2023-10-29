@@ -1,3 +1,4 @@
+import { v5 as uuid } from "https://deno.land/std/uuid/mod.ts";
 import { notFound, unauthorized } from "../http/response.ts";
 import { adm as wrapper } from "../http/wrapper.ts";
 //import { addIdentity } from "../database/identity.ts";
@@ -10,6 +11,7 @@ import {
 } from "../../config.ts";
 
 const PRE = "/api/adm/identity";
+const UUID_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
 
 // -----------------------------------------------------------------------------
 //async function add(req: Request): Promise<unknown> {
@@ -103,8 +105,11 @@ async function getByCode(req: Request): Promise<unknown> {
   const userInfo = await getUserInfo(token);
   if (!userInfo) return unauthorized();
 
+  const userId = await uuid.generate(UUID_NAMESPACE, userInfo.sub);
+
   const identity = [{
     jwt: "my_jwt",
+    userId: userId,
     userInfo: userInfo,
   }];
 
