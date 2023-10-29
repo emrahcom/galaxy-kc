@@ -5,6 +5,7 @@ After=network-online.target
 [Service]
 User=api-adm
 Group=api-adm
+Environment=DENO_TLS_CA_STORE=system
 WorkingDirectory=/home/api/galaxy
 ExecStart=deno run --allow-net --allow-env index-adm.ts
 Restart=always
