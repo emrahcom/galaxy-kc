@@ -69,10 +69,10 @@ else
 fi
 
 # set config
-sed -i "s/___GALAXY_FQDN___/$GALAXY_FQDN/" $APP/src/lib/config.ts
-sed -i "s/___KEYCLOAK_ORIGIN___/$KEYCLOAK_ORIGIN/" $APP/src/lib/config.ts
-sed -i "s/___KEYCLOAK_REALM___/$KEYCLOAK_REALM/" $APP/src/lib/config.ts
-sed -i "s/___KEYCLOAK_CLIENT_ID___/$KEYCLOAK_CLIENT_ID/" $APP/src/lib/config.ts
+sed -i "s~___GALAXY_FQDN___~$GALAXY_FQDN~" $APP/src/lib/config.ts
+sed -i "s~___KEYCLOAK_ORIGIN___~$KEYCLOAK_ORIGIN~" $APP/src/lib/config.ts
+sed -i "s~___KEYCLOAK_REALM___~$KEYCLOAK_REALM~" $APP/src/lib/config.ts
+sed -i "s~___KEYCLOAK_CLIENT_ID___~$KEYCLOAK_CLIENT_ID~" $APP/src/lib/config.ts
 cat $APP/src/lib/config.ts
 
 # upgrade app
