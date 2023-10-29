@@ -6,8 +6,9 @@ After=network-online.target
 User=api-adm
 Group=api-adm
 Environment=DENO_TLS_CA_STORE=system
+#Environment=IGNORE_CERT_ERRORS=--unsafely-ignore-certificate-errors
 WorkingDirectory=/home/api/galaxy
-ExecStart=deno run --allow-net --allow-env index-adm.ts
+ExecStart=deno run --allow-net --allow-env $IGNORE_CERT_ERRORS index-adm.ts
 Restart=always
 RestartSec=2s
 
