@@ -11,6 +11,5 @@ export async function load() {
     const identity = await getByCode("/api/adm/identity/get/bycode", code);
 
     console.error(identity);
-  } catch {
-  }
+  } catch {}
 }
