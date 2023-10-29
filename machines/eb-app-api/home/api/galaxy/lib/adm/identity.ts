@@ -93,6 +93,8 @@ async function getUserInfo(
 }
 
 // -----------------------------------------------------------------------------
+// Return the user identity and a token for API calls if auth code is valid
+// -----------------------------------------------------------------------------
 async function getByCode(req: Request): Promise<unknown> {
   const pl = await req.json();
   const code = pl.code;
@@ -104,8 +106,11 @@ async function getByCode(req: Request): Promise<unknown> {
   // get the user info from Keycloak by using the access token
   const userInfo = await getUserInfo(token);
   if (!userInfo) return unauthorized();
+  if (typeof userInfo.sub !== "string") return unauthorized();
 
-  const userId = await uuid.generate(UUID_NAMESPACE, userInfo.sub);
+  // create uuid as userId based on sub
+  const sub = new TextEncoder().encode(userInfo.sub);
+  const userId = await uuid.generate(UUID_NAMESPACE, sub);
 
   const identity = [{
     jwt: "my_jwt",
