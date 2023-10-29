@@ -8,9 +8,9 @@ export async function load() {
     if (!code) throw new Error("code not found");
 
     console.error(code);
-    const identity = getByCode("/api/adm/identity/get/bycode", code);
+    const identity = await getByCode("/api/adm/identity/get/bycode", code);
 
-    console.log(identity);
+    console.error(identity);
   } catch {
   }
 }
