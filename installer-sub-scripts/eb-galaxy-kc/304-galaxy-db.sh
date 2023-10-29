@@ -90,22 +90,22 @@ EOS
 # UPDATE PASSWD
 # ------------------------------------------------------------------------------
 # get current passwd if exists
-DB_GALAXY_PASSWD=$(egrep '^galaxy:' $ROOTFS/root/postgresql-passwd.txt | \
+DB_PASSWD=$(egrep '^galaxy:' $ROOTFS/root/postgresql-passwd.txt | \
     tail -n1 | cut -d: -f2)
 
 # generate a new one if there is no passwd
-if [[ -z "$DB_GALAXY_PASSWD" ]]; then
-    DB_GALAXY_PASSWD=$(openssl rand -hex 20)
-    echo "galaxy:$DB_GALAXY_PASSWD" >> $ROOTFS/root/postgresql-passwd.txt
+if [[ -z "$DB_PASSWD" ]]; then
+    DB_PASSWD=$(openssl rand -hex 20)
+    echo "galaxy:$DB_PASSWD" >> $ROOTFS/root/postgresql-passwd.txt
 fi
 
 chmod 600 $ROOTFS/root/postgresql-passwd.txt
-echo "DB_GALAXY_PASSWD=$DB_GALAXY_PASSWD" >> $INSTALLER/000-source
+echo "DB_PASSWD=$DB_PASSWD" >> $INSTALLER/000-source
 
 lxc-attach -n $TAG-postgres -- zsh <<EOS
 set -e
 su -l postgres -s /usr/bin/psql -- -v ON_ERROR_STOP=1 <<PSQL
-    ALTER ROLE galaxy WITH PASSWORD '$DB_GALAXY_PASSWD';
+    ALTER ROLE galaxy WITH PASSWORD '$DB_PASSWD';
 PSQL
 EOS
 
