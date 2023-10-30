@@ -1,11 +1,11 @@
 <script lang="ts">
-  import identity from "$lib/stores/kratos/identity";
+  import identity from "$lib/stores/keycloak/identity";
   import NavBarPri from "$lib/components/nav/bar-pri.svelte";
   import NavBarPub from "$lib/components/nav/bar-pub.svelte";
 </script>
 
 <!-- -------------------------------------------------------------------------->
-{#if $identity.id}
+{#if $identity.sub}
   <NavBarPri />
 {:else}
   <NavBarPub />
