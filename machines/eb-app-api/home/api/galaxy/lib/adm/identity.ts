@@ -120,11 +120,9 @@ async function getByCode(req: Request): Promise<Response> {
   // Add the identity if not exists in Galaxy database
   await add(userId, userInfo);
 
-  // The client waits for a list of identities as format but it will use only
-  // the first identity from this list. So, put the identity into the list.
-  const identities = [{
-    userInfo: userInfo,
-  }];
+  // The client waits for a list of identities but it will use only the first
+  // identity from this list. So, put the only available identity into the list.
+  const identities = [userInfo];
 
   // Send token inside the cookie.
   // The token contains the userId of the authenticated user.
