@@ -7,6 +7,7 @@ export async function addIdentity(identityId: string) {
     text: `
       INSERT INTO identity (id)
       VALUES ($1)
+      ON CONFLICT (id) DO NOTHING
       RETURNING id, created_at as at`,
     args: [
       identityId,
