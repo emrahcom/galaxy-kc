@@ -1,15 +1,8 @@
-import { browser } from "$app/environment";
-import { getLogoutDataModels } from "$lib/kratos";
+import identity from "$lib/stores/keycloak/identity";
 
 // -----------------------------------------------------------------------------
 export async function load() {
-  if (!browser) return {};
+  identity.set({});
 
-  const dm = await getLogoutDataModels();
-
-  if (dm.instanceOf === "KratosLogout") {
-    window.location.replace(dm.logout_url);
-  } else {
-    window.location.replace("/");
-  }
+  window.location.href = "/";
 }
