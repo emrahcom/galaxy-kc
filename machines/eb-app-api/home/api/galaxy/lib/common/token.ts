@@ -4,7 +4,7 @@ import {
   getNumericDate,
   Payload,
 } from "https://deno.land/x/djwt/mod.ts";
-import { API_SECRET, API_TIMEOUT } from "../config.ts";
+import { API_SECRET, API_TIMEOUT } from "../../config.ts";
 
 // -----------------------------------------------------------------------------
 async function generateCryptoKeyHS(
