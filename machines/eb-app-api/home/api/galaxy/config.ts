@@ -16,6 +16,7 @@ export const MAX_LIST_SIZE = 100;
 
 // app
 export const GALAXY_FQDN = Deno.env.get("GALAXY_FQDN") || "";
+export const API_SECRET = Deno.env.get("API_SECRET") || "mysecret";
 
 // keycloak
 export const KEYCLOAK_ORIGIN = Deno.env.get("KEYCLOAK_ORIGIN") || "";
