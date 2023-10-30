@@ -127,7 +127,7 @@ async function getByCode(req: Request): Promise<Response> {
     name: "token",
     value: await generateAPIToken(userId),
     path: "/api",
-    secure: true.
+    secure: true,
     httpOnly: true,
     sameSite: "Lax",
   });
