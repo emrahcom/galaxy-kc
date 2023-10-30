@@ -3,8 +3,8 @@ import { setCookie } from "https://deno.land/std/http/cookie.ts";
 import { notFound, ok, unauthorized } from "../http/response.ts";
 import { adm as wrapper } from "../http/wrapper.ts";
 import { generateAPIToken } from "../common/token.ts";
-//import { addIdentity } from "../database/identity.ts";
-//import { addProfile } from "../database/profile.ts";
+import { addIdentity } from "../database/identity.ts";
+import { addProfile } from "../database/profile.ts";
 import {
   GALAXY_FQDN,
   KEYCLOAK_CLIENT_ID,
@@ -16,24 +16,25 @@ const PRE = "/api/adm/identity";
 const UUID_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
 
 // -----------------------------------------------------------------------------
-//async function add(req: Request): Promise<unknown> {
-//  const pl = await req.json();
-//  const identityId = pl.identity_id;
-//  const email = pl.identity_email;
-//  const name = email.split("@")[0];
-//  const rows = await addIdentity(identityId);
-//
-//  if (rows[0] !== undefined) {
-//    await addProfile(
-//      identityId,
-//      name,
-//      email,
-//      true,
-//    );
-//  }
-//
-//  return rows;
-//}
+async function add(
+  userId: string,
+  userInfo: Record<string, unknown>,
+): Promise<void> {
+  const name = (typeof userInfo.preferred_username === "string")
+    ? userInfo.preferred_username
+    : "Guest";
+  const email = (typeof userInfo.email === "string") ? userInfo.email : "Guest";
+  const rows = await addIdentity(userId);
+
+  if (rows[0] !== undefined) {
+    await addProfile(
+      userId,
+      name,
+      email,
+      true,
+    );
+  }
+}
 
 // -----------------------------------------------------------------------------
 // Get the access token from Keycloak by using the short-term auth code
@@ -113,6 +114,9 @@ async function getByCode(req: Request): Promise<Response> {
   // create uuid as userId based on sub
   const sub = new TextEncoder().encode(userInfo.sub);
   const userId = await uuid.generate(UUID_NAMESPACE, sub);
+
+  // add user if not exists
+  await add(userId, userInfo);
 
   // the client waits for a list of identities as format but it will use only
   // the first identity from this list
