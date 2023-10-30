@@ -13,16 +13,7 @@
           <a
             class="btn btn-sm btn-outline-primary"
             role="button"
-            href="/id/registration"
-          >
-            Sign Up
-          </a>
-        </li>
-        <li class="nav-item me-2">
-          <a
-            class="btn btn-sm btn-outline-primary"
-            role="button"
-            href="/id/login"
+            href="/oidc/redirect"
           >
             Sign In
           </a>
