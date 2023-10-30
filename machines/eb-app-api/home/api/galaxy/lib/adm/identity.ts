@@ -16,6 +16,8 @@ const PRE = "/api/adm/identity";
 const UUID_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
 
 // -----------------------------------------------------------------------------
+// Add the identity if not exists
+// -----------------------------------------------------------------------------
 async function add(
   userId: string,
   userInfo: Record<string, unknown>,
@@ -102,30 +104,30 @@ async function getByCode(req: Request): Promise<Response> {
   const pl = await req.json();
   const code = pl.code;
 
-  // get the access token from Keycloak if the short-term auth code is valid
+  // Get the access token from Keycloak if the short-term auth code is valid
   const token = await getToken(code);
   if (!token) return unauthorized();
 
-  // get the user info from Keycloak by using the access token
+  // Get the user info from Keycloak by using the access token
   const userInfo = await getUserInfo(token);
   if (!userInfo) return unauthorized();
   if (typeof userInfo.sub !== "string") return unauthorized();
 
-  // create uuid as userId based on sub
+  // Create uuid as userId based on sub
   const sub = new TextEncoder().encode(userInfo.sub);
   const userId = await uuid.generate(UUID_NAMESPACE, sub);
 
-  // add user if not exists
+  // Add the identity if not exists in Galaxy database
   await add(userId, userInfo);
 
-  // the client waits for a list of identities as format but it will use only
-  // the first identity from this list
+  // The client waits for a list of identities as format but it will use only
+  // the first identity from this list. So, put the identity into the list.
   const identities = [{
     userInfo: userInfo,
   }];
 
-  // send token inside the cookie
-  // token contains the userId of the authenticated user
+  // Send token inside the cookie.
+  // The token contains the userId of the authenticated user.
   const headers = new Headers();
   setCookie(headers, {
     name: "token",
