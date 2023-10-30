@@ -27,7 +27,7 @@
 >
   <div class="offcanvas-header bg-light">
     <h5 class="offcanvas-title text-muted" id="offcanvasAccountLabel">
-      {$identity.preferred_name}
+      {$identity.preferred_username}
     </h5>
 
     <button
