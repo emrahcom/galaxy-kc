@@ -1,5 +1,4 @@
 import { getByCode } from "$lib/api";
-import identity from "$lib/stores/keycloak/identity";
 
 // -----------------------------------------------------------------------------
 export async function load() {
@@ -8,8 +7,8 @@ export async function load() {
     const code = qs.get("code");
     if (!code) throw new Error("code not found");
 
-    const _identity = await getByCode("/api/adm/identity/get/bycode", code);
-    identity.set(_identity);
+    const identity = await getByCode("/api/adm/identity/get/bycode", code);
+    window.localStorage.setItem("identity", JSON.stringify(identity));
 
     window.location.href = "/pri";
   } catch {
