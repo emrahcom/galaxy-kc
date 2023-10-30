@@ -5,6 +5,7 @@ import {
   notFound,
   unauthorized,
 } from "./lib/http/response.ts";
+import { getIdentityId } from "./lib/pri/identity.ts";
 import domain from "./lib/pri/domain.ts";
 import domainInvite from "./lib/pri/domain-invite.ts";
 import domainPartner from "./lib/pri/domain-partner.ts";
@@ -71,10 +72,9 @@ async function route(
 async function handler(req: Request): Promise<Response> {
   // check method
   if (req.method === "POST") {
-    // THERE IS NO IDENTITY CHECK FOR NOW
-    const identityId = "0000";
+    const identityId = getIdentityId(req);
 
-    if (identityId) {
+    if (identityId && typeof identityId === "string") {
       const url = new URL(req.url);
       const path = url.pathname;
 

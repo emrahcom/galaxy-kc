@@ -7,7 +7,7 @@ import {
 import { API_SECRET, API_TIMEOUT } from "../../config.ts";
 
 // -----------------------------------------------------------------------------
-async function generateCryptoKeyHS(
+export async function generateCryptoKeyHS(
   secret: string,
   hash: string,
 ): Promise<CryptoKey> {
@@ -21,7 +21,7 @@ async function generateCryptoKeyHS(
       hash: hash,
     },
     true,
-    ["sign"],
+    ["sign", "verify"],
   );
 
   return cryptoKey;
