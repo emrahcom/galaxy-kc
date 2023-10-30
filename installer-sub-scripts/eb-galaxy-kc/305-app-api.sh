@@ -177,9 +177,12 @@ cp -arp home/api/galaxy $ROOTFS/home/api/
 rm -rf $ROOTFS/home/api/galaxy/database
 rm -rf $ROOTFS/home/api/galaxy/test
 
+API_SECRET=$(openssl rand -hex 20)
+
 sed -i \
   -e "s~DB_PASSWD =.*~DB_PASSWD = \"$DB_PASSWD\"~" \
   -e "s~GALAXY_FQDN =.*~GALAXY_FQDN = \"$GALAXY_FQDN\"~" \
+  -e "s~API_SECRET =.*~API_SECRET = \"$API_SECRET\"~" \
   -e "s~KEYCLOAK_ORIGIN =.*~KEYCLOAK_ORIGIN = \"$KEYCLOAK_ORIGIN\"~" \
   -e "s~KEYCLOAK_REALM =.*~KEYCLOAK_REALM = \"$KEYCLOAK_REALM\"~" \
   -e "s~KEYCLOAK_CLIENT_ID =.*~KEYCLOAK_CLIENT_ID = \"$KEYCLOAK_CLIENT_ID\"~" \
