@@ -31,13 +31,11 @@ export async function pub(f: functionPub, req: Request): Promise<Response> {
 }
 
 // -----------------------------------------------------------------------------
-type functionAdm = (req: Request) => Promise<unknown>;
+type functionAdm = (req: Request) => Promise<Response>;
 
 export async function adm(f: functionAdm, req: Request): Promise<Response> {
   try {
-    const rows = await f(req);
-
-    return ok(JSON.stringify(rows));
+    return await f(req);
   } catch {
     return internalServerError();
   }
