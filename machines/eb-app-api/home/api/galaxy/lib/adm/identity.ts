@@ -126,6 +126,10 @@ async function getByCode(req: Request): Promise<Response> {
   setCookie(headers, {
     name: "token",
     value: await generateAPIToken(userId),
+    path: "/api",
+    secure: true.
+    httpOnly: true,
+    sameSite: "Lax",
   });
 
   return ok(JSON.stringify(identities), headers);
