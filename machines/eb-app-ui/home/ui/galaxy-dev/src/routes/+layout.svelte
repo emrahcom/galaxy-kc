@@ -1,11 +1,12 @@
 <script lang="ts">
-  import identity from "$lib/stores/keycloak/identity";
   import NavBarPri from "$lib/components/nav/bar-pri.svelte";
   import NavBarPub from "$lib/components/nav/bar-pub.svelte";
+
+  const identity = JSON.parse(window.localStorage.getItem("identity"));
 </script>
 
 <!-- -------------------------------------------------------------------------->
-{#if $identity.sub}
+{#if identity.sub}
   <NavBarPri />
 {:else}
   <NavBarPub />
