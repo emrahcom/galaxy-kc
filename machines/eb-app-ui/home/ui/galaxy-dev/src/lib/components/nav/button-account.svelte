@@ -42,7 +42,9 @@
   <div class="offcanvas-body">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" href="/oidc/logout" on:click={closeMenu}> Log Out </a>
+        <a class="nav-link" href="/oidc/logout" on:click={closeMenu}>
+          Log Out
+        </a>
       </li>
     </ul>
   </div>
