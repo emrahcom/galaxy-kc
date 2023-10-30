@@ -1,9 +1,7 @@
 <script lang="ts">
   import { FORM_WIDTH, GALAXY_FQDN } from "$lib/config";
-  import { get } from "svelte/store";
-  import identity from "$lib/stores/keycloak/identity";
 
-  const _identity = get(identity);
+  export let data;
 </script>
 
 <!-- -------------------------------------------------------------------------->
@@ -17,7 +15,7 @@
         schedules and attendees.
       </h4>
 
-      {#if !_identity.sub}
+      {#if !data.identity.sub}
         <h4 class="text-muted small mb-5">
           Please click
           <a class="text-primary" href="/oidc/redirect">Sign In</a>
