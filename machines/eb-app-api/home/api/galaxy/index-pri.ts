@@ -72,7 +72,7 @@ async function route(
 async function handler(req: Request): Promise<Response> {
   // check method
   if (req.method === "POST") {
-    const identityId = getIdentityId(req);
+    const identityId = await getIdentityId(req);
 
     if (identityId && typeof identityId === "string") {
       const url = new URL(req.url);
