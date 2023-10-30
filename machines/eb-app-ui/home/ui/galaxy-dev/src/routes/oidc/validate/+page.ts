@@ -9,6 +9,7 @@ export async function load() {
 
     const identity = await getByCode("/api/adm/identity/get/bycode", code);
     window.localStorage.setItem("identity", JSON.stringify(identity));
+    window.localStorage.setItem("username", identity.preferred_username);
 
     window.location.href = "/pri";
   } catch {

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import identity from "$lib/stores/keycloak/identity";
+  const username = window.localStorage.getItem("username");
 
   // ---------------------------------------------------------------------------
   function closeMenu() {
@@ -27,7 +27,7 @@
 >
   <div class="offcanvas-header bg-light">
     <h5 class="offcanvas-title text-muted" id="offcanvasAccountLabel">
-      {$identity.preferred_username}
+      {username}
     </h5>
 
     <button
