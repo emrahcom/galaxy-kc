@@ -1,6 +1,8 @@
 import { v5 as uuid } from "https://deno.land/std/uuid/mod.ts";
-import { notFound, unauthorized } from "../http/response.ts";
+import { setCookie } from "https://deno.land/std/http/cookie.ts";
+import { notFound, ok, unauthorized } from "../http/response.ts";
 import { adm as wrapper } from "../http/wrapper.ts";
+import { generateAPIToken } from "../common/token.ts";
 //import { addIdentity } from "../database/identity.ts";
 //import { addProfile } from "../database/profile.ts";
 import {
@@ -95,7 +97,7 @@ async function getUserInfo(
 // -----------------------------------------------------------------------------
 // Return the user identity and a token for API calls if auth code is valid
 // -----------------------------------------------------------------------------
-async function getByCode(req: Request): Promise<unknown> {
+async function getByCode(req: Request): Promise<Response> {
   const pl = await req.json();
   const code = pl.code;
 
@@ -112,13 +114,21 @@ async function getByCode(req: Request): Promise<unknown> {
   const sub = new TextEncoder().encode(userInfo.sub);
   const userId = await uuid.generate(UUID_NAMESPACE, sub);
 
-  const identity = [{
-    jwt: "my_jwt",
-    userId: userId,
+  // the client waits for a list of identities as format but it will use only
+  // the first identity from this list
+  const identities = [{
     userInfo: userInfo,
   }];
 
-  return identity;
+  // send token inside the cookie
+  // token contains the userId of the authenticated user
+  const headers = new Headers();
+  setCookie(headers, {
+    name: "token",
+    value: generateAPIToken(userId),
+  });
+
+  return ok(JSON.stringify(identities), headers);
 }
 
 // -----------------------------------------------------------------------------
