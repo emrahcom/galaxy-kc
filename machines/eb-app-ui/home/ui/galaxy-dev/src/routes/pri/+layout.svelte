@@ -1,10 +1,7 @@
 <script lang="ts">
-  import { get } from "svelte/store";
-  import identity from "$lib/stores/keycloak/identity";
+  export let data;
 
-  const _identity = get(identity);
-
-  if (!_identity.sub) window.location.replace("/oidc/redirect");
+  if (!data.identity.sub) window.location.replace("/oidc/redirect");
 </script>
 
 <!-- -------------------------------------------------------------------------->
