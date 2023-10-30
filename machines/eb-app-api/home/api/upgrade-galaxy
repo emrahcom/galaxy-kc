@@ -37,6 +37,18 @@ else
     echo "GALAXY_FQDN: $GALAXY_FQDN"
 fi
 
+# get API_SECRET
+[[ -z "$API_SECRET" ]] && \
+    API_SECRET=$(ack "^export const API_SECRET =" \
+        /home/api/galaxy/config.ts | cut -d'"' -f2) || \
+    API_SECRET=$(openssl rand -hex 20)
+if [[ -z "$API_SECRET" ]]; then
+    echo "error: API_SECRET is not found"
+    exit 1
+else
+    echo "API_SECRET: $API_SECRET"
+fi
+
 # get KEYCLOAK_ORIGIN
 [[ -z "$KEYCLOAK_ORIGIN" ]] && \
     KEYCLOAK_ORIGIN=$(ack "^export const KEYCLOAK_ORIGIN =" \
@@ -82,6 +94,7 @@ git clone --depth=1 --branch $BRANCH $REMOTE $LOCAL
 
 sed -i \
   -e "s~DB_PASSWD =.*~DB_PASSWD = \"$DB_PASSWD\"~" \
+  -e "s~API_SECRET =.*~API_SECRET = \"$API_SECRET\"~" \
   -e "s~GALAXY_FQDN =.*~GALAXY_FQDN = \"$GALAXY_FQDN\"~" \
   -e "s~KEYCLOAK_ORIGIN =.*~KEYCLOAK_ORIGIN = \"$KEYCLOAK_ORIGIN\"~" \
   -e "s~KEYCLOAK_REALM =.*~KEYCLOAK_REALM = \"$KEYCLOAK_REALM\"~" \
