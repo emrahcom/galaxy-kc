@@ -10,7 +10,9 @@ export async function load() {
 
     const _identity = await getByCode("/api/adm/identity/get/bycode", code);
     identity.set(_identity);
+
+    window.location.href = "/pri";
   } catch {
-    console.error("no identity");
+    window.location.href = "/";
   }
 }
