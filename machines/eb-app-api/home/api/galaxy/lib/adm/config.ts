@@ -8,12 +8,12 @@ import {
 
 // -----------------------------------------------------------------------------
 export default function (): Response {
-  const config = {
+  const config = [{
     galaxy_fqdn: GALAXY_FQDN,
     keycloak_client_id: KEYCLOAK_CLIENT_ID,
     keycloak_origin: KEYCLOAK_ORIGIN,
     keycloak_realm: KEYCLOAK_REALM,
-  };
+  }];
 
   return ok(JSON.stringify(config));
 }
