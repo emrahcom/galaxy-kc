@@ -1,5 +1,5 @@
 export async function load() {
-  const data = window.localStorage.getItem("identity");
+  const data = window.sessionStorage.getItem("identity");
   const identity = data ? JSON.parse(data) : {};
 
   return {

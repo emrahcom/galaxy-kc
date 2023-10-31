@@ -1,5 +1,5 @@
 <script lang="ts">
-  const username = window.localStorage.getItem("username");
+  const username = window.sessionStorage.getItem("username");
 
   // ---------------------------------------------------------------------------
   function closeMenu() {

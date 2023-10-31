@@ -8,8 +8,8 @@ export async function load() {
     if (!code) throw new Error("code not found");
 
     const identity = await getByCode("/api/adm/identity/get/bycode", code);
-    window.localStorage.setItem("identity", JSON.stringify(identity));
-    window.localStorage.setItem("username", identity.preferred_username);
+    window.sessionStorage.setItem("identity", JSON.stringify(identity));
+    window.sessionStorage.setItem("username", identity.preferred_username);
 
     window.location.href = "/pri";
   } catch {
