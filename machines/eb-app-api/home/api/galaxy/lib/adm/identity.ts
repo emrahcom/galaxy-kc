@@ -140,9 +140,31 @@ async function getByCode(req: Request): Promise<Response> {
 }
 
 // -----------------------------------------------------------------------------
+// Reset the token in cookies to clear the identity on the client-side
+// -----------------------------------------------------------------------------
+async function clear(req: Request): Promise<Response> {
+  const _pl = await req.json();
+
+  // Send the empty token inside the cookie.
+  const headers = new Headers();
+  setCookie(headers, {
+    name: "token",
+    value: "",
+    path: "/api",
+    secure: true,
+    httpOnly: true,
+    sameSite: "Lax",
+  });
+
+  return ok(JSON.stringify([]), headers);
+}
+
+// -----------------------------------------------------------------------------
 export default async function (req: Request, path: string): Promise<Response> {
   if (path === `${PRE}/get/bycode`) {
     return await wrapper(getByCode, req);
+  } else if (path === `${PRE}/clear`) {
+    return await wrapper(clear, req);
   } else {
     return notFound();
   }
