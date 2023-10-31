@@ -11,7 +11,10 @@ export async function load() {
     const config = await get("/api/adm/config");
 
     window.localStorage.setItem("galaxy_fqdn", config.galaxy_fqdn);
-    window.localStorage.setItem("keycloak_client_id", config.keycloak_client_id);
+    window.localStorage.setItem(
+      "keycloak_client_id",
+      config.keycloak_client_id,
+    );
     window.localStorage.setItem("keycloak_origin", config.keycloak_origin);
     window.localStorage.setItem("keycloak_realm", config.keycloak_realm);
   }
