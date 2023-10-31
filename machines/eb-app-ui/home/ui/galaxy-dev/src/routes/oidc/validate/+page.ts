@@ -14,8 +14,8 @@ export async function load() {
     if (!code) throw new Error("code not found");
 
     const identity = await getByCode("/api/adm/identity/get/bycode", code);
-    window.localStorage.setItem("identity", JSON.stringify(identity));
     window.localStorage.setItem("username", identity.preferred_username);
+    window.localStorage.setItem("identity_sub", identity.sub);
 
     window.location.href = "/pri";
   } catch {
