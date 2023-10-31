@@ -7,8 +7,9 @@ import {
 
 // -----------------------------------------------------------------------------
 export async function load() {
-  window.sessionStorage.clear();
   window.localStorage.clear();
+  window.sessionStorage.clear();
+  window.sessionStorage.setItem("oidc", "ok");
 
   const target =
     `${KEYCLOAK_ORIGIN}/realms/${KEYCLOAK_REALM}` +

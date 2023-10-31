@@ -2,6 +2,10 @@ import { getByCode } from "$lib/api";
 
 // -----------------------------------------------------------------------------
 export async function load() {
+  window.localStorage.clear();
+  window.sessionStorage.clear();
+  window.sessionStorage.setItem("oidc", "ok");
+
   try {
     const qs = new URLSearchParams(window.location.search);
     const code = qs.get("code");
