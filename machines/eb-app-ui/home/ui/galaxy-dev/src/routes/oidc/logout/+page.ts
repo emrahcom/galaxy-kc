@@ -1,13 +1,12 @@
 import { get } from "$lib/api";
-import {
-  GALAXY_FQDN,
-  KEYCLOAK_CLIENT_ID,
-  KEYCLOAK_ORIGIN,
-  KEYCLOAK_REALM,
-} from "$lib/config";
 
 // -----------------------------------------------------------------------------
 export async function load() {
+  const GALAXY_FQDN = window.localStorage.getItem("galaxy_fqdn");
+  const KEYCLOAK_CLIENT_ID = window.localStorage.getItem("keycloak_client_id");
+  const KEYCLOAK_ORIGIN = window.localStorage.getItem("keycloak_origin");
+  const KEYCLOAK_REALM = window.localStorage.getItem("keycloak_realm");
+
   window.localStorage.clear();
   window.sessionStorage.clear();
 

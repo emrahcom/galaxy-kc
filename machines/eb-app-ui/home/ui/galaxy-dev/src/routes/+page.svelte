@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { FORM_WIDTH, GALAXY_FQDN } from "$lib/config";
+  import { FORM_WIDTH } from "$lib/config";
 
+  const GALAXY_FQDN = window.localStorage.getItem("galaxy_fqdn");
   const identitySub = window.localStorage.getItem("identity_sub");
 </script>
 
