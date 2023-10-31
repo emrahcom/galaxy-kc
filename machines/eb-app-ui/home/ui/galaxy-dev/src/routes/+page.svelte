@@ -1,7 +1,7 @@
 <script lang="ts">
   import { FORM_WIDTH, GALAXY_FQDN } from "$lib/config";
 
-  export let data;
+  const identitySub = window.localStorage.getItem("identity_sub");
 </script>
 
 <!-- -------------------------------------------------------------------------->
@@ -15,7 +15,7 @@
         schedules and attendees.
       </h4>
 
-      {#if !data.identity.sub}
+      {#if !identitySub}
         <h4 class="text-muted small mb-5">
           Please click
           <a class="text-primary" href="/oidc/redirect-consent">Sign In</a>

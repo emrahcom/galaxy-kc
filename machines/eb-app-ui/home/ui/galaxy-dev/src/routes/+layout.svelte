@@ -2,11 +2,11 @@
   import NavBarPri from "$lib/components/nav/bar-pri.svelte";
   import NavBarPub from "$lib/components/nav/bar-pub.svelte";
 
-  export let data;
+  const identitySub = window.localStorage.getItem("identity_sub");
 </script>
 
 <!-- -------------------------------------------------------------------------->
-{#if data.identity.sub}
+{#if identitySub}
   <NavBarPri />
 {:else}
   <NavBarPub />

@@ -1,7 +1,7 @@
 <script lang="ts">
-  export let data;
+  const identitySub = window.localStorage.getItem("identity_sub");
 
-  if (!data.identity.sub) window.location.replace("/oidc/redirect-consent");
+  if (!identitySub) window.location.replace("/oidc/redirect-consent");
 </script>
 
 <!-- -------------------------------------------------------------------------->
