@@ -6,8 +6,8 @@ export async function load() {
     return {};
   }
 
-  const data = window.localStorage.getItem("identity");
-  const identity = data ? JSON.parse(data) : {};
+  const strData = window.localStorage.getItem("identity");
+  const identity = strData ? JSON.parse(strData) : {};
 
   return {
     identity: identity,
