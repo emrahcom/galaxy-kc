@@ -1,4 +1,4 @@
-import { getByCode } from "$lib/api";
+import { get, getByCode } from "$lib/api";
 
 // -----------------------------------------------------------------------------
 export async function load() {
@@ -7,6 +7,8 @@ export async function load() {
   window.sessionStorage.setItem("oidc", "ok");
 
   try {
+    await get("/api/adm/identity/clear");
+
     const qs = new URLSearchParams(window.location.search);
     const code = qs.get("code");
     if (!code) throw new Error("code not found");
