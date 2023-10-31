@@ -13,7 +13,7 @@
           <a
             class="btn btn-sm btn-outline-primary"
             role="button"
-            href="/oidc/redirect"
+            href="/oidc/redirect-consent"
           >
             Sign In
           </a>

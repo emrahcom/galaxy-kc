@@ -18,7 +18,7 @@
       {#if !data.identity.sub}
         <h4 class="text-muted small mb-5">
           Please click
-          <a class="text-primary" href="/oidc/redirect">Sign In</a>
+          <a class="text-primary" href="/oidc/redirect-consent">Sign In</a>
           to start.
         </h4>
       {:else}
