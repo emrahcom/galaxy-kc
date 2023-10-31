@@ -156,7 +156,7 @@ async function clear(req: Request): Promise<Response> {
     sameSite: "Lax",
   });
 
-  return ok(JSON.stringify([]), headers);
+  return ok(JSON.stringify([{}]), headers);
 }
 
 // -----------------------------------------------------------------------------
