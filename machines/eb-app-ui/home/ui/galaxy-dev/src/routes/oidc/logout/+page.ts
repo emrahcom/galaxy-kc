@@ -11,6 +11,8 @@ export async function load() {
   window.localStorage.clear();
   window.sessionStorage.clear();
 
+  // Send a clearing request to API to remove the HttpOnly cookie. This cookie
+  // contains the token for this session.
   try {
     await get("/api/adm/identity/clear");
   } catch {

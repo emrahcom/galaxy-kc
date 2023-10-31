@@ -6,7 +6,7 @@ export async function load() {
     return {};
   }
 
-  const data = window.sessionStorage.getItem("identity");
+  const data = window.localStorage.getItem("identity");
   const identity = data ? JSON.parse(data) : {};
 
   return {
