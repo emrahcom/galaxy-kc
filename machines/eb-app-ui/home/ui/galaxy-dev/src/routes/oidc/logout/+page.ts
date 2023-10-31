@@ -9,12 +9,11 @@ import {
 export async function load() {
   window.localStorage.clear();
   window.sessionStorage.clear();
-  window.sessionStorage.setItem("oidc", "ok");
 
   const target =
     `${KEYCLOAK_ORIGIN}/realms/${KEYCLOAK_REALM}` +
     `/protocol/openid-connect/logout?client_id=${KEYCLOAK_CLIENT_ID}` +
     `&post_logout_redirect_uri=https://${GALAXY_FQDN}/`;
 
-  window.location.href = `${target}`;
+  window.location.replace(`${target}`);
 }
