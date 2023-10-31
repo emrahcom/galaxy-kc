@@ -231,13 +231,6 @@ su -l ui <<EOSS
 EOSS
 EOS
 
-sed -i \
-    -e "s~___GALAXY_FQDN___~$GALAXY_FQDN~g" \
-    -e "s~___KEYCLOAK_ORIGIN___~$KEYCLOAK_ORIGIN~g" \
-    -e "s~___KEYCLOAK_REALM___~$KEYCLOAK_REALM~g" \
-    -e "s~___KEYCLOAK_CLIENT_ID___~$KEYCLOAK_CLIENT_ID~g" \
-    $ROOTFS/home/ui/galaxy-dev/src/lib/config.ts
-
 # ------------------------------------------------------------------------------
 # GALAXY UI (prod)
 # ------------------------------------------------------------------------------
