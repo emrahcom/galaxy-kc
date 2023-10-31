@@ -1,6 +1,13 @@
-export async function load() {
-  const oidc = window.sessionStorage.getItem("oidc");
+import { get } from "$lib/api";
 
+// -----------------------------------------------------------------------------
+export async function load() {
+  if (!window.localStorage.getItem("config")) {
+    const config = await get("/api/adm/config");
+    window.localStorage.setItem("config", JSON.stringify(config));
+  }
+
+  const oidc = window.sessionStorage.getItem("oidc");
   if (!oidc) {
     window.location.href = "/oidc/redirect-none";
     return {};
