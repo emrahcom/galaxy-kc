@@ -1,8 +1,2 @@
 // application
-export const GALAXY_FQDN = "___GALAXY_FQDN___";
 export const FORM_WIDTH = "540px";
-
-// keycloak
-export const KEYCLOAK_ORIGIN = "___KEYCLOAK_ORIGIN___";
-export const KEYCLOAK_REALM = "___KEYCLOAK_REALM___";
-export const KEYCLOAK_CLIENT_ID = "___KEYCLOAK_CLIENT_ID___";
