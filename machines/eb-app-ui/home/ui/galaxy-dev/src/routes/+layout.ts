@@ -2,21 +2,23 @@ import { get } from "$lib/api";
 
 // -----------------------------------------------------------------------------
 export async function load() {
-  if (!window.localStorage.getItem("config")) {
+  if (
+    !window.localStorage.getItem("galaxy_fqdn") ||
+    !window.localStorage.getItem("keycloak_client_id") ||
+    !window.localStorage.getItem("keycloak_origin") ||
+    !window.localStorage.getItem("keycloak_realm")
+  ) {
     const config = await get("/api/adm/config");
-    window.localStorage.setItem("config", JSON.stringify(config));
+
+    window.localStorage.setItem("galaxy_fqdn", config.galaxy_fqdn);
+    window.localStorage.setItem("keycloak_client_id", config.keycloak_client_id);
+    window.localStorage.setItem("keycloak_origin", config.keycloak_origin);
+    window.localStorage.setItem("keycloak_realm", config.keycloak_realm);
   }
 
   const oidc = window.sessionStorage.getItem("oidc");
+
   if (!oidc) {
     window.location.href = "/oidc/redirect-none";
-    return {};
   }
-
-  const strData = window.localStorage.getItem("identity");
-  const identity = strData ? JSON.parse(strData) : {};
-
-  return {
-    identity: identity,
-  };
 }
