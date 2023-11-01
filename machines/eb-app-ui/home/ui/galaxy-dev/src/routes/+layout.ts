@@ -27,7 +27,9 @@ export async function load() {
   }
 
   // try to authenticate if the target is the entry page
-  if (target === "/" && !window.sessionStorage.getItem("oidc_checked")) {
-    window.location.href = "/oidc/redirect-none";
+  if (target === "/" || target === "/pri") {
+    if (!window.sessionStorage.getItem("oidc_checked")) {
+      window.location.href = "/oidc/redirect-none";
+    }
   }
 }
