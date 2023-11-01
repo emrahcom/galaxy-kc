@@ -1,7 +1,6 @@
 <script lang="ts">
   import { FORM_WIDTH } from "$lib/config";
 
-  const GALAXY_FQDN = window.localStorage.getItem("galaxy_fqdn");
   const identitySub = window.localStorage.getItem("identity_sub");
 </script>
 
@@ -9,7 +8,7 @@
 <section id="welcome">
   <div class="row d-flex mt-5 justify-content-center">
     <div class="col mx-auto text-center" style="max-width:{FORM_WIDTH};">
-      <h2 class="text-muted mb-5">Welcome to {GALAXY_FQDN}</h2>
+      <h2 class="text-muted mb-5">Welcome</h2>
 
       <h4 class="text-muted mb-5">
         This site is for Fellow Jitsters to organize Jitsi meetings, meeting
