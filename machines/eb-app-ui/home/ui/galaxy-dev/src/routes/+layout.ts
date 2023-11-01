@@ -26,10 +26,8 @@ export async function load() {
     window.localStorage.setItem("keycloak_realm", config.keycloak_realm);
   }
 
-  // try to authenticate if the target is a possible entry page
-  if (target === "/" || target === "/pri") {
-    if (!window.sessionStorage.getItem("oidc_checked")) {
-      window.location.href = "/oidc/redirect-none";
-    }
+  // try to authenticate if the target is the entry page
+  if (target === "/" && !window.sessionStorage.getItem("oidc_checked")) {
+    window.location.href = "/oidc/redirect-none";
   }
 }
