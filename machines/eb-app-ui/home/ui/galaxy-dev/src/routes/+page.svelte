@@ -1,7 +1,7 @@
 <script lang="ts">
   import { FORM_WIDTH } from "$lib/config";
 
-  const identitySub = window.localStorage.getItem("identity_sub");
+  const username = window.localStorage.getItem("username");
 </script>
 
 <!-- -------------------------------------------------------------------------->
@@ -15,7 +15,7 @@
         schedules and attendees.
       </h4>
 
-      {#if !identitySub}
+      {#if !username}
         <h4 class="text-muted small mb-5">
           Please click
           <a class="text-primary" href="/oidc/redirect-consent">Sign In</a>
