@@ -2,6 +2,13 @@ import { get } from "$lib/api";
 
 // -----------------------------------------------------------------------------
 export async function load() {
+  const target = window.location.pathname;
+
+  // dont continue if the target is the audience pages
+  // the audience pages dont need authentication
+  if (target.match("^/aud/")) return;
+
+  // get global parmeters if they are not available in the storage
   if (
     !window.localStorage.getItem("galaxy_fqdn") ||
     !window.localStorage.getItem("keycloak_client_id") ||
@@ -19,9 +26,11 @@ export async function load() {
     window.localStorage.setItem("keycloak_realm", config.keycloak_realm);
   }
 
-  const oidc = window.sessionStorage.getItem("oidc");
+  // dont continue if the target is the redirection page
+  if (target === "/oidc/redirect-none") return;
 
-  if (!oidc && window.location.href !== "/oidc/redirect-none") {
+  const oidc = window.sessionStorage.getItem("oidc");
+  if (!oidc) {
     window.location.href = "/oidc/redirect-none";
   }
 }
