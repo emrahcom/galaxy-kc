@@ -4,7 +4,7 @@
   async function load() {
     window.localStorage.clear();
     window.sessionStorage.clear();
-    window.sessionStorage.setItem("oidc", "ok");
+    window.sessionStorage.setItem("oidc_checked", "ok");
 
     try {
       await get("/api/adm/identity/clear");
