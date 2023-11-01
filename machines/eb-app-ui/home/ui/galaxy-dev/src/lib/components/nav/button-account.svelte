@@ -1,5 +1,10 @@
 <script lang="ts">
-  const username = window.localStorage.getItem("username");
+  let username = "";
+
+  // ---------------------------------------------------------------------------
+  function updateUsername() {
+    username = window.localStorage.getItem("username") || "";
+  }
 
   // ---------------------------------------------------------------------------
   function closeMenu() {
@@ -16,6 +21,7 @@
   data-bs-toggle="offcanvas"
   data-bs-target="#offcanvasAccount"
   aria-controls="offcanvasAccount"
+  on:click={updateUsername}
 >
   <span class="bi bi-person" />
 </button>
