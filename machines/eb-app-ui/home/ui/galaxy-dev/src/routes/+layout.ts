@@ -21,7 +21,7 @@ export async function load() {
 
   const oidc = window.sessionStorage.getItem("oidc");
 
-  if (!oidc) {
+  if (!oidc && window.location.href !== "/oidc/redirect-none") {
     window.location.href = "/oidc/redirect-none";
   }
 }
