@@ -1,4 +1,5 @@
 import { get } from "$lib/api";
+import { post } from "$lib/http";
 
 // -----------------------------------------------------------------------------
 export async function load() {
@@ -37,6 +38,6 @@ export async function load() {
 
   // Try to authenticate if the target is the entry page
   if (target === "/" && !window.sessionStorage.getItem("oidc_checked")) {
-      window.location.href = "/oidc/redirect-none";
+    window.location.href = "/oidc/redirect-none";
   }
 }
