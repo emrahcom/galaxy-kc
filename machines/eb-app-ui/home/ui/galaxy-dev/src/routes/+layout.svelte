@@ -2,11 +2,11 @@
   import NavBarPri from "$lib/components/nav/bar-pri.svelte";
   import NavBarPub from "$lib/components/nav/bar-pub.svelte";
 
-  const username = window.localStorage.getItem("username");
+  const isAuthenticated = window.localStorage.getItem("oidc_authenticated");
 </script>
 
 <!-- -------------------------------------------------------------------------->
-{#if username}
+{#if isAuthenticated}
   <NavBarPri />
 {:else}
   <NavBarPub />

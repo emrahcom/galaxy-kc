@@ -1,7 +1,7 @@
 <script lang="ts">
   import { FORM_WIDTH } from "$lib/config";
 
-  const username = window.localStorage.getItem("username");
+  const isAuthenticated = window.localStorage.getItem("oidc_authenticated");
 </script>
 
 <!-- -------------------------------------------------------------------------->
@@ -15,13 +15,7 @@
         schedules and attendees.
       </h4>
 
-      {#if !username}
-        <h4 class="text-muted small mb-5">
-          Please click
-          <a class="text-primary" href="/oidc/redirect-consent">Sign In</a>
-          to start.
-        </h4>
-      {:else}
+      {#if isAuthenticated}
         <h5 class="text-muted mb-5">
           Click
           <button
@@ -35,6 +29,12 @@
           </button>
           to start.
         </h5>
+      {:else}
+        <h4 class="text-muted small mb-5">
+          Please click
+          <a class="text-primary" href="/oidc/redirect-consent">Sign In</a>
+          to start.
+        </h4>
       {/if}
     </div>
   </div>

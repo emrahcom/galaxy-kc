@@ -1,7 +1,7 @@
 <script lang="ts">
-  const username = window.localStorage.getItem("username");
+  const isAuthenticated = window.localStorage.getItem("oidc_authenticated");
 
-  if (!username) window.location.replace("/oidc/redirect-consent");
+  if (!isAuthenticated) window.location.replace("/oidc/redirect-consent");
 </script>
 
 <!-- -------------------------------------------------------------------------->
