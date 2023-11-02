@@ -1,7 +1,7 @@
 <script lang="ts">
   import { FORM_WIDTH } from "$lib/config";
 
-  const isAuthenticated = window.localStorage.getItem("oidc_authenticated");
+  const isAuthenticated = window.sessionStorage.getItem("oidc_authenticated");
 </script>
 
 <!-- -------------------------------------------------------------------------->
