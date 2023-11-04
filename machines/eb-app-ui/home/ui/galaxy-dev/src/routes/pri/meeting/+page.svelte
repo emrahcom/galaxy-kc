@@ -5,6 +5,10 @@
   import Warning from "$lib/components/common/alert-warning.svelte";
 
   const pr = list("/api/pri/meeting/list", 100);
+
+  setTimeout(() => {
+    window.location.replace("/pri/meeting");
+  }, 60000);
 </script>
 
 <!-- -------------------------------------------------------------------------->
