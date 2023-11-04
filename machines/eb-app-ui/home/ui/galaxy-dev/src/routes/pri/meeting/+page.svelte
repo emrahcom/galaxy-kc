@@ -6,8 +6,11 @@
 
   const pr = list("/api/pri/meeting/list", 100);
 
+  // refresh list every minute
   setTimeout(() => {
-    window.location.replace("/pri/meeting");
+    const path = window.location.pathname;
+
+    if (path === "/pri/meeting") window.location.replace("/pri/meeting");
   }, 60000);
 </script>
 
