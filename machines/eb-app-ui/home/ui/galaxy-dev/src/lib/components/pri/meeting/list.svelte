@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { toLocaleTime } from "$lib/common";
+  import { isOnline, isToday, toLocaleTime } from "$lib/common";
   import type { Meeting222 } from "$lib/types";
   import Add from "$lib/components/common/link-add.svelte";
   import Del from "$lib/components/common/link-del.svelte";
@@ -51,19 +51,26 @@
 
             {#if p.schedule_type === "scheduled"}
               {#if p.scheduled_at}
-                <p
-                  class="card-text text-muted {new Date(p.scheduled_at) <
-                  new Date()
-                    ? 'text-success'
-                    : 'text-warning'}"
-                >
-                  {toLocaleTime(p.scheduled_at)}
-                </p>
+                {#if isOnline(p.scheduled_at)}
+                  <p class="card-text text-success fw-bold">
+                    {toLocaleTime(p.scheduled_at)}
+                  </p>
+                {:else if isToday(p.scheduled_at)}
+                  <p class="card-text text-warning fw-bold">
+                    {toLocaleTime(p.scheduled_at)}
+                  </p>
+                {:else}
+                  <p class="card-text text-secondary fw-bold">
+                    {toLocaleTime(p.scheduled_at)}
+                  </p>
+                {/if}
               {:else}
                 <p class="card-text text-muted">not planned</p>
               {/if}
-            {:else}
-              <p class="card-text text-success">online</p>
+            {:else if p.schedule_type === "permanent"}
+              <p class="card-text text-primary fw-bold">online</p>
+            {:else if p.schedule_type === "ephemeral"}
+              <p class="card-text text-success fw-bold">online</p>
             {/if}
 
             {#if p.info}
