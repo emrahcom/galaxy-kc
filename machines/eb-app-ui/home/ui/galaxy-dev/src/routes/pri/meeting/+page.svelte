@@ -5,13 +5,6 @@
   import Warning from "$lib/components/common/alert-warning.svelte";
 
   const pr = list("/api/pri/meeting/list", 100);
-
-  // refresh list every minute
-  setTimeout(() => {
-    const path = window.location.pathname;
-
-    if (path === "/pri/meeting") window.location.replace("/pri/meeting");
-  }, 60000);
 </script>
 
 <!-- -------------------------------------------------------------------------->
