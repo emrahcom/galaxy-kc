@@ -49,17 +49,22 @@
               {/if}
             </p>
 
-            <p class="card-text text-muted">
-              {#if p.schedule_type === "scheduled"}
-                {#if p.scheduled_at}
+            {#if p.schedule_type === "scheduled"}
+              {#if p.scheduled_at}
+                <p
+                  class="card-text text-muted {new Date(p.scheduled_at) <
+                  new Date()
+                    ? 'text-success'
+                    : 'text-warning'}"
+                >
                   {toLocaleTime(p.scheduled_at)}
-                {:else}
-                  not planned
-                {/if}
+                </p>
               {:else}
-                online
+                <p class="card-text text-muted">not planned</p>
               {/if}
-            </p>
+            {:else}
+              <p class="card-text text-success">online</p>
+            {/if}
 
             {#if p.info}
               <p
