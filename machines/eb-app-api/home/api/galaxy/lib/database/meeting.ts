@@ -294,7 +294,7 @@ export async function listMeeting(
                                          AND ended_at > now()
                                        ORDER BY started_at
                                       )
-           ELSE array[]::varchar[]
+           ELSE array[]::timestamp with time zone[]
          END
         ) as schedule_list,
         (CASE m.schedule_type
@@ -352,7 +352,7 @@ export async function listMeeting(
                                          AND ended_at > now()
                                        ORDER BY started_at
                                       )
-           ELSE array[]::varchar[]
+           ELSE array[]::timestamp with time zone[]
          END
         ) as schedule_list,
         (CASE m.schedule_type
