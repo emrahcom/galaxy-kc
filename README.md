@@ -63,7 +63,7 @@ _Update the value of `GALAXY_FQDN` according to your domain name and
 wget https://raw.githubusercontent.com/emrahcom/emrah-bullseye-base/main/installer/eb
 wget https://raw.githubusercontent.com/emrahcom/galaxy-kc/main/installer/eb-galaxy-kc.conf
 
-export GALAXY_FQDN="app.galaxy-kc.corp"
+export GALAXY_FQDN="app.galaxy.corp"
 export KEYCLOAK_ORIGIN="https://ucs-sso-ng.mydomain.corp"
 export KEYCLOAK_REALM="ucs"
 export KEYCLOAK_CLIENT_ID="galaxy"
