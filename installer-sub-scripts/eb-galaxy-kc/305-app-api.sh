@@ -199,6 +199,11 @@ cp etc/systemd/system/galaxy-api-adm.service $ROOTFS/etc/systemd/system/
 cp etc/systemd/system/galaxy-api-pri.service $ROOTFS/etc/systemd/system/
 cp etc/systemd/system/galaxy-api-pub.service $ROOTFS/etc/systemd/system/
 
+if [[ "$IGNORE_CERT_ERRORS" == true ]]; then
+    sed -i "/IGNORE_CERT_ERRORS/ s/^#//" \
+        $ROOTFS/etc/systemd/system/galaxy-api-adm.service
+fi
+
 lxc-attach -n $MACH -- zsh <<EOS
 set -e
 systemctl daemon-reload
