@@ -40,6 +40,26 @@ services:
     networks:
       galaxy:
 
+  galaxy-api-pri:
+    build:
+      context: machines/eb-app-api/
+      dockerfile: pri.Dockerfile
+    environment:
+      - API_SECRET
+      - DB_HOST
+      - DB_PASSWD
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-http.entrypoints=reverse-proxy-http"
+      - "traefik.http.routers.api-http.rule=PathPrefix(`/api/pri`)"
+      - "traefik.http.routers.api-https.entrypoints=reverse-proxy-https"
+      - "traefik.http.routers.api-https.rule=PathPrefix(`/api/pri`)"
+      - "traefik.http.routers.api-https.tls=true"
+    depends_on:
+      - galaxy-db
+    networks:
+      galaxy:
+
 volumes:
   data:
 
