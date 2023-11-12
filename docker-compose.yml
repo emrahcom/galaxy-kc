@@ -12,7 +12,7 @@ services:
       - ./machines/eb-app-api/home/api/galaxy/database/02-create-galaxy-tables.sql:/docker-entrypoint-initdb.d/init.sql:ro
       - data:/var/lib/postgresql/data
     networks:
-      galaxy:
+      intranet:
 
   galaxy-api-adm:
     build:
@@ -38,7 +38,7 @@ services:
     depends_on:
       - galaxy-db
     networks:
-      galaxy:
+      intranet:
 
   galaxy-api-pri:
     build:
@@ -58,7 +58,7 @@ services:
     depends_on:
       - galaxy-db
     networks:
-      galaxy:
+      intranet:
 
   galaxy-api-pub:
     build:
@@ -77,10 +77,28 @@ services:
     depends_on:
       - galaxy-db
     networks:
-      galaxy:
+      intranet:
+
+  galaxy-ui:
+    build:
+      context: machines/eb-app-ui/
+      dockerfile: Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-http.entrypoints=reverse-proxy-http"
+      - "traefik.http.routers.api-http.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.api-https.entrypoints=reverse-proxy-https"
+      - "traefik.http.routers.api-https.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.api-https.tls=true"
+    depends_on:
+      - galaxy-app-adm
+      - galaxy-app-pri
+      - galaxy-app-pub
+    networks:
+      intranet:
 
 volumes:
   data:
 
 networks:
-  galaxy:
+  intranet:
