@@ -5,12 +5,43 @@ services:
     image: postgres:16
     restart: always
     environment:
-      POSTGRES_DB: galaxy
-      POSTGRES_USER: galaxy
-      POSTGRES_PASSWORD: galaxy
+      - POSTGRES_DB=galaxy
+      - POSTGRES_USER=galaxy
+      - POSTGRES_PASSWORD=${DB_PASSWD:-galaxy}
     volumes:
       - ./machines/eb-app-api/home/api/galaxy/database/02-create-galaxy-tables.sql:/docker-entrypoint-initdb.d/init.sql:ro
       - data:/var/lib/postgresql/data
+    networks:
+      galaxy:
+
+  galaxy-api-adm:
+    build:
+      context: machines/eb-app-api/
+      dockerfile: adm.Dockerfile
+    environment:
+      - ALLOW_UNSECURE_CERT
+      - API_SECRET
+      - API_TIMEOUT
+      - DB_HOST
+      - DB_PASSWD
+      - GALAXY_FQDN
+      - KEYCLOAK_CLIENT_ID
+      - KEYCLOAK_ORIGIN
+      - KEYCLOAK_REALM
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-http.entrypoints=reverse-proxy-http"
+      - "traefik.http.routers.api-http.rule=PathPrefix(`/api/adm`)"
+      - "traefik.http.routers.api-https.entrypoints=reverse-proxy-https"
+      - "traefik.http.routers.api-https.rule=PathPrefix(`/api/adm`)"
+      - "traefik.http.routers.api-https.tls=true"
+    depends_on:
+      - galaxy-db
+    networks:
+      galaxy:
 
 volumes:
   data:
+
+networks:
+  galaxy:
