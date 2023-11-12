@@ -91,9 +91,9 @@ services:
       - "traefik.http.routers.api-https.rule=PathPrefix(`/`)"
       - "traefik.http.routers.api-https.tls=true"
     depends_on:
-      - galaxy-app-adm
-      - galaxy-app-pri
-      - galaxy-app-pub
+      - galaxy-api-adm
+      - galaxy-api-pri
+      - galaxy-api-pub
     networks:
       intranet:
 
