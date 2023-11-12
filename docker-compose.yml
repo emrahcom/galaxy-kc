@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  galaxy-db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: galaxy
+      POSTGRES_USER: galaxy
+      POSTGRES_PASSWORD: galaxy
+    volumes:
+      - ./machines/eb-app-api/home/api/galaxy/database/02-create-galaxy-tables.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - data:/var/lib/postgresql/data
+
+volumes:
+  data:
