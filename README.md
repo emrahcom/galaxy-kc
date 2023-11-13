@@ -43,13 +43,13 @@ Try `Galaxy` using publicly available implementation on
 
 ### Docker setup
 
-Copy [env.sample](/env.sample) as `.env` and update parameters in it according
-to your environment then start containers with `docker-compose`:
+Copy [env.sample](/env.sample) as `.env`, update parameters in it according to
+your environment then start containers with `docker-compose`:
 
 ```bash
 cp env.sample .env
 
-# edit .env
+# Edit .env
 
 docker-compose up -d
 ```
