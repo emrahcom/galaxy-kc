@@ -41,7 +41,22 @@ Try `Galaxy` using publicly available implementation on
 - Transfer all your Jitsi resources (rooms, meetings, partners, members, etc.)
   in one simple step to a new Jitsi server.
 
-### Prerequisites
+### Docker setup
+
+Copy [env.sample](/env.sample) as `.env` and update parameters in it according
+to your environment then start containers with `docker-compose`:
+
+```bash
+cp env.sample .env
+
+# edit .env
+
+docker-compose up -d
+```
+
+### Standalone setup
+
+#### Prerequisites
 
 - `Debian 11 Bullseye` server
 - At least 1 GB RAM
@@ -52,7 +67,7 @@ Try `Galaxy` using publicly available implementation on
   - `TCP/443`
 - A `Keycloak` server
 
-### Installation
+#### Installation
 
 Run the following commands as `root`.
 
@@ -85,7 +100,7 @@ please set `IGNORE_CERT_ERRORS` before installation_
 export IGNORE_CERT_ERRORS=true
 ```
 
-### Let's Encrypt certificate
+#### Let's Encrypt certificate
 
 Let's say the host address of the application is `app.galaxy.corp`. To set the
 Let's Encrypt certificate:
