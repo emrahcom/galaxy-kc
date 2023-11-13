@@ -58,7 +58,8 @@ docker-compose up -d
 
 #### Prerequisites
 
-- `Debian 11 Bullseye` server
+- `Debian 11 Bullseye` server\
+  _Use a dedicated server, not shared... It will be heavily customized_
 - At least 1 GB RAM
 - An `FQDN`. e.g. `app.galaxy.corp`
 - A DNS `A record` for this `FQDN` pointing to the server
