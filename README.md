@@ -47,6 +47,9 @@ Copy [env.sample](/env.sample) as `.env`, update parameters in it according to
 your environment then start containers with `docker-compose`:
 
 ```bash
+git clone https://github.com/emrahcom/galaxy-kc.git
+cd galaxy-kc
+
 cp env.sample .env
 
 # Edit .env
@@ -59,7 +62,7 @@ docker-compose up -d
 #### Prerequisites
 
 - `Debian 11 Bullseye` server\
-  _Use a dedicated server, not shared... It will be heavily customized_
+  _Use a dedicated server, not shared... It will be heavily customized._
 - At least 1 GB RAM
 - An `FQDN`. e.g. `app.galaxy.corp`
 - A DNS `A record` for this `FQDN` pointing to the server
