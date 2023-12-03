@@ -61,7 +61,7 @@ docker-compose up -d
 
 #### Prerequisites
 
-- `Debian 11 Bullseye` server\
+- `Debian 12 Bookworm` server\
   _Use a dedicated server, not shared... It will be heavily customized._
 - At least 1 GB RAM
 - An `FQDN`. e.g. `app.galaxy.corp`
@@ -79,7 +79,7 @@ _Update the value of `GALAXY_FQDN` according to your domain name and
 `KEYCLOAK_*` parameters according to your `Keycloak` configuration._
 
 ```bash
-wget https://raw.githubusercontent.com/emrahcom/emrah-bullseye-base/main/installer/eb
+wget https://raw.githubusercontent.com/emrahcom/bookworm-lxc-base/main/installer/eb
 wget https://raw.githubusercontent.com/emrahcom/galaxy-kc/main/installer/eb-galaxy-kc.conf
 
 export GALAXY_FQDN="app.galaxy.corp"
