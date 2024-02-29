@@ -33,7 +33,7 @@ INSERT INTO identity VALUES (
 -- -----------------------------------------------------------------------------
 -- PROFILE
 -- -----------------------------------------------------------------------------
--- - don't allow to delete the default profile
+-- - Don't allow to delete the default profile.
 -- -----------------------------------------------------------------------------
 CREATE TABLE profile (
     "id" uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -48,12 +48,32 @@ CREATE UNIQUE INDEX ON profile("identity_id", "name", "email");
 ALTER TABLE profile OWNER TO galaxy;
 
 -- -----------------------------------------------------------------------------
+-- CONTACT
+-- -----------------------------------------------------------------------------
+-- - Allow contact if both parties agree to be in touch. If one party deletes
+--   the contact, delete the other party's contact too.
+-- - Deleting contact works like blocking. A user cannot offer partnership to a
+--   registered user if she is not in their contact list.
+-- -----------------------------------------------------------------------------
+CREATE TABLE contact (
+    "id" uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+    "identity_id" uuid NOT NULL REFERENCES identity(id) ON DELETE CASCADE,
+    "remote_id" uuid NOT NULL REFERENCES identity(id) ON DELETE CASCADE,
+    "name" varchar(250) NOT NULL,
+    "created_at" timestamp with time zone NOT NULL DEFAULT now(),
+    "updated_at" timestamp with time zone NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX ON contact("identity_id", "remote_id");
+CREATE INDEX ON contact("identity_id", "name");
+ALTER TABLE contact OWNER TO galaxy;
+
+-- -----------------------------------------------------------------------------
 -- DOMAIN
 -- -----------------------------------------------------------------------------
--- - public domain can only be added by system account
--- - auth_type of public domain must be 'none' (to decrease complexity)
--- - only none, token and jaas are supported as auth_type
--- - urls are in domain_attr depending on auth_type
+-- - Public domains can only be added by the system account.
+-- - auth_type of public domains must be 'none' (to decrease complexity).
+-- - Only none, token and jaas are supported as auth_type.
+-- - URLs are in domain_attr depending on auth_type.
 -- -----------------------------------------------------------------------------
 CREATE TYPE domain_auth_type AS ENUM ('none', 'token', 'jaas');
 CREATE TABLE domain (
@@ -75,12 +95,16 @@ INSERT INTO domain VALUES (
     default, '00000000-0000-0000-0000-000000000000', 'meet.jit.si', 'none',
     '{"url": "https://meet.jit.si"}'::jsonb, true, true, default, default
 );
+INSERT INTO domain VALUES (
+    default, '00000000-0000-0000-0000-000000000000', 'meet.element.io', 'none',
+    '{"url": "https://meet.element.io"}'::jsonb, true, true, default, default
+);
 
 -- -----------------------------------------------------------------------------
 -- DOMAIN_INVITE
 -- -----------------------------------------------------------------------------
--- - domain invite can only be used once, then it will be disabled
--- - needs a unique invite for each partner
+-- - The domain invite can only be used once, then it will be disabled.
+-- - A unique invite is needed for each partner.
 -- -----------------------------------------------------------------------------
 CREATE TABLE domain_invite (
     "id" uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -102,8 +126,8 @@ ALTER TABLE domain_invite OWNER TO galaxy;
 -- -----------------------------------------------------------------------------
 -- DOMAIN_PARTNER
 -- -----------------------------------------------------------------------------
--- - identity cannot update enabled but she can delete the partnership
--- - domain owner can update enabled or delete the partnership
+-- - The partner cannot update enabled but she can delete her partnership.
+-- - The domain owner can update enabled or delete the partnership.
 -- -----------------------------------------------------------------------------
 CREATE TABLE domain_partner (
     "id" uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -118,11 +142,39 @@ CREATE INDEX ON domain_partner("domain_id");
 ALTER TABLE domain_partner OWNER TO galaxy;
 
 -- -----------------------------------------------------------------------------
+-- DOMAIN_PARTNER_CANDIDATE
+-- -----------------------------------------------------------------------------
+-- - The candidate can be added if she is already in the domain owner's contact
+--   list.
+-- - The domain owner can delete the candidate only if its status is pending.
+-- - The candidate cannot delete the candidacy but may reject it.
+-- - When rejected, expired_at will be updated as now() + interval '7 days'.
+-- - The candidate can accept an already rejected candidacy if it is not
+--   expired (deleted) yet.
+-- - Delete all candidates which have expired_at older than now().
+-- - Delete expired candidates before listing.
+-- -----------------------------------------------------------------------------
+CREATE TYPE candidate_status AS ENUM ('pending', 'rejected');
+CREATE TABLE domain_partner_candidate (
+    "id" uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+    "identity_id" uuid NOT NULL REFERENCES identity(id) ON DELETE CASCADE,
+    "domain_id" uuid NOT NULL REFERENCES domain(id) ON DELETE CASCADE,
+    "status" candidate_status NOT NULL DEFAULT 'pending',
+    "created_at" timestamp with time zone NOT NULL DEFAULT now(),
+    "updated_at" timestamp with time zone NOT NULL DEFAULT now(),
+    "expired_at" timestamp with time zone NOT NULL
+      DEFAULT now() + interval '7 days'
+);
+CREATE UNIQUE INDEX ON domain_partner_candidate("identity_id", "domain_id");
+CREATE INDEX ON domain_partner_candidate("expired_at");
+ALTER TABLE domain_partner_candidate OWNER TO galaxy;
+
+-- -----------------------------------------------------------------------------
 -- ROOM
 -- -----------------------------------------------------------------------------
--- - update suffix if accessed_at is older than 4 hours
--- - dont show the room to the owner if ephemeral is true
--- - ephemeral room name contains suffix in its name
+-- - Update suffix if accessed_at is older than 4 hours.
+-- - Dont show the room to the owner if ephemeral is true.
+-- - The ephemeral room name contains suffix in its name.
 -- -----------------------------------------------------------------------------
 CREATE TABLE room (
     "id" uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -146,8 +198,8 @@ ALTER TABLE room OWNER TO galaxy;
 -- -----------------------------------------------------------------------------
 -- ROOM_INVITE
 -- -----------------------------------------------------------------------------
--- - room invite can only be used once, then it will be disabled
--- - needs a unique invite for each partner
+-- - The room invite can only be used once, then it will be disabled.
+-- - A unique invite is needed for each partner.
 -- -----------------------------------------------------------------------------
 CREATE TABLE room_invite (
     "id" uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -169,8 +221,8 @@ ALTER TABLE room_invite OWNER TO galaxy;
 -- -----------------------------------------------------------------------------
 -- ROOM_PARTNER
 -- -----------------------------------------------------------------------------
--- - identity cannot update enabled but she can delete the partnership
--- - room owner can update enabled or delete the partnership
+-- - The partner cannot update enabled but she can delete her partnership.
+-- - The room owner can update enabled or delete the partnership.
 -- -----------------------------------------------------------------------------
 CREATE TABLE room_partner (
     "id" uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -185,16 +237,44 @@ CREATE INDEX ON room_partner("room_id");
 ALTER TABLE room_partner OWNER TO galaxy;
 
 -- -----------------------------------------------------------------------------
+-- ROOM_PARTNER_CANDIDATE
+-- -----------------------------------------------------------------------------
+-- - The candidate can be added if she is already in the room owner's contact
+--   list.
+-- - The room owner can delete the candidate only if its status is pending.
+-- - The candidate cannot delete the candidacy but may reject it.
+-- - When rejected, expired_at will be updated as now() + interval '7 days'.
+-- - The candidate can accept an already rejected candidacy if it is not
+--   expired (deleted) yet.
+-- - Delete all candidates which have expired_at older than now().
+-- - Delete expired candidates before listing.
+-- -----------------------------------------------------------------------------
+CREATE TABLE room_partner_candidate (
+    "id" uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+    "identity_id" uuid NOT NULL REFERENCES identity(id) ON DELETE CASCADE,
+    "room_id" uuid NOT NULL REFERENCES room(id) ON DELETE CASCADE,
+    "status" candidate_status NOT NULL DEFAULT 'pending',
+    "created_at" timestamp with time zone NOT NULL DEFAULT now(),
+    "updated_at" timestamp with time zone NOT NULL DEFAULT now(),
+    "expired_at" timestamp with time zone NOT NULL
+      DEFAULT now() + interval '7 days'
+);
+CREATE UNIQUE INDEX ON room_partner_candidate("identity_id", "room_id");
+CREATE INDEX ON room_partner_candidate("expired_at");
+ALTER TABLE room_partner_candidate OWNER TO galaxy;
+
+-- -----------------------------------------------------------------------------
 -- MEETING
 -- -----------------------------------------------------------------------------
--- - dont show the ephemeral meeting if it's over
--- - ephemeral will be over 4 hours after the room's accessed_at
--- - show the scheduled meeting although it's over. it may be added a new date
--- - allow to change the schedule type if it is not ephemeral
--- - non-hidden meeting can be seen by everyone but permission will be needed to
---   participate it if it is restricted
--- - anybody can participate a restricted meeting if she has the audience key
--- - a non-restricted meeting may be hidden
+-- - Dont show the ephemeral meeting if it's over.
+-- - The ephemeral meeting will be over 4 hours after the room's accessed_at.
+-- - Show the scheduled meeting although it's over. It may be added a new date
+--   later.
+-- - Allow to change the schedule type if it is not ephemeral.
+-- - Non-hidden meeting can be seen by everyone but permission will be needed to
+--   participate it if it is restricted.
+-- - Anybody can participate a restricted meeting if she has the audience key.
+-- - A non-restricted meeting may be hidden.
 -- -----------------------------------------------------------------------------
 CREATE TYPE meeting_schedule_type AS ENUM
     ('permanent', 'scheduled', 'ephemeral');
@@ -221,9 +301,9 @@ ALTER TABLE meeting OWNER TO galaxy;
 -- -----------------------------------------------------------------------------
 -- MEETING_INVITE
 -- -----------------------------------------------------------------------------
--- - meeting invite can be shared with multiple member candidates and can be
---   used multiple times before the expire time if it is not disposable
--- - audience invite is not disposable
+-- - The meeting invite can be shared with multiple candidates and can be used
+--   multiple times before the expire time if it is not disposable.
+-- - The audience invite is not disposable.
 -- -----------------------------------------------------------------------------
 CREATE TYPE meeting_invite_type AS ENUM ('audience', 'member');
 CREATE TYPE meeting_affiliation_type AS ENUM ('guest', 'host');
@@ -250,19 +330,20 @@ ALTER TABLE meeting_invite OWNER TO galaxy;
 -- -----------------------------------------------------------------------------
 -- MEETING_REQUEST
 -- -----------------------------------------------------------------------------
--- - request can be created only if the meeting is subscribable and restricted.
---   if not restricted, no need the request, create membership immediately.
--- - when rejected, expired_at will be updated as now() + interval '7 days'
--- - identity owner can update the profile only if the status is pending
--- - identity owner can delete the request only if the status is pending
--- - meeting owner can delete the request anytimes
--- - delete all records which have expired_at older than now()
+-- - The request can only be created if the meeting is subscribable and
+--   restricted. If not restricted, no need the request, create membership
+--   immediately.
+-- - When rejected, expired_at will be updated as now() + interval '7 days'.
+-- - The request owner can update the profile only if its status is pending.
+-- - The request owner can delete the request only if its status is pending.
+-- - The meeting owner can delete the request anytimes.
+-- - Delete all records which have expired_at older than now().
 -- -----------------------------------------------------------------------------
 CREATE TYPE meeting_request_status AS ENUM ('pending', 'rejected');
 CREATE TABLE meeting_request (
     "id" uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
     "identity_id" uuid NOT NULL REFERENCES identity(id) ON DELETE CASCADE,
-    "profile_id" uuid NOT NULL REFERENCES profile(id) ON DELETE CASCADE,
+    "profile_id" uuid REFERENCES profile(id) ON DELETE SET NULL,
     "meeting_id" uuid NOT NULL REFERENCES meeting(id) ON DELETE CASCADE,
     "status" meeting_request_status NOT NULL DEFAULT 'pending',
     "created_at" timestamp with time zone NOT NULL DEFAULT now(),
@@ -277,10 +358,10 @@ ALTER TABLE meeting_request OWNER TO galaxy;
 -- -----------------------------------------------------------------------------
 -- MEETING_MEMBER
 -- -----------------------------------------------------------------------------
--- - identity cannot update enabled but she can delete the membership
--- - identity cannot update join_as
--- - meeting owner can update enabled or delete the membership
--- - meeting owner can update join_as
+-- - The member cannot update enabled but she can delete her membership.
+-- - The member cannot update join_as.
+-- - The meeting owner can update enabled or delete the membership.
+-- - The meeting owner can update join_as.
 -- -----------------------------------------------------------------------------
 CREATE TABLE meeting_member (
     "id" uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -296,9 +377,39 @@ CREATE UNIQUE INDEX ON meeting_member("identity_id", "meeting_id", "join_as");
 ALTER TABLE meeting_member OWNER TO galaxy;
 
 -- -----------------------------------------------------------------------------
+-- MEETING_MEMBER_CANDIDATE
+-- -----------------------------------------------------------------------------
+-- - The candidate can be added if she is already in the meeting owner's contact
+--   list.
+-- - The meeting owner can delete the candidate only if its status is pending.
+-- - The candidate cannot delete the candidacy but may reject it.
+-- - When rejected, expired_at will be updated as now() + interval '7 days'.
+-- - The candidate can accept an already rejected candidacy if it is not
+--   expired (deleted) yet.
+-- - Delete all candidates which have expired_at older than now().
+-- - Delete expired candidates before listing.
+-- -----------------------------------------------------------------------------
+CREATE TABLE meeting_member_candidate (
+    "id" uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+    "identity_id" uuid NOT NULL REFERENCES identity(id) ON DELETE CASCADE,
+    "meeting_id" uuid NOT NULL REFERENCES meeting(id) ON DELETE CASCADE,
+    "join_as" meeting_affiliation_type NOT NULL DEFAULT 'guest',
+    "status" candidate_status NOT NULL DEFAULT 'pending',
+    "created_at" timestamp with time zone NOT NULL DEFAULT now(),
+    "updated_at" timestamp with time zone NOT NULL DEFAULT now(),
+    "expired_at" timestamp with time zone NOT NULL
+      DEFAULT now() + interval '7 days'
+);
+CREATE UNIQUE INDEX ON meeting_member_candidate(
+    "identity_id", "meeting_id", "join_as"
+);
+CREATE INDEX ON meeting_member_candidate("expired_at");
+ALTER TABLE meeting_member_candidate OWNER TO galaxy;
+
+-- -----------------------------------------------------------------------------
 -- MEETING_SCHEDULE
 -- -----------------------------------------------------------------------------
--- - schedule contains scheduled meetings only
+-- - This table contains only scheduled meetings.
 -- - ended_at = started_at + duration * interval '1 min'
 -- -----------------------------------------------------------------------------
 CREATE TABLE meeting_schedule (
