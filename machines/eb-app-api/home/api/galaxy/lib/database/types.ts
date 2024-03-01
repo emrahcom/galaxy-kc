@@ -13,6 +13,16 @@ export interface Id {
 }
 
 // -----------------------------------------------------------------------------
+export interface Contact {
+  id: string;
+  name: string;
+  profile_name: string;
+  profile_email: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// -----------------------------------------------------------------------------
 export interface Domain {
   id: string;
   name: string;
@@ -62,11 +72,36 @@ export interface DomainInvite111 {
 export interface DomainPartner {
   id: string;
   domain_id: string;
+  contact_name: string;
   profile_name: string;
   profile_email: string;
   enabled: boolean;
   created_at: string;
   updated_at: string;
+}
+
+// -----------------------------------------------------------------------------
+export interface DomainPartnerCandidacy {
+  id: string;
+  domain_name: string;
+  domain_url: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  expired_at: string;
+}
+
+// -----------------------------------------------------------------------------
+export interface DomainPartnerCandidate {
+  id: string;
+  domain_id: string;
+  contact_name: string;
+  profile_name: string;
+  profile_email: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  expired_at: string;
 }
 
 // -----------------------------------------------------------------------------
@@ -159,18 +194,49 @@ export interface MeetingInvite111 {
   meeting_info: string;
   code: string;
   invite_to: string;
+  schedule_type: string;
+  schedule_list: [[string, string]];
 }
 
 // -----------------------------------------------------------------------------
 export interface MeetingMember {
   id: string;
   meeting_id: string;
+  contact_name: string;
   profile_name: string;
   profile_email: string;
   join_as: string;
   enabled: boolean;
   created_at: string;
   updated_at: string;
+}
+
+// -----------------------------------------------------------------------------
+export interface MeetingMemberCandidacy {
+  id: string;
+  meeting_name: string;
+  meeting_info: string;
+  schedule_type: string;
+  schedule_list: [[string, string]];
+  join_as: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  expired_at: string;
+}
+
+// -----------------------------------------------------------------------------
+export interface MeetingMemberCandidate {
+  id: string;
+  meeting_id: string;
+  contact_name: string;
+  profile_name: string;
+  profile_email: string;
+  join_as: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  expired_at: string;
 }
 
 // -----------------------------------------------------------------------------
@@ -336,11 +402,37 @@ export interface RoomInvite111 {
 export interface RoomPartner {
   id: string;
   room_id: string;
+  contact_name: string;
   profile_name: string;
   profile_email: string;
   enabled: boolean;
   created_at: string;
   updated_at: string;
+}
+
+// -----------------------------------------------------------------------------
+export interface RoomPartnerCandidacy {
+  id: string;
+  room_name: string;
+  domain_name: string;
+  domain_url: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  expired_at: string;
+}
+
+// -----------------------------------------------------------------------------
+export interface RoomPartnerCandidate {
+  id: string;
+  room_id: string;
+  contact_name: string;
+  profile_name: string;
+  profile_email: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  expired_at: string;
 }
 
 // -----------------------------------------------------------------------------
