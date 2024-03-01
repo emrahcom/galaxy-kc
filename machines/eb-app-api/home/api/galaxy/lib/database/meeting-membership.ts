@@ -14,7 +14,7 @@ export async function getMeetingMembership(
         mem.updated_at
       FROM meeting_member mem
         JOIN meeting m ON mem.meeting_id = m.id
-        JOIN profile pr ON mem.profile_id = pr.id
+        LEFT JOIN profile pr ON mem.profile_id = pr.id
       WHERE mem.id = $2
         AND mem.identity_id = $1`,
     args: [
@@ -34,8 +34,7 @@ export async function addMeetingMembershipByCode(
 ) {
   const sql = {
     text: `
-      INSERT INTO meeting_member (identity_id, profile_id, meeting_id,
-        join_as)
+      INSERT INTO meeting_member (identity_id, profile_id, meeting_id, join_as)
       VALUES (
         $1,
         (SELECT id
@@ -85,6 +84,77 @@ export async function addMeetingMembershipByCode(
     ],
   };
   if (rows[0] !== undefined) await query(sql1);
+
+  // add partner to the contact list
+  const sql2 = {
+    text: `
+      INSERT INTO contact (identity_id, remote_id, name)
+      VALUES (
+        (SELECT identity_id
+         FROM meeting_invite
+         WHERE code = $2
+        ),
+        $1,
+        (SELECT name
+         FROM profile
+         WHERE identity_id = $1
+           AND is_default
+        )
+      )
+      ON CONFLICT DO NOTHING`,
+    args: [
+      identityId,
+      code,
+    ],
+  };
+  if (rows[0] !== undefined) await query(sql2);
+
+  // add meeting owner to the partner's contact list
+  const sql3 = {
+    text: `
+      INSERT INTO contact (identity_id, remote_id, name)
+      VALUES (
+        $1,
+        (SELECT identity_id
+         FROM meeting_invite
+         WHERE code = $2
+        ),
+        (SELECT name
+         FROM profile
+         WHERE identity_id = (SELECT identity_id
+                              FROM meeting_invite
+                              WHERE code = $2
+                             )
+           AND is_default
+        )
+      )
+      ON CONFLICT DO NOTHING`,
+    args: [
+      identityId,
+      code,
+    ],
+  };
+  if (rows[0] !== undefined) await query(sql3);
+
+  // remove the meeting-member candidancy if exists
+  const sql4 = {
+    text: `
+      DELETE FROM meeting_member_candidate
+      WHERE identity_id = $1
+        AND meeting_id = (SELECT meeting_id
+                          FROM meeting_invite
+                          WHERE code = $2
+                         )
+        AND join_as = (SELECT join_as
+                       FROM meeting_invite
+                       WHERE code = $2
+                      )`,
+    args: [
+      identityId,
+      code,
+    ],
+  };
+  if (rows[0] !== undefined) await query(sql4);
 
   return rows;
 }
