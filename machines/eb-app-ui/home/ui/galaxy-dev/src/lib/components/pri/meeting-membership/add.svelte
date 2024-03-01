@@ -12,6 +12,18 @@
 
   export let invite: MeetingInvite111;
 
+  let schedules = "";
+  for (const s of invite.schedule_list) {
+    const startTime = new Date(s[0]);
+    const localStartTime = startTime.toLocaleString();
+    const endTime = new Date(s[1]);
+    const diff = endTime.getTime() - startTime.getTime();
+    const minutes = Math.round(diff / (1000 * 60));
+
+    schedules = `${schedules}\n${localStartTime} (${minutes} min)`;
+  }
+  schedules = schedules.trim();
+
   let warning = false;
   let p = {
     code: invite.code,
@@ -74,6 +86,23 @@
           disabled={true}
           readonly={true}
         />
+        {#if invite.schedule_list.length > 1}
+          <Textarea
+            name="meeting_schedule"
+            label="Schedules"
+            value={schedules}
+            disabled={true}
+            readonly={true}
+          />
+        {:else if invite.schedule_list.length === 1}
+          <Text
+            name="meeting_schedule"
+            label="Schedule"
+            value={schedules}
+            disabled={true}
+            readonly={true}
+          />
+        {/if}
         <Select
           id="profile_id"
           label="Profile"
