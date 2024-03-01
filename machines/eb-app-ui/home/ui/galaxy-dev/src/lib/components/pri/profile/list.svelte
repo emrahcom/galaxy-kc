@@ -17,7 +17,7 @@
         <div class="card h-100 {p.is_default ? 'border-primary' : ''}">
           <div class="card-body text-center">
             <h5 class="card-title text-muted">{p.name}</h5>
-            <p class="card-text text-muted">{p.email ?? "-"}</p>
+            <p class="card-text text-muted">{p.email}</p>
           </div>
 
           <div class="card-footer bg-body border-0 text-center">
@@ -32,7 +32,7 @@
       </div>
     {:else}
       <Warning>
-        There is no profiles in the list. Click <Add href="/pri/profile/add" />
+        There is no profile in the list. Click <Add href="/pri/profile/add" />
         to add a new profile.
       </Warning>
     {/each}
