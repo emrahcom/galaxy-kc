@@ -6,14 +6,19 @@ import {
   unauthorized,
 } from "./lib/http/response.ts";
 import { getIdentityId } from "./lib/pri/identity.ts";
+import contact from "./lib/pri/contact.ts";
 import domain from "./lib/pri/domain.ts";
 import domainInvite from "./lib/pri/domain-invite.ts";
 import domainPartner from "./lib/pri/domain-partner.ts";
+import domainPartnerCandidacy from "./lib/pri/domain-partner-candidacy.ts";
+import domainPartnerCandidate from "./lib/pri/domain-partner-candidate.ts";
 import domainPartnership from "./lib/pri/domain-partnership.ts";
 import hello from "./lib/pri/hello.ts";
 import meeting from "./lib/pri/meeting.ts";
 import meetingInvite from "./lib/pri/meeting-invite.ts";
 import meetingMember from "./lib/pri/meeting-member.ts";
+import meetingMemberCandidacy from "./lib/pri/meeting-member-candidacy.ts";
+import meetingMemberCandidate from "./lib/pri/meeting-member-candidate.ts";
 import meetingMembership from "./lib/pri/meeting-membership.ts";
 import meetingRequest from "./lib/pri/meeting-request.ts";
 import meetingSchedule from "./lib/pri/meeting-schedule.ts";
@@ -21,6 +26,8 @@ import profile from "./lib/pri/profile.ts";
 import room from "./lib/pri/room.ts";
 import roomInvite from "./lib/pri/room-invite.ts";
 import roomPartner from "./lib/pri/room-partner.ts";
+import roomPartnerCandidacy from "./lib/pri/room-partner-candidacy.ts";
+import roomPartnerCandidate from "./lib/pri/room-partner-candidate.ts";
 import roomPartnership from "./lib/pri/room-partnership.ts";
 
 const PRE = "/api/pri";
@@ -33,8 +40,14 @@ async function route(
 ): Promise<Response> {
   if (path === `${PRE}/hello`) {
     return hello(identityId);
+  } else if (path.match(`^${PRE}/contact/`)) {
+    return await contact(req, path, identityId);
   } else if (path.match(`^${PRE}/domain/invite/`)) {
     return await domainInvite(req, path, identityId);
+  } else if (path.match(`^${PRE}/domain/partner/candidacy/`)) {
+    return await domainPartnerCandidacy(req, path, identityId);
+  } else if (path.match(`^${PRE}/domain/partner/candidate/`)) {
+    return await domainPartnerCandidate(req, path, identityId);
   } else if (path.match(`^${PRE}/domain/partner/`)) {
     return await domainPartner(req, path, identityId);
   } else if (path.match(`^${PRE}/domain/partnership/`)) {
@@ -43,6 +56,10 @@ async function route(
     return await domain(req, path, identityId);
   } else if (path.match(`^${PRE}/meeting/invite/`)) {
     return await meetingInvite(req, path, identityId);
+  } else if (path.match(`^${PRE}/meeting/member/candidacy/`)) {
+    return await meetingMemberCandidacy(req, path, identityId);
+  } else if (path.match(`^${PRE}/meeting/member/candidate/`)) {
+    return await meetingMemberCandidate(req, path, identityId);
   } else if (path.match(`^${PRE}/meeting/member/`)) {
     return await meetingMember(req, path, identityId);
   } else if (path.match(`^${PRE}/meeting/membership/`)) {
@@ -57,6 +74,10 @@ async function route(
     return await profile(req, path, identityId);
   } else if (path.match(`^${PRE}/room/invite/`)) {
     return await roomInvite(req, path, identityId);
+  } else if (path.match(`^${PRE}/room/partner/candidacy/`)) {
+    return await roomPartnerCandidacy(req, path, identityId);
+  } else if (path.match(`^${PRE}/room/partner/candidate/`)) {
+    return await roomPartnerCandidate(req, path, identityId);
   } else if (path.match(`^${PRE}/room/partner/`)) {
     return await roomPartner(req, path, identityId);
   } else if (path.match(`^${PRE}/room/partnership/`)) {
