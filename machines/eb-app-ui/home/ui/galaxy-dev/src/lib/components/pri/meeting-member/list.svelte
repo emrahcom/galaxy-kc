@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { MeetingMember } from "$lib/types";
+  import type { MeetingMember, MeetingMemberCandidate } from "$lib/types";
   import Del from "$lib/components/common/link-del.svelte";
   import Disable from "$lib/components/common/link-disable.svelte";
   import Enable from "$lib/components/common/link-enable.svelte";
@@ -8,6 +8,9 @@
   import Warning from "$lib/components/common/alert-warning.svelte";
 
   export let members: MeetingMember[];
+  export let candidates: MeetingMemberCandidate[];
+
+  const isEmpty = !(members.length || candidates.length);
 </script>
 
 <!-- -------------------------------------------------------------------------->
@@ -17,9 +20,11 @@
       <div class="col-md-6 col-xl-4">
         <div class="card h-100 {p.enabled ? '' : 'border-danger'}">
           <div class="card-body text-center">
-            <h5 class="card-title text-muted">{p.profile_name}</h5>
+            <h5 class="card-title text-muted">
+              {p.contact_name || p.profile_name || ""}
+            </h5>
 
-            <p class="card-text text-muted">{p.profile_email}</p>
+            <p class="card-text text-muted">{p.profile_email || ""}</p>
             <p class="card-text text-muted">{p.join_as}</p>
           </div>
 
@@ -40,8 +45,37 @@
           </div>
         </div>
       </div>
-    {:else}
-      <Warning>This meeting has no members.</Warning>
     {/each}
+
+    {#each candidates as c}
+      <div class="col-md-6 col-xl-4">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title text-muted">
+              {c.contact_name || c.profile_name || ""}
+            </h5>
+
+            <p class="card-text text-muted">{c.profile_email || ""}</p>
+            <p class="card-text text-muted">{c.join_as}</p>
+
+            {#if c.status == "pending"}
+              <p class="card-text fw-bold text-success">pending</p>
+            {:else}
+              <p class="card-text fw-bold text-warning">rejected</p>
+            {/if}
+          </div>
+
+          <div class="card-footer bg-body border-0 text-center">
+            {#if c.status == "pending"}
+              <Del href="/pri/meeting/member/candidate/del/{c.id}" />
+            {/if}
+          </div>
+        </div>
+      </div>
+    {/each}
+
+    {#if isEmpty}
+      <Warning>This meeting has no member.</Warning>
+    {/if}
   </div>
 </section>
