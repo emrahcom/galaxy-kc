@@ -48,7 +48,8 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
-        file: ./machines/${{ env.MACHINE }}/${{ env.PROCESS }}.Dockerfile
+        context: ./machines/${{ env.MACHINE }}
+        file: ${{ env.PROCESS }}.Dockerfile
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
