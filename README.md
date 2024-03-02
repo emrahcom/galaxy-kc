@@ -63,7 +63,7 @@ docker-compose up -d
 
 - `Debian 12 Bookworm` server\
   _Use a dedicated server, not shared... It will be heavily customized._
-- At least 1 GB RAM
+- At least 2 GB RAM and 6 GB disk space
 - An `FQDN`. e.g. `app.galaxy.corp`
 - A DNS `A record` for this `FQDN` pointing to the server
 - Allow the following ports if the server is behind a firewall
