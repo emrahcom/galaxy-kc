@@ -15,9 +15,7 @@ services:
       intranet:
 
   galaxy-api-adm:
-    build:
-      context: machines/eb-app-api/
-      dockerfile: adm.Dockerfile
+    image: ghcr.io/emrahcom/galaxy-kc/galaxy-api-adm
     environment:
       - ALLOW_UNSECURE_CERT
       - API_SECRET
@@ -41,9 +39,7 @@ services:
       intranet:
 
   galaxy-api-pri:
-    build:
-      context: machines/eb-app-api/
-      dockerfile: pri.Dockerfile
+    image: ghcr.io/emrahcom/galaxy-kc/galaxy-api-pri
     environment:
       - API_SECRET
       - DB_HOST
@@ -61,9 +57,7 @@ services:
       intranet:
 
   galaxy-api-pub:
-    build:
-      context: machines/eb-app-api/
-      dockerfile: pub.Dockerfile
+    image: ghcr.io/emrahcom/galaxy-kc/galaxy-api-pub
     environment:
       - DB_HOST
       - DB_PASSWD
@@ -80,9 +74,7 @@ services:
       intranet:
 
   galaxy-ui:
-    build:
-      context: machines/eb-app-ui/
-      dockerfile: Dockerfile
+    image: ghcr.io/emrahcom/galaxy-kc/galaxy-ui
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ui-http.entrypoints=reverse-proxy-http"
