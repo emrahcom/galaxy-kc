@@ -7,11 +7,11 @@ WORKDIR /app
 
 COPY home/ui/galaxy-dev/package.json /app/
 RUN yarn install
-RUN yarn run check
-RUN yarn run lint
 
 COPY home/ui/galaxy-dev/ /app/
-RUN yarn build
+RUN yarn run check
+RUN yarn run lint
+RUN yarn run build
 
 # ------------------------------------------------------------------------------
 # prod
