@@ -45,10 +45,10 @@ jobs:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    #- name: Build and push
-    #  uses: docker/build-push-action@v5
-    #  with:
-    #    context: ./machines/${{ env.MACHINE }}/${{ env.PROCESS }}.Dockerfile
-    #    push: true
-    #    tags: ${{ steps.meta.outputs.tags }}
-    #    labels: ${{ steps.meta.outputs.labels }}
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        context: ./machines/${{ env.MACHINE }}/${{ env.PROCESS }}.Dockerfile
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
