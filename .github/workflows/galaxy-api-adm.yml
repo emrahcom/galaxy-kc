@@ -1,0 +1,54 @@
+name: galaxy-api-adm
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/galaxy-api-adm.yml"
+      - "machines/eb-app-api/adm.Dockerfile"
+      - "machines/eb-app-api/**.ts"
+
+env:
+  CONTEXT: galaxy-api-adm
+  MACHINE: eb-app-api
+  PROCESS: adm
+  REGISTRY: ghcr.io
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Custom metadata
+      run: |
+        echo "BUILD_DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
+        echo ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.CONTEXT }}
+
+    - name: Metadata
+      uses: docker/metadata-action@v5
+      id: meta
+      with:
+        images: |
+          ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.CONTEXT }}
+        tags: |
+          type=raw,value=latest
+          type=raw,value=v${{ env.BUILD_DATE }}
+
+    - name: Login
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    #- name: Build and push
+    #  uses: docker/build-push-action@v5
+    #  with:
+    #    context: ./machines/${{ env.MACHINE }}/${{ env.PROCESS }}.Dockerfile
+    #    push: true
+    #    tags: ${{ steps.meta.outputs.tags }}
+    #    labels: ${{ steps.meta.outputs.labels }}
