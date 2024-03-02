@@ -16,6 +16,7 @@ services:
 
   galaxy-api-adm:
     image: ghcr.io/emrahcom/galaxy-kc/galaxy-api-adm
+    restart: always
     environment:
       - ALLOW_UNSECURE_CERT
       - API_SECRET
@@ -40,6 +41,7 @@ services:
 
   galaxy-api-pri:
     image: ghcr.io/emrahcom/galaxy-kc/galaxy-api-pri
+    restart: always
     environment:
       - API_SECRET
       - DB_HOST
@@ -58,6 +60,7 @@ services:
 
   galaxy-api-pub:
     image: ghcr.io/emrahcom/galaxy-kc/galaxy-api-pub
+    restart: always
     environment:
       - DB_HOST
       - DB_PASSWD
@@ -75,6 +78,7 @@ services:
 
   galaxy-ui:
     image: ghcr.io/emrahcom/galaxy-kc/galaxy-ui
+    restart: always
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ui-http.entrypoints=reverse-proxy-http"
@@ -91,6 +95,7 @@ services:
 
   reverse-proxy:
     image: "traefik:v2.9"
+    restart: always
     ports:
       - 80:80
       - 443:443
