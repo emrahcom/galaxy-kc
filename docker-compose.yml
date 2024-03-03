@@ -15,7 +15,7 @@ services:
       intranet:
 
   galaxy-api-adm:
-    image: ghcr.io/emrahcom/galaxy-kc/galaxy-api-adm
+    image: ghcr.io/emrahcom/galaxy-kc/galaxy-api-adm:latest
     restart: always
     environment:
       - ALLOW_UNSECURE_CERT
@@ -40,7 +40,7 @@ services:
       intranet:
 
   galaxy-api-pri:
-    image: ghcr.io/emrahcom/galaxy-kc/galaxy-api-pri
+    image: ghcr.io/emrahcom/galaxy-kc/galaxy-api-pri:latest
     restart: always
     environment:
       - API_SECRET
@@ -59,7 +59,7 @@ services:
       intranet:
 
   galaxy-api-pub:
-    image: ghcr.io/emrahcom/galaxy-kc/galaxy-api-pub
+    image: ghcr.io/emrahcom/galaxy-kc/galaxy-api-pub:latest
     restart: always
     environment:
       - DB_HOST
@@ -77,7 +77,7 @@ services:
       intranet:
 
   galaxy-ui:
-    image: ghcr.io/emrahcom/galaxy-kc/galaxy-ui
+    image: ghcr.io/emrahcom/galaxy-kc/galaxy-ui:latest
     restart: always
     labels:
       - "traefik.enable=true"
