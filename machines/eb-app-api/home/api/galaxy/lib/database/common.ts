@@ -13,6 +13,7 @@ import {
   DEFAULT_LIST_SIZE,
   MAX_LIST_SIZE,
 } from "../../config.ts";
+import type { Meta } from "./types.ts";
 
 interface QueryObject {
   text: string;
@@ -55,6 +56,19 @@ export async function fetch(sql: QueryObject): Promise<unknown> {
     });
 
   return rows;
+}
+
+// -----------------------------------------------------------------------------
+export async function getVersion() {
+  const sql = {
+    text: `
+      SELECT mvalue
+      FROM metadata
+      WHERE mkey = 'database_version'`,
+  };
+  const rows = await fetch(sql) as Meta[];
+
+  return rows[0].mvalue;
 }
 
 // -----------------------------------------------------------------------------
