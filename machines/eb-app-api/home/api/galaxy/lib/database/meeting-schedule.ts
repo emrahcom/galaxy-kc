@@ -1,10 +1,16 @@
 import { fetch } from "./common.ts";
 import type {
+  Attr,
   Id,
   MeetingSchedule,
   MeetingSchedule111,
   MeetingSchedule222,
 } from "./types.ts";
+import {
+  addMeetingSessionOnce,
+  checkScheduleAttr,
+  delMeetingSessionBySchedule,
+} from "./meeting-session.ts";
 
 // -----------------------------------------------------------------------------
 export async function getMeetingSchedule(
@@ -13,7 +19,8 @@ export async function getMeetingSchedule(
 ) {
   const sql = {
     text: `
-      SELECT id, meeting_id, name, started_at, ended_at, duration
+      SELECT id, meeting_id, name, schedule_attr, enabled, created_at,
+        updated_at
       FROM meeting_schedule
       WHERE id = $2
         AND EXISTS (SELECT 1
@@ -40,24 +47,26 @@ export async function getMeetingScheduleByMeeting(
   const sql = {
     text: `
       SELECT m.id, m.name as meeting_name, m.info as meeting_info,
-        s.name as schedule_name, s.started_at, s.ended_at, s.duration,
-        extract('epoch' from age(started_at, now()))::integer as waiting_time,
-        'host' as join_as
+        s.name as schedule_name, ses.started_at, ses.ended_at, ses.duration,
+        extract('epoch' from age(ses.started_at, now()))::integer
+        as waiting_time, 'host' as join_as
       FROM meeting m
         JOIN room r ON m.room_id = r.id
+                       AND r.enabled
         JOIN domain d ON r.domain_id = d.id
+                         AND d.enabled
         JOIN identity i1 ON d.identity_id = i1.id
+                            AND i1.enabled
         JOIN identity i2 ON r.identity_id = i2.id
+                            AND i2.enabled
         JOIN identity i3 ON m.identity_id = i3.id
+                            AND i3.enabled
         JOIN meeting_schedule s ON m.id = s.meeting_id
+                                   AND s.enabled
+        JOIN meeting_session ses ON s.id = ses.meeting_schedule_id
       WHERE m.id = $2
         AND m.identity_id = $1
         AND m.enabled
-        AND r.enabled
-        AND d.enabled
-        AND i1.enabled
-        AND i2.enabled
-        AND i3.enabled
         AND (r.identity_id = $1
              OR EXISTS (SELECT 1
                         FROM room_partner
@@ -75,8 +84,8 @@ export async function getMeetingScheduleByMeeting(
                           AND enabled
                        )
             )
-        AND s.ended_at > now()
-      ORDER BY s.started_at
+        AND ses.ended_at > now()
+      ORDER BY ses.started_at
       LIMIT 1`,
     args: [
       identityId,
@@ -98,8 +107,8 @@ export async function getMeetingScheduleByMembership(
   const sql = {
     text: `
       SELECT mem.id, m.name as meeting_name, m.info as meeting_info,
-        s.name as schedule_name, s.started_at, s.ended_at, s.duration,
-        extract('epoch' from age(started_at, now()))::integer
+        s.name as schedule_name, ses.started_at, ses.ended_at, ses.duration,
+        extract('epoch' from age(ses.started_at, now()))::integer
           + CASE mem.join_as
               WHEN 'host' THEN 0
               WHEN 'guest' THEN 3 + floor(random()*27)
@@ -107,21 +116,23 @@ export async function getMeetingScheduleByMembership(
         mem.join_as
       FROM meeting_member mem
         JOIN meeting m ON mem.meeting_id = m.id
+                          AND m.enabled
         JOIN room r ON m.room_id = r.id
+                       AND r.enabled
         JOIN domain d ON r.domain_id = d.id
+                         AND d.enabled
         JOIN identity i1 ON d.identity_id = i1.id
+                            AND i1.enabled
         JOIN identity i2 ON r.identity_id = i2.id
+                            AND i2.enabled
         JOIN identity i3 ON m.identity_id = i3.id
+                            AND i3.enabled
         JOIN meeting_schedule s ON m.id = s.meeting_id
+                            AND s.enabled
+        JOIN meeting_session ses ON s.id = ses.meeting_schedule_id
       WHERE mem.id = $2
         AND mem.identity_id = $1
         AND mem.enabled
-        AND m.enabled
-        AND r.enabled
-        AND d.enabled
-        AND i1.enabled
-        AND i2.enabled
-        AND i3.enabled
         AND (r.identity_id = m.identity_id
              OR EXISTS (SELECT 1
                         FROM room_partner
@@ -139,8 +150,8 @@ export async function getMeetingScheduleByMembership(
                           AND enabled
                        )
             )
-        AND s.ended_at > now()
-      ORDER BY s.started_at
+        AND ses.ended_at > now()
+      ORDER BY ses.started_at
       LIMIT 1`,
     args: [
       identityId,
@@ -159,8 +170,8 @@ export async function getMeetingScheduleByCode(code: string) {
   const sql = {
     text: `
       SELECT iv.code, m.name as meeting_name, m.info as meeting_info,
-        s.name as schedule_name, s.started_at, s.ended_at, s.duration,
-        extract('epoch' from age(started_at, now()))::integer
+        s.name as schedule_name, ses.started_at, ses.ended_at, ses.duration,
+        extract('epoch' from age(ses.started_at, now()))::integer
           + CASE iv.join_as
               WHEN 'host' THEN 0
               WHEN 'guest' THEN 3 + floor(random()*27)
@@ -168,22 +179,24 @@ export async function getMeetingScheduleByCode(code: string) {
         iv.join_as
       FROM meeting_invite iv
         JOIN meeting m ON iv.meeting_id = m.id
+                          AND m.enabled
         JOIN room r ON m.room_id = r.id
+                       AND r.enabled
         JOIN domain d ON r.domain_id = d.id
+                         AND d.enabled
         JOIN identity i1 ON d.identity_id = i1.id
+                            AND i1.enabled
         JOIN identity i2 ON r.identity_id = i2.id
+                            AND i2.enabled
         JOIN identity i3 ON m.identity_id = i3.id
+                            AND i3.enabled
         JOIN meeting_schedule s ON m.id = s.meeting_id
+                                   AND s.enabled
+        JOIN meeting_session ses ON s.id = ses.meeting_schedule_id
       WHERE iv.code = $1
         AND iv.enabled
         AND iv.invite_to = 'audience'
         AND iv.expired_at > now()
-        AND m.enabled
-        AND r.enabled
-        AND d.enabled
-        AND i1.enabled
-        AND i2.enabled
-        AND i3.enabled
         AND (r.identity_id = m.identity_id
              OR EXISTS (SELECT 1
                         FROM room_partner
@@ -201,8 +214,8 @@ export async function getMeetingScheduleByCode(code: string) {
                           AND enabled
                        )
             )
-        AND s.ended_at > now()
-      ORDER BY s.started_at
+        AND ses.ended_at > now()
+      ORDER BY ses.started_at
       LIMIT 1`,
     args: [
       code,
@@ -221,16 +234,18 @@ export async function listMeetingScheduleByMeeting(
 ) {
   const sql = {
     text: `
-      SELECT id, meeting_id, name, started_at, ended_at, duration
-      FROM meeting_schedule
+      SELECT s.id, s.meeting_id, s.name, s.schedule_attr, s.enabled,
+        s.created_at, s.updated_at
+      FROM meeting_schedule s
+        JOIN meeting_session ses ON s.id = ses.meeting_schedule_id
       WHERE meeting_id = $2
         AND EXISTS (SELECT 1
                     FROM meeting
                     WHERE id = $2
                       AND identity_id = $1
                    )
-        AND ended_at + interval '20 mins' > now()
-      ORDER BY started_at
+        AND ses.ended_at + interval '20 mins' > now()
+      ORDER BY ses.started_at
       LIMIT $3 OFFSET $4`,
     args: [
       identityId,
@@ -248,36 +263,41 @@ export async function addMeetingSchedule(
   identityId: string,
   meetingId: string,
   name: string,
-  started_at: string,
-  duration: number,
+  scheduleAttr: Attr,
 ) {
-  if (duration < 1) throw new Error("duration is out of range");
-  if (duration > 1440) throw new Error("duration is out of range");
+  // if not valid, it will throw an error
+  checkScheduleAttr(scheduleAttr);
 
   const sql = {
     text: `
-      INSERT INTO meeting_schedule (meeting_id, name, started_at, duration,
-        ended_at)
+      INSERT INTO meeting_schedule (meeting_id, name, schedule_attr)
       VALUES (
         (SELECT id
          FROM meeting
          WHERE id = $2
            AND identity_id = $1
         ),
-        $3, $4, $5,
-        $4::timestamptz + $5::integer * interval '1 min'
+        $3, $4::jsonb
       )
       RETURNING id, now() as at`,
     args: [
       identityId,
       meetingId,
       name,
-      started_at,
-      duration,
+      scheduleAttr,
     ],
   };
+  const rows = await fetch(sql) as Id[];
 
-  return await fetch(sql) as Id[];
+  // dont continue if the schedule was not created
+  if (rows[0] === undefined) return rows;
+
+  // add sessions
+  if (scheduleAttr.type === "once") {
+    await addMeetingSessionOnce(rows[0].id, scheduleAttr);
+  }
+
+  return rows;
 }
 
 // -----------------------------------------------------------------------------
@@ -287,11 +307,11 @@ export async function delMeetingSchedule(
 ) {
   const sql = {
     text: `
-      DELETE FROM meeting_schedule
+      DELETE FROM meeting_schedule s
       WHERE id = $2
         AND EXISTS (SELECT 1
                     FROM meeting
-                    WHERE id = meeting_id
+                    WHERE id = s.meeting_id
                       AND identity_id = $1
                    )
       RETURNING id, now() as at`,
@@ -309,24 +329,21 @@ export async function updateMeetingSchedule(
   identityId: string,
   scheduleId: string,
   name: string,
-  started_at: string,
-  duration: number,
+  scheduleAttr: Attr,
 ) {
-  if (duration < 1) throw new Error("duration is out of range");
-  if (duration > 1440) throw new Error("duration is out of range");
+  // if not valid, it will throw an error
+  checkScheduleAttr(scheduleAttr);
 
   const sql = {
     text: `
-      UPDATE meeting_schedule
+      UPDATE meeting_schedule s
       SET
         name = $3,
-        started_at = $4,
-        duration = $5,
-        ended_at = $4::timestamptz + $5::integer * interval '1 min'
+        schedule_attr = $4
       WHERE id = $2
         AND EXISTS (SELECT 1
                     FROM meeting
-                    WHERE id = meeting_id
+                    WHERE id = s.meeting_id
                       AND identity_id = $1
                    )
       RETURNING id, now() as at`,
@@ -334,8 +351,48 @@ export async function updateMeetingSchedule(
       identityId,
       scheduleId,
       name,
-      started_at,
-      duration,
+      scheduleAttr,
+    ],
+  };
+  const rows = await fetch(sql) as Id[];
+
+  // dont continue if the schedule was not updated
+  if (rows[0] === undefined) return rows;
+
+  // delete old sessions
+  await delMeetingSessionBySchedule(scheduleId);
+
+  // add new sessions
+  if (scheduleAttr.type === "once") {
+    await addMeetingSessionOnce(rows[0].id, scheduleAttr);
+  }
+
+  return rows;
+}
+
+// -----------------------------------------------------------------------------
+export async function updateMeetingScheduleEnabled(
+  identityId: string,
+  scheduleId: string,
+  value: boolean,
+) {
+  const sql = {
+    text: `
+      UPDATE meeting_schedule s
+      SET
+        enabled = $3,
+        updated_at = now()
+      WHERE id = $2
+        AND EXISTS (SELECT 1
+                    FROM meeting
+                    WHERE id = s.meeting_id
+                      AND identity_id = $1
+                   )
+      RETURNING id, updated_at as at`,
+    args: [
+      identityId,
+      scheduleId,
+      value,
     ],
   };
 
