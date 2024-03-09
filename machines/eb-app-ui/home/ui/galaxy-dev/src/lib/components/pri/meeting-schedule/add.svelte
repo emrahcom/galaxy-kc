@@ -16,14 +16,17 @@
   const hash = $page.url.hash;
 
   const min = toInputTime();
-  let time = min;
+  let once_started_at = min;
 
   let warning = false;
   let p = {
     name: "",
     meeting_id: meeting.id,
-    started_at: "",
-    duration: 30,
+    schedule_attr: {
+      type: "once",
+      once_started_at: "",
+      once_duration: 30,
+    },
   };
 
   // ---------------------------------------------------------------------------
@@ -40,8 +43,8 @@
     try {
       warning = false;
 
-      const started_at = new Date(time);
-      p.started_at = started_at.toISOString();
+      const started_at = new Date(once_started_at);
+      p.schedule_attr.once_started_at = started_at.toISOString();
 
       await action("/api/pri/meeting/schedule/add", p);
 
@@ -67,16 +70,16 @@
         required={false}
       />
       <Datetime
-        name="time"
+        name="once_started_at"
         label="Time"
-        bind:value={time}
+        bind:value={once_started_at}
         {min}
         required={true}
       />
       <Range
-        name="duration"
+        name="once_duration"
         label="Duration (minutes)"
-        bind:value={p.duration}
+        bind:value={p.schedule_attr.once_duration}
         min={5}
         max={120}
         step={5}
