@@ -9,6 +9,7 @@ import {
   getMeetingScheduleByMembership,
   listMeetingScheduleByMeeting,
   updateMeetingSchedule,
+  updateMeetingScheduleEnabled,
 } from "../database/meeting-schedule.ts";
 
 const PRE = "/api/pri/meeting/schedule";
@@ -66,15 +67,13 @@ async function add(req: Request, identityId: string): Promise<unknown> {
   const pl = await req.json();
   const meetingId = pl.meeting_id;
   const name = pl.name;
-  const started_at = pl.started_at;
-  const duration = pl.duration;
+  const scheduleAttr = pl.schedule_attr;
 
   return await addMeetingSchedule(
     identityId,
     meetingId,
     name,
-    started_at,
-    duration,
+    scheduleAttr,
   );
 }
 
@@ -91,16 +90,30 @@ async function update(req: Request, identityId: string): Promise<unknown> {
   const pl = await req.json();
   const scheduleId = pl.id;
   const name = pl.name;
-  const started_at = pl.started_at;
-  const duration = pl.duration;
+  const scheduleAttr = pl.schedule_attr;
 
   return await updateMeetingSchedule(
     identityId,
     scheduleId,
     name,
-    started_at,
-    duration,
+    scheduleAttr,
   );
+}
+
+// -----------------------------------------------------------------------------
+async function enable(req: Request, identityId: string): Promise<unknown> {
+  const pl = await req.json();
+  const scheduleId = pl.id;
+
+  return await updateMeetingScheduleEnabled(identityId, scheduleId, true);
+}
+
+// -----------------------------------------------------------------------------
+async function disable(req: Request, identityId: string): Promise<unknown> {
+  const pl = await req.json();
+  const scheduleId = pl.id;
+
+  return await updateMeetingScheduleEnabled(identityId, scheduleId, false);
 }
 
 // -----------------------------------------------------------------------------
@@ -123,6 +136,10 @@ export default async function (
     return await wrapper(del, req, identityId);
   } else if (path === `${PRE}/update`) {
     return await wrapper(update, req, identityId);
+  } else if (path === `${PRE}/enable`) {
+    return await wrapper(enable, req, identityId);
+  } else if (path === `${PRE}/disable`) {
+    return await wrapper(disable, req, identityId);
   } else {
     return notFound();
   }
