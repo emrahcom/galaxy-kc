@@ -11,11 +11,16 @@ export async function getMeetingMemberCandidacy(
       SELECT ca.id, m.name as meeting_name, m.info as meeting_info,
         m.schedule_type,
         array(SELECT array[started_at, ended_at]
-              FROM meeting_schedule
-              WHERE meeting_id = m.id
+              FROM meeting_session
+              WHERE meeting_schedule_id IN (SELECT id
+                                            FROM meeting_schedule
+                                            WHERE meeting_id = m.id
+                                              AND enabled
+                                           )
                 AND ended_at > now()
+              ORDER BY started_at
               LIMIT 8
-             ) as schedule_list,
+             ) as session_list,
         ca.join_as, ca.status, ca.created_at, ca.updated_at, ca.expired_at
       FROM meeting_member_candidate ca
         JOIN meeting m ON ca.meeting_id = m.id
@@ -36,23 +41,21 @@ export async function listMeetingMemberCandidacy(
   limit: number,
   offset: number,
 ) {
-  const sql0 = {
-    text: `
-      DELETE FROM meeting_member_candidate
-      WHERE expired_at < now()`,
-  };
-  await query(sql0);
-
   const sql = {
     text: `
       SELECT ca.id, m.name as meeting_name, m.info as meeting_info,
         m.schedule_type,
         array(SELECT array[started_at, ended_at]
-              FROM meeting_schedule
-              WHERE meeting_id = m.id
+              FROM meeting_session
+              WHERE meeting_schedule_id IN (SELECT id
+                                            FROM meeting_schedule
+                                            WHERE meeting_id = m.id
+                                              AND enabled
+                                           )
                 AND ended_at > now()
+              ORDER BY started_at
               LIMIT 8
-             ) as schedule_list,
+             ) as session_list,
         ca.join_as, ca.status, ca.created_at, ca.updated_at, ca.expired_at
       FROM meeting_member_candidate ca
         JOIN meeting m ON ca.meeting_id = m.id
