@@ -11,9 +11,11 @@ export const DB_USER = Deno.env.get("DB_USER") || "galaxy";
 export const DB_PASSWD = Deno.env.get("DB_PASSWD") || "";
 export const DB_HOST = Deno.env.get("DB_HOST") || "eb-postgres";
 export const DB_PORT = Number(Deno.env.get("DB_PORT") || 5432);
-export const DB_POOL_SIZE = 8;
-export const DEFAULT_LIST_SIZE = 10;
-export const MAX_LIST_SIZE = 100;
+export const DB_POOL_SIZE = Number(Deno.env.get("DB_POOL_SIZE") || 8);
+export const DEFAULT_LIST_SIZE = Number(
+  Deno.env.get("DEFAULT_LIST_SIZE") || 20,
+);
+export const MAX_LIST_SIZE = Number(Deno.env.get("MAX_LIST_SIZE") || 2000);
 
 // application
 export const GALAXY_FQDN = Deno.env.get("GALAXY_FQDN") || "";
