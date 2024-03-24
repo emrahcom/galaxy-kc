@@ -6,6 +6,7 @@ FROM node:20-alpine as builder
 WORKDIR /app
 
 COPY home/ui/galaxy-dev/package.json /app/
+COPY home/ui/galaxy-dev/yarn.lock /app/
 RUN yarn install
 
 COPY home/ui/galaxy-dev/ /app/
