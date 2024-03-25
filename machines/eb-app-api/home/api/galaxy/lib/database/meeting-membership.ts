@@ -1,4 +1,4 @@
-import { fetch, query } from "./common.ts";
+import { fetch, pool } from "./common.ts";
 import type { Id, MeetingMembership } from "./types.ts";
 
 // -----------------------------------------------------------------------------
@@ -56,6 +56,10 @@ export async function addMeetingMembershipByCode(
   profileId: string,
   code: string,
 ) {
+  using client = await pool.connect();
+  const trans = client.createTransaction("transaction");
+  await trans.begin();
+
   const sql = {
     text: `
       INSERT INTO meeting_member (identity_id, profile_id, meeting_id, join_as)
@@ -90,7 +94,7 @@ export async function addMeetingMembershipByCode(
       code,
     ],
   };
-  const rows = await fetch(sql) as Id[];
+  const { rows: rows } = await trans.queryObject(sql);
 
   // disable the invite key if the add action is successful
   // don't disable audience keys and undisposable keys
@@ -107,7 +111,7 @@ export async function addMeetingMembershipByCode(
       code,
     ],
   };
-  if (rows[0] !== undefined) await query(sql1);
+  await trans.queryObject(sql1);
 
   // add partner to the contact list
   const sql2 = {
@@ -131,7 +135,7 @@ export async function addMeetingMembershipByCode(
       code,
     ],
   };
-  if (rows[0] !== undefined) await query(sql2);
+  await trans.queryObject(sql2);
 
   // add meeting owner to the partner's contact list
   const sql3 = {
@@ -158,7 +162,7 @@ export async function addMeetingMembershipByCode(
       code,
     ],
   };
-  if (rows[0] !== undefined) await query(sql3);
+  await trans.queryObject(sql3);
 
   // remove the meeting-member candidancy if exists
   const sql4 = {
@@ -178,9 +182,11 @@ export async function addMeetingMembershipByCode(
       code,
     ],
   };
-  if (rows[0] !== undefined) await query(sql4);
+  await trans.queryObject(sql4);
 
-  return rows;
+  await trans.commit();
+
+  return rows as Id[];
 }
 
 // -----------------------------------------------------------------------------
