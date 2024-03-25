@@ -20,32 +20,26 @@ interface QueryObject {
   args?: QueryArguments;
 }
 
-const dbPool = new Pool({
-  user: DB_USER,
-  password: DB_PASSWD,
-  database: DB_NAME,
-  hostname: DB_HOST,
-  port: DB_PORT,
-}, DB_POOL_SIZE);
+export const pool = new Pool(
+  {
+    user: DB_USER,
+    password: DB_PASSWD,
+    database: DB_NAME,
+    hostname: DB_HOST,
+    port: DB_PORT,
+  },
+  DB_POOL_SIZE,
+  true,
+);
 
 // -----------------------------------------------------------------------------
 export async function query(
   sql: QueryObject,
 ): Promise<QueryObjectResult<unknown>> {
-  const db = await dbPool.connect();
+  using client = await pool.connect();
+  const rst = await client.queryObject(sql);
 
-  try {
-    const rst = await db.queryObject(sql);
-    return rst;
-  } catch (e) {
-    throw e;
-  } finally {
-    try {
-      db.release();
-    } catch {
-      // do nothing
-    }
-  }
+  return rst;
 }
 
 // -----------------------------------------------------------------------------
