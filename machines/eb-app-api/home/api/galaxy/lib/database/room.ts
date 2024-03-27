@@ -228,7 +228,7 @@ export async function addEphemeralRoom(
                )
         ),
         'room-' || md5(gen_random_uuid()::text),
-        false, true)
+        true, true)
       RETURNING id, created_at as at`,
     args: [
       identityId,
