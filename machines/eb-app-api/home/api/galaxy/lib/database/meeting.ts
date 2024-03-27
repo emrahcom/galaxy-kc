@@ -12,20 +12,16 @@ export async function getMeeting(identityId: string, meetingId: string) {
   const sql = {
     text: `
       SELECT m.id, m.name, m.info, pr.id as profile_id, pr.name as profile_name,
-        pr.email as profile_email,
-        (CASE m.schedule_type
-           WHEN 'ephemeral' THEN d.id
-         END
-        ) as domain_id,
-        d.name as domain_name,
+        pr.email as profile_email, d.id as domain_id, d.name as domain_name,
         (CASE d.auth_type
            WHEN 'jaas' THEN d.domain_attr->>'jaas_url'
            ELSE d.domain_attr->>'url'
          END
         ) as domain_url,
         d.enabled as domain_enabled, r.id as room_id, r.name as room_name,
-        r.enabled as room_enabled, m.schedule_type, m.hidden, m.restricted,
-        m.subscribable, m.enabled, m.created_at, m.updated_at
+        r.enabled as room_enabled, r.ephemeral as room_ephemeral,
+        m.schedule_type, m.hidden, m.restricted, m.subscribable, m.enabled,
+        m.created_at, m.updated_at
       FROM meeting m
         JOIN room r ON m.room_id = r.id
         JOIN domain d ON r.domain_id = d.id
@@ -292,7 +288,7 @@ export async function listMeeting(
            ELSE d.domain_attr->>'url'
          END
         ) as domain_url,
-        r.name as room_name, m.schedule_type,
+        r.name as room_name, r.ephemeral as room_ephemeral, m.schedule_type,
         (CASE m.schedule_type
            WHEN 'scheduled' THEN array(SELECT started_at
                                        FROM meeting_session
@@ -360,7 +356,7 @@ export async function listMeeting(
       UNION
 
       SELECT m.id, m.name, m.info, '' as domain_name, '' as domain_url,
-        '' as room_name, m.schedule_type,
+        '' as room_name, r.ephemeral as room_ephemeral, m.schedule_type,
         (CASE m.schedule_type
            WHEN 'scheduled' THEN array(SELECT started_at
                                        FROM meeting_session
