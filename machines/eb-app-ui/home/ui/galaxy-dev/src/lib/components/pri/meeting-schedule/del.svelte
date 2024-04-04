@@ -1,10 +1,10 @@
 <script lang="ts">
   import { FORM_WIDTH } from "$lib/config";
   import { actionById } from "$lib/api";
-  import { toInputTime } from "$lib/common";
+  import { toLocaleDate, toLocaleInterval } from "$lib/common";
   import type { MeetingSchedule } from "$lib/types";
   import Cancel from "$lib/components/common/button-cancel.svelte";
-  import Datetime from "$lib/components/common/form-datetime.svelte";
+  import Day from "$lib/components/common/form-date.svelte";
   import Submit from "$lib/components/common/button-submit.svelte";
   import SubmitBlocker from "$lib/components/common/button-submit-blocker.svelte";
   import Text from "$lib/components/common/form-text.svelte";
@@ -12,8 +12,11 @@
 
   export let p: MeetingSchedule;
 
-  const min = toInputTime();
-  let started_at = toInputTime(p.schedule_attr.started_at);
+  let date0 = toLocaleDate(p.schedule_attr.started_at);
+  let interval = toLocaleInterval(
+    p.schedule_attr.started_at,
+    Number(p.schedule_attr.duration),
+  );
   let warning = false;
 
   // ---------------------------------------------------------------------------
@@ -44,11 +47,17 @@
         disabled={true}
         readonly={true}
       />
-      <Datetime
-        name="started_at"
+      <Day
+        name="date0"
+        label="Date"
+        value={date0}
+        disabled={true}
+        readonly={true}
+      />
+      <Text
+        name="interval"
         label="Time"
-        value={started_at}
-        {min}
+        value={interval}
         disabled={true}
         readonly={true}
       />
