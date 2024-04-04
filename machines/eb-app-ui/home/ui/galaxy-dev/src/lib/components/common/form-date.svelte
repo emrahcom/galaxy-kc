@@ -1,6 +1,6 @@
 <script lang="ts">
   export let label: string;
-  export let min: string;
+  export let min = "2020-01-01";
   export let name: string;
   export let disabled = false;
   export let readonly = false;
@@ -11,7 +11,7 @@
 <!-- -------------------------------------------------------------------------->
 <div class="form-floating my-3">
   <input
-    type="datetime-local"
+    type="date"
     id={name}
     class="form-control"
     {name}
