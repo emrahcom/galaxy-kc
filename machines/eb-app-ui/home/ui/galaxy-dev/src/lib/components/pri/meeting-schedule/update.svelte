@@ -1,20 +1,22 @@
 <script lang="ts">
   import { FORM_WIDTH } from "$lib/config";
   import { action } from "$lib/api";
-  import { toInputTime } from "$lib/common";
+  import { today, toLocaleDate, toLocaleTime } from "$lib/common";
   import type { MeetingSchedule } from "$lib/types";
   import Cancel from "$lib/components/common/button-cancel.svelte";
-  import Datetime from "$lib/components/common/form-datetime.svelte";
+  import Day from "$lib/components/common/form-date.svelte";
   import Range from "$lib/components/common/form-range.svelte";
   import Submit from "$lib/components/common/button-submit.svelte";
   import SubmitBlocker from "$lib/components/common/button-submit-blocker.svelte";
   import Text from "$lib/components/common/form-text.svelte";
+  import Time from "$lib/components/common/form-time.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
   export let p: MeetingSchedule;
 
-  const min = toInputTime();
-  let started_at = toInputTime(p.schedule_attr.started_at);
+  const min = today();
+  let date0 = toLocaleDate(p.schedule_attr.started_at);
+  let time0 = toLocaleTime(p.schedule_attr.started_at);
   let duration = Number(p.schedule_attr.duration);
   let warning = false;
 
@@ -28,7 +30,7 @@
     try {
       warning = false;
 
-      const at = new Date(started_at);
+      const at = new Date(`${date0}T${time0}`);
       p.schedule_attr.started_at = at.toISOString();
       p.schedule_attr.duration = String(duration);
 
@@ -50,19 +52,14 @@
         bind:value={p.name}
         required={false}
       />
-      <Datetime
-        name="started_at"
-        label="Time"
-        bind:value={started_at}
-        {min}
-        required={true}
-      />
+      <Day name="date0" label="Date" bind:value={date0} {min} required={true} />
+      <Time name="time0" label="Time" bind:value={time0} required={true} />
       <Range
         name="duration"
         label="Duration (minutes)"
         bind:value={duration}
         min={5}
-        max={120}
+        max={180}
         step={5}
         required={true}
       />
