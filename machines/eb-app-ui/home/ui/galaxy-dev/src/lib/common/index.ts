@@ -1,3 +1,6 @@
+// -----------------------------------------------------------------------------
+// from epoch to "x days hh:mm:ss"
+// -----------------------------------------------------------------------------
 export function epochToIntervalString(time: number) {
   try {
     let sign = "";
@@ -35,20 +38,44 @@ export function epochToIntervalString(time: number) {
 }
 
 // -----------------------------------------------------------------------------
-export function toInputTime(date = "") {
-  let _time1 = new Date();
-
-  if (date) _time1 = new Date(date);
-
-  const _time2 = new Date(
-    _time1.getTime() - 60 * 1000 * _time1.getTimezoneOffset(),
-  );
-
-  return _time2.toISOString().slice(0, 16);
+// The generated value will be used in the backend to set a date object.
+// -----------------------------------------------------------------------------
+export function today() {
+  return new Date().toISOString().split("T")[0];
 }
 
 // -----------------------------------------------------------------------------
+// The generated value will be used in the backend to set a date object.
+// -----------------------------------------------------------------------------
+export function toLocaleDate(date: string) {
+  const _date = new Date(date);
+
+  return (
+    _date.getFullYear() +
+    "-" +
+    ("0" + (_date.getMonth() + 1)).slice(-2) +
+    "-" +
+    ("0" + _date.getDate()).slice(-2)
+  );
+}
+
+// -----------------------------------------------------------------------------
+// The generated value will be used in the backend to set a time object.
+// -----------------------------------------------------------------------------
 export function toLocaleTime(date: string) {
+  const _date = new Date(date);
+
+  return (
+    ("0" + _date.getHours()).slice(-2) +
+    ":" +
+    ("0" + _date.getMinutes()).slice(-2)
+  );
+}
+
+// -----------------------------------------------------------------------------
+// The generated value will be used in the frontend to show the user.
+// -----------------------------------------------------------------------------
+export function toLocaleDatetime(date: string) {
   const _date = new Date(date);
 
   return _date.toLocaleString(undefined, {
@@ -58,6 +85,24 @@ export function toLocaleTime(date: string) {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+// -----------------------------------------------------------------------------
+// to "08:30 AM - 10:00 PM"
+// -----------------------------------------------------------------------------
+export function toLocaleInterval(date: string, minutes: number) {
+  const date0 = new Date(date);
+  const date1 = new Date(date0.getTime() + minutes * 60 * 1000);
+  const time0 = date0.toLocaleString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const time1 = date1.toLocaleString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  return `${time0} - ${time1}`;
 }
 
 // -----------------------------------------------------------------------------
