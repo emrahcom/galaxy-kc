@@ -1,7 +1,13 @@
 <script lang="ts">
   import { FORM_WIDTH } from "$lib/config";
   import { action } from "$lib/api";
-  import { today, toLocaleDate, toLocaleTime } from "$lib/common";
+  import {
+    getDuration,
+    getEndTime,
+    today,
+    toLocaleDate,
+    toLocaleTime,
+  } from "$lib/common";
   import type { MeetingSchedule } from "$lib/types";
   import Cancel from "$lib/components/common/button-cancel.svelte";
   import Day from "$lib/components/common/form-date.svelte";
@@ -15,10 +21,67 @@
   export let p: MeetingSchedule;
 
   const min = today();
+  const defaultDuration = Number(p.schedule_attr.duration);
+  let duration = defaultDuration;
   let date0 = toLocaleDate(p.schedule_attr.started_at);
   let time0 = toLocaleTime(p.schedule_attr.started_at);
-  let duration = Number(p.schedule_attr.duration);
+  let time1 = getEndTime(time0, duration);
   let warning = false;
+
+  // ---------------------------------------------------------------------------
+  function startTimeUpdated() {
+    try {
+      time1 = getEndTime(time0, duration);
+    } catch {
+      //do nothing
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  function endTimeUpdated() {
+    try {
+      duration = getDuration(time0, time1);
+    } catch {
+      //do nothing
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  function durationUpdated() {
+    try {
+      const _duration = Math.round(Number(duration));
+
+      if (isNaN(_duration)) {
+        throw new Error("no valid duration");
+      } else if (_duration === 0) {
+        throw new Error("no duration");
+      } else if (_duration < 0) {
+        throw new Error("negative duration");
+      } else if (_duration > 1440) {
+        duration = 1440;
+      } else {
+        duration = _duration;
+      }
+    } catch {
+      duration = defaultDuration;
+    }
+
+    try {
+      time1 = getEndTime(time0, duration);
+    } catch {
+      //do nothing
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  function durationTyped(e: Event) {
+    try {
+      const target = e.target as HTMLInputElement;
+      time1 = getEndTime(time0, Number(target.value));
+    } catch {
+      //do nothing
+    }
+  }
 
   // ---------------------------------------------------------------------------
   function cancel() {
@@ -53,7 +116,20 @@
         required={false}
       />
       <Day name="date0" label="Date" bind:value={date0} {min} required={true} />
-      <Time name="time0" label="Time" bind:value={time0} required={true} />
+      <Time
+        name="time0"
+        label="Start time"
+        bind:value={time0}
+        required={true}
+        on:change={startTimeUpdated}
+      />
+      <Time
+        name="time1"
+        label="End time"
+        bind:value={time1}
+        required={true}
+        on:change={endTimeUpdated}
+      />
       <Range
         name="duration"
         label="Duration (minutes)"
@@ -62,6 +138,8 @@
         max={180}
         step={5}
         required={true}
+        on:change={durationUpdated}
+        on:input={durationTyped}
       />
 
       {#if warning}
