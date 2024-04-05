@@ -23,6 +23,8 @@
     {readonly}
     {required}
     tabindex={disabled || readonly ? -1 : undefined}
+    on:change
+    on:input
   />
   <label for={name}>{label}</label>
 </div>
@@ -38,4 +40,5 @@
   {max}
   {step}
   tabindex={readonly ? -1 : undefined}
+  on:input
 />
