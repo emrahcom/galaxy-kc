@@ -106,6 +106,38 @@ export function toLocaleInterval(date: string, minutes: number) {
 }
 
 // -----------------------------------------------------------------------------
+// time after M min from T
+// -----------------------------------------------------------------------------
+export function getEndTime(time: string, minutes: number) {
+  const day = today();
+  const date0 = new Date(`${day}T${time}`);
+  const date1 = new Date(date0.getTime() + minutes * 60 * 1000);
+
+  return (
+    ("0" + date1.getHours()).slice(-2) +
+    ":" +
+    ("0" + date1.getMinutes()).slice(-2)
+  );
+}
+
+// -----------------------------------------------------------------------------
+// get the duration as minutes
+// -----------------------------------------------------------------------------
+export function getDuration(time0: string, time1: string) {
+  const day = today();
+  const date0 = new Date(`${day}T${time0}`);
+  const date1 = new Date(`${day}T${time1}`);
+  const millis = date1.getTime() - date0.getTime();
+  const minutes = Math.round(millis / (1000 * 60));
+
+  if (minutes > 0) {
+    return minutes;
+  } else {
+    return 1440 + minutes;
+  }
+}
+
+// -----------------------------------------------------------------------------
 // if the time difference is less than 15 min then accept it as online
 // -----------------------------------------------------------------------------
 export function isOnline(date: string) {
