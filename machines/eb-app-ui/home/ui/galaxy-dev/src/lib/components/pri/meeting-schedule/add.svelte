@@ -2,13 +2,14 @@
   import { page } from "$app/stores";
   import { FORM_WIDTH } from "$lib/config";
   import { action } from "$lib/api";
-  import { getDuration, getEndTime, today } from "$lib/common";
+  import { getDuration, getEndTime, isEnded, today } from "$lib/common";
   import type { Meeting } from "$lib/types";
   import Cancel from "$lib/components/common/button-cancel.svelte";
   import Day from "$lib/components/common/form-date.svelte";
   import Range from "$lib/components/common/form-range.svelte";
   import Submit from "$lib/components/common/button-submit.svelte";
   import SubmitBlocker from "$lib/components/common/button-submit-blocker.svelte";
+  import Switch from "$lib/components/common/form-switch.svelte";
   import Text from "$lib/components/common/form-text.svelte";
   import Time from "$lib/components/common/form-time.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
@@ -18,9 +19,11 @@
 
   const min = today();
   const defaultDuration = 30;
+  let duration = defaultDuration;
   let date0 = today();
   let time0 = "08:30";
   let time1 = getEndTime(time0, defaultDuration);
+  let allDay = false;
 
   let warning = false;
   let p = {
@@ -29,14 +32,14 @@
     schedule_attr: {
       type: "o",
       started_at: "",
-      duration: defaultDuration,
+      duration: "",
     },
   };
 
   // ---------------------------------------------------------------------------
   function startTimeUpdated() {
     try {
-      time1 = getEndTime(time0, p.schedule_attr.duration);
+      time1 = getEndTime(time0, duration);
     } catch {
       //do nothing
     }
@@ -45,7 +48,7 @@
   // ---------------------------------------------------------------------------
   function endTimeUpdated() {
     try {
-      p.schedule_attr.duration = getDuration(time0, time1);
+      duration = getDuration(time0, time1);
     } catch {
       //do nothing
     }
@@ -54,7 +57,7 @@
   // ---------------------------------------------------------------------------
   function durationUpdated() {
     try {
-      const _duration = Math.round(Number(p.schedule_attr.duration));
+      const _duration = Math.round(Number(duration));
 
       if (isNaN(_duration)) {
         throw new Error("no valid duration");
@@ -63,16 +66,16 @@
       } else if (_duration < 0) {
         throw new Error("negative duration");
       } else if (_duration > 1440) {
-        p.schedule_attr.duration = 1440;
+        duration = 1440;
       } else {
-        p.schedule_attr.duration = _duration;
+        duration = _duration;
       }
     } catch {
-      p.schedule_attr.duration = defaultDuration;
+      duration = defaultDuration;
     }
 
     try {
-      time1 = getEndTime(time0, p.schedule_attr.duration);
+      time1 = getEndTime(time0, duration);
     } catch {
       //do nothing
     }
@@ -102,8 +105,17 @@
     try {
       warning = false;
 
+      // if all day meeting, overwrite the start time and duration
+      if (allDay) {
+        time0 = "00:00";
+        duration = 1440;
+      }
+
       const at = new Date(`${date0}T${time0}`);
+      if (isEnded(at, duration)) throw new Error("it is already over");
+
       p.schedule_attr.started_at = at.toISOString();
+      p.schedule_attr.duration = String(duration);
 
       await action("/api/pri/meeting/schedule/add", p);
 
@@ -129,31 +141,35 @@
         required={false}
       />
       <Day name="date0" label="Date" bind:value={date0} {min} required={true} />
-      <Time
-        name="time0"
-        label="Start time"
-        bind:value={time0}
-        required={true}
-        on:change={startTimeUpdated}
-      />
-      <Time
-        name="time1"
-        label="End time"
-        bind:value={time1}
-        required={true}
-        on:change={endTimeUpdated}
-      />
-      <Range
-        name="duration"
-        label="Duration (minutes)"
-        bind:value={p.schedule_attr.duration}
-        min={5}
-        max={180}
-        step={5}
-        required={true}
-        on:change={durationUpdated}
-        on:input={durationTyped}
-      />
+      <Switch name="all_day" label="All day meeting" bind:value={allDay} />
+
+      {#if !allDay}
+        <Time
+          name="time0"
+          label="Start time"
+          bind:value={time0}
+          required={true}
+          on:change={startTimeUpdated}
+        />
+        <Time
+          name="time1"
+          label="End time"
+          bind:value={time1}
+          required={true}
+          on:change={endTimeUpdated}
+        />
+        <Range
+          name="duration"
+          label="Duration (minutes)"
+          bind:value={duration}
+          min={5}
+          max={180}
+          step={5}
+          required={true}
+          on:change={durationUpdated}
+          on:input={durationTyped}
+        />
+      {/if}
 
       {#if warning}
         <Warning>
