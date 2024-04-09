@@ -182,7 +182,9 @@ export function isToday(date: string) {
 }
 
 // -----------------------------------------------------------------------------
-// It is an all day meeting if started at 00:00 and its duration is 1440 min
+// It is an all day meeting if started at 00:00 and its duration is 1440 min.
+// minutes is a string value with number content to simplyfy codes because
+// minutes is mostly available as string on UI.
 // -----------------------------------------------------------------------------
 export function isAllDay(date: string, minutes: string) {
   const _date = new Date(date);
@@ -195,7 +197,7 @@ export function isAllDay(date: string, minutes: string) {
 // -----------------------------------------------------------------------------
 // Get the start time and duration and return if it is already ended
 // -----------------------------------------------------------------------------
-export function isEnded(date: Date, minutes: number) {
+export function isOver(date: Date, minutes: number) {
   const now = new Date();
   const endTime = date.getTime() + minutes * 60 * 1000;
 
