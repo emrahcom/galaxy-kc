@@ -1,11 +1,14 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import { FORM_WIDTH } from "$lib/config";
+  import { SCHEDULE_ATTR_TYPE_OPTIONS } from "$lib/pri/meeting-schedule";
   import { action } from "$lib/api";
-  import { getDuration, getEndTime, isEnded, today } from "$lib/common";
+  import { getDuration, getEndTime, isOver, today } from "$lib/common";
   import type { Meeting } from "$lib/types";
   import Cancel from "$lib/components/common/button-cancel.svelte";
   import Day from "$lib/components/common/form-date.svelte";
+  import Numeric from "$lib/components/common/form-select-number.svelte";
+  import RadioInline from "$lib/components/common/form-radio-inline.svelte";
   import Range from "$lib/components/common/form-range.svelte";
   import Submit from "$lib/components/common/button-submit.svelte";
   import SubmitBlocker from "$lib/components/common/button-submit-blocker.svelte";
@@ -17,13 +20,15 @@
   export let meeting: Meeting;
   const hash = $page.url.hash;
 
-  const min = today();
+  const notBefore = today();
   const defaultDuration = 30;
   let duration = defaultDuration;
   let date0 = today();
   let time0 = "08:30";
   let time1 = getEndTime(time0, defaultDuration);
   let allDay = false;
+  let every = 1;
+  let times = 10;
 
   let warning = false;
   let p = {
@@ -33,6 +38,11 @@
       type: "o",
       started_at: "",
       duration: "",
+      rep_end_type: "",
+      rep_end_at: "",
+      rep_end_x: "",
+      rep_every: "",
+      rep_days: "",
     },
   };
 
@@ -101,22 +111,41 @@
   }
 
   // ---------------------------------------------------------------------------
+  function normalizeData() {
+    // if all day meeting, overwrite the start time and duration
+    if (allDay) {
+      time0 = "00:00";
+      duration = 1440;
+    }
+
+    const started_at = new Date(`${date0}T${time0}`);
+
+    if (p.schedule_attr.type === "o") {
+      // if the end time of the only session is over, throw an error
+      if (isOver(started_at, duration)) throw new Error("it is already over");
+    } else if (p.schedule_attr.type === "d") {
+      // If the end time of the last session is over, throw an error.
+      // Dont care how many sessions are over if there is still time for the
+      // last one. Count the old sessions too.
+      if (isOver(started_at, (times - 1) * every * 1440 + duration)) {
+        throw new Error("it is already over");
+      }
+
+      p.schedule_attr.rep_end_type = "x";
+      p.schedule_attr.rep_end_x = String(times);
+      p.schedule_attr.rep_every = String(every);
+    }
+
+    p.schedule_attr.started_at = started_at.toISOString();
+    p.schedule_attr.duration = String(duration);
+  }
+
+  // ---------------------------------------------------------------------------
   async function onSubmit() {
     try {
       warning = false;
 
-      // if all day meeting, overwrite the start time and duration
-      if (allDay) {
-        time0 = "00:00";
-        duration = 1440;
-      }
-
-      const at = new Date(`${date0}T${time0}`);
-      if (isEnded(at, duration)) throw new Error("it is already over");
-
-      p.schedule_attr.started_at = at.toISOString();
-      p.schedule_attr.duration = String(duration);
-
+      normalizeData();
       await action("/api/pri/meeting/schedule/add", p);
 
       if (hash === "#0") {
@@ -134,13 +163,46 @@
 <section id="add">
   <div class="d-flex mt-2 justify-content-center">
     <form on:submit|preventDefault={onSubmit} style="width:{FORM_WIDTH};">
-      <Text
-        name="name"
-        label="Tag (optional)"
-        bind:value={p.name}
-        required={false}
-      />
-      <Day name="date0" label="Date" bind:value={date0} {min} required={true} />
+      <div class="d-flex gap-3 my-5 justify-content-center">
+        <RadioInline
+          bind:value={p.schedule_attr.type}
+          options={SCHEDULE_ATTR_TYPE_OPTIONS}
+        />
+      </div>
+
+      {#if p.schedule_attr.type === "o"}
+        <Day
+          name="date0"
+          label="Date"
+          bind:value={date0}
+          min={notBefore}
+          required={true}
+        />
+      {:else if p.schedule_attr.type === "d"}
+        <Day
+          name="date0"
+          label="From"
+          bind:value={date0}
+          min={notBefore}
+          required={true}
+        />
+        <Numeric
+          id="every"
+          label="Every"
+          bind:value={every}
+          unit="day"
+          max={30}
+        />
+        <Numeric
+          id="times"
+          label="Times"
+          bind:value={times}
+          unit="time"
+          min={2}
+          max={99}
+        />
+      {/if}
+
       <Switch name="all_day" label="All day meeting" bind:value={allDay} />
 
       {#if !allDay}
@@ -170,6 +232,13 @@
           on:input={durationTyped}
         />
       {/if}
+
+      <Text
+        name="name"
+        label="Label (optional)"
+        bind:value={p.name}
+        required={false}
+      />
 
       {#if warning}
         <Warning>
