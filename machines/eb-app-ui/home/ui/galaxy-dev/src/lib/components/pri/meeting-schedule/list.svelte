@@ -22,13 +22,13 @@
           <div class="card-body text-center">
             {#if isAllDay(p.schedule_attr.started_at, p.schedule_attr.duration)}
               <h5 class="card-title text-muted">
-                {showLocaleDate(p.schedule_attr.started_at)}
+                {showLocaleDate(p.session_at)}
               </h5>
 
               <p class="card-text text-muted">All day</p>
             {:else}
               <h5 class="card-title text-muted">
-                {showLocaleDatetime(p.schedule_attr.started_at)}
+                {showLocaleDatetime(p.session_at)}
               </h5>
 
               <p class="card-text text-muted">
@@ -38,6 +38,21 @@
 
             {#if p.name}
               <p class="card-text text-muted">{p.name}</p>
+            {/if}
+
+            {#if p.schedule_attr.type === "d"}
+              {#if p.session_remaining === 1}
+                <p class="card-text text-muted">last session of the series</p>
+              {:else if p.schedule_attr.rep_every === "1"}
+                <p class="card-text text-muted">
+                  repeat every day, {p.session_remaining} times
+                </p>
+              {:else}
+                <p class="card-text text-muted">
+                  repeat every {p.schedule_attr.rep_every} days,
+                  {p.session_remaining} times
+                </p>
+              {/if}
             {/if}
           </div>
 
