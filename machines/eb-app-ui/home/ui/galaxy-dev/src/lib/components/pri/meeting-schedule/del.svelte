@@ -12,12 +12,28 @@
 
   export let p: MeetingSchedule;
 
-  let date0 = toLocaleDate(p.schedule_attr.started_at);
-  let interval = toLocaleInterval(
+  const date0 = toLocaleDate(p.schedule_attr.started_at);
+  const interval = toLocaleInterval(
     p.schedule_attr.started_at,
     Number(p.schedule_attr.duration),
   );
+  let every = "";
+  let times = "";
   let warning = false;
+
+  if (p.schedule_attr.type === "d") {
+    if (p.schedule_attr.rep_every === "1") {
+      every = "1 day";
+    } else {
+      every = `${p.schedule_attr.rep_every} days`;
+    }
+
+    if (p.schedule_attr.rep_end_x === "1") {
+      times = "1 time";
+    } else {
+      times = `${p.schedule_attr.rep_end_x} times`;
+    }
+  }
 
   // ---------------------------------------------------------------------------
   function cancel() {
@@ -40,20 +56,37 @@
 <section id="del">
   <div class="d-flex mt-2 justify-content-center">
     <form on:submit|preventDefault={onSubmit} style="width:{FORM_WIDTH};">
-      <Text
-        name="name"
-        label="Tag (optional)"
-        value={p.name}
-        disabled={true}
-        readonly={true}
-      />
-      <Day
-        name="date0"
-        label="Date"
-        value={date0}
-        disabled={true}
-        readonly={true}
-      />
+      {#if p.schedule_attr.type === "o"}
+        <Day
+          name="date0"
+          label="Date"
+          value={date0}
+          disabled={true}
+          readonly={true}
+        />
+      {:else if p.schedule_attr.type === "d"}
+        <Day
+          name="date0"
+          label="From"
+          value={date0}
+          disabled={true}
+          readonly={true}
+        />
+        <Text
+          name="every"
+          label="Every"
+          value={every}
+          disabled={true}
+          readonly={true}
+        />
+        <Text
+          name="times"
+          label="Times"
+          value={times}
+          disabled={true}
+          readonly={true}
+        />
+      {/if}
 
       {#if isAllDay(p.schedule_attr.started_at, p.schedule_attr.duration)}
         <Text
@@ -75,6 +108,16 @@
           name="duration"
           label="Duration (minutes)"
           value={`${p.schedule_attr.duration}`}
+          disabled={true}
+          readonly={true}
+        />
+      {/if}
+
+      {#if p.name}
+        <Text
+          name="name"
+          label="Label"
+          value={p.name}
           disabled={true}
           readonly={true}
         />
