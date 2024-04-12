@@ -2,12 +2,24 @@ import { Transaction } from "https://deno.land/x/postgres@v0.19.3/mod.ts";
 import type { Attr } from "./types.ts";
 
 // -----------------------------------------------------------------------------
+function isOver(date: string, minutes: number) {
+  const now = new Date();
+  const time = new Date(date);
+  const epoch = time.getTime() + minutes * 60 * 1000;
+
+  return now.getTime() > epoch;
+}
+
+// -----------------------------------------------------------------------------
 function checkScheduleAttrOnce(scheduleAttr: Attr) {
   if (Number(scheduleAttr.duration) < 1) {
     throw new Error("duration is out of range");
   }
   if (Number(scheduleAttr.duration) > 1440) {
     throw new Error("duration is out of range");
+  }
+  if (isOver(scheduleAttr.started_at, Number(scheduleAttr.duration))) {
+    throw new Error("it is already over");
   }
 }
 
@@ -34,6 +46,15 @@ function checkScheduleAttrDaily(scheduleAttr: Attr) {
   if (Number(scheduleAttr.rep_every) > 30) {
     throw new Error("rep_every is out of range");
   }
+  if (
+    isOver(
+      scheduleAttr.started_at,
+      (Number(scheduleAttr.rep_end_x) - 1) * Number(scheduleAttr.rep_every) *
+          24 * 60 + Number(scheduleAttr.duration),
+    )
+  ) {
+    throw new Error("it is already over");
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -44,6 +65,31 @@ function checkScheduleAttrWeekly(scheduleAttr: Attr) {
   if (Number(scheduleAttr.duration) > 1440) {
     throw new Error("duration is out of range");
   }
+  if (scheduleAttr.rep_end_type !== "at") {
+    throw new Error("wrong rep_end_type");
+  }
+  if (!scheduleAttr.rep_days.match("^[01]{7}$")) {
+    throw new Error("wrong rep_days");
+  }
+  if (Number(scheduleAttr.rep_every) < 1) {
+    throw new Error("rep_every is out of range");
+  }
+  if (Number(scheduleAttr.rep_every) > 30) {
+    throw new Error("rep_every is out of range");
+  }
+  if (scheduleAttr.started_at > scheduleAttr.rep_end_at) {
+    throw new Error("invalid period");
+  }
+  if (isOver(scheduleAttr.rep_end_at, 0)) {
+    throw new Error("it is already over");
+  }
+}
+
+// -----------------------------------------------------------------------------
+// the first date (sunday) of the week to which the given date is belong
+// -----------------------------------------------------------------------------
+function getFirstDateOfInterval(date: Date) {
+  return new Date(date.getTime() - date.getDay() * 24 * 60 * 60 * 1000);
 }
 
 // -----------------------------------------------------------------------------
@@ -94,6 +140,7 @@ async function addMeetingSessionDaily(
 ) {
   const now = new Date();
   const started_at = new Date(scheduleAttr.started_at);
+  let counter = 0;
 
   for (let i = 0; i < Number(scheduleAttr.rep_end_x); i++) {
     const session_start = started_at.getTime() +
@@ -120,7 +167,10 @@ async function addMeetingSessionDaily(
     };
 
     await trans.queryObject(sql);
+    counter = counter + 1;
   }
+
+  if (counter === 0) throw new Error("no inserted session");
 }
 
 // -----------------------------------------------------------------------------
@@ -131,10 +181,48 @@ async function addMeetingSessionWeekly(
   meetingScheduleId: string,
   scheduleAttr: Attr,
 ) {
-  // not implemented yet
-  await console.log(trans);
-  await console.log(meetingScheduleId);
-  await console.log(scheduleAttr);
+  const now = new Date();
+  const started_at = new Date(scheduleAttr.started_at);
+  const ended_at = new Date(scheduleAttr.rep_end_at);
+  const firstDateOfInterval = getFirstDateOfInterval(started_at);
+  let counter = 0;
+
+  // loop in days of week (from Sunday (0) to Saturday (6))
+  for (let i = 0; i < 7; i++) {
+    // if this is not a selected day, skip it
+    if (scheduleAttr.rep_days[i] !== "1") continue;
+
+    let session_start = firstDateOfInterval.getTime() + i * 24 * 60 * 60 * 1000;
+    while (session_start < ended_at.getTime()) {
+      const at = new Date(session_start);
+      const sql = {
+        text: `
+          INSERT INTO meeting_session (meeting_schedule_id, started_at,
+            duration, ended_at)
+          VALUES ($1, $2, $3,
+            $2::timestamptz + $3::integer * interval '1 min')
+          RETURNING id, created_at as at`,
+        args: [
+          meetingScheduleId,
+          at.toISOString(),
+          scheduleAttr.duration,
+        ],
+      };
+
+      const session_end = session_start +
+        Number(scheduleAttr.duration) * 60 * 1000;
+      if (started_at.getTime() < session_start && now.getTime() < session_end) {
+        await trans.queryObject(sql);
+        counter = counter + 1;
+      }
+
+      // jump to the next week depending on the repeat interval (every)
+      session_start = session_start +
+        Number(scheduleAttr.rep_every) * 7 * 24 * 60 * 60 * 1000;
+    }
+  }
+
+  if (counter === 0) throw new Error("no inserted session");
 }
 
 // -----------------------------------------------------------------------------
