@@ -38,7 +38,8 @@ export function epochToIntervalString(time: number) {
 }
 
 // -----------------------------------------------------------------------------
-// The generated value will be used in the backend to set a date object.
+// The generated value will be used in the backend to set a date string.
+// YYYY-MM-DD
 // -----------------------------------------------------------------------------
 export function today() {
   const now = new Date();
@@ -53,7 +54,44 @@ export function today() {
 }
 
 // -----------------------------------------------------------------------------
-// The generated value will be used in the backend to set a date object.
+// The generated value will be used in the backend to set a date string.
+// YYYY-MM-DD
+// -----------------------------------------------------------------------------
+export function dateAfterXDays(days: number) {
+  const now = new Date();
+  const date = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+
+  return (
+    date.getFullYear() +
+    "-" +
+    ("0" + (date.getMonth() + 1)).slice(-2) +
+    "-" +
+    ("0" + date.getDate()).slice(-2)
+  );
+}
+
+// -----------------------------------------------------------------------------
+// The generated value will be used in the backend to set a date string.
+// Saturday is assumed as the last day of the week.
+// YYYY-MM-DD
+// -----------------------------------------------------------------------------
+export function lastDayOfWeek(date: string) {
+  const _date = new Date(date);
+  const diff = 6 - _date.getDay();
+  const saturday = new Date(_date.getTime() + diff * 24 * 60 * 60 * 1000);
+
+  return (
+    saturday.getFullYear() +
+    "-" +
+    ("0" + (saturday.getMonth() + 1)).slice(-2) +
+    "-" +
+    ("0" + saturday.getDate()).slice(-2)
+  );
+}
+
+// -----------------------------------------------------------------------------
+// The generated value will be used in the backend to set a date string.
+// YYYY-MM-DD
 // -----------------------------------------------------------------------------
 export function toLocaleDate(date: string) {
   const _date = new Date(date);
@@ -68,7 +106,8 @@ export function toLocaleDate(date: string) {
 }
 
 // -----------------------------------------------------------------------------
-// The generated value will be used in the backend to set a time object.
+// The generated value will be used in the backend to set a time string.
+// HH:MM
 // -----------------------------------------------------------------------------
 export function toLocaleTime(date: string) {
   const _date = new Date(date);
@@ -81,7 +120,7 @@ export function toLocaleTime(date: string) {
 }
 
 // -----------------------------------------------------------------------------
-// The generated value will be used in the frontend to show the user.
+// The generated value will be used in the frontend as date in local format.
 // -----------------------------------------------------------------------------
 export function showLocaleDate(date: string) {
   const _date = new Date(date);
@@ -94,7 +133,7 @@ export function showLocaleDate(date: string) {
 }
 
 // -----------------------------------------------------------------------------
-// The generated value will be used in the frontend to show the user.
+// The generated value will be used in the frontend as datetime in local format.
 // -----------------------------------------------------------------------------
 export function showLocaleDatetime(date: string) {
   const _date = new Date(date);
@@ -109,7 +148,7 @@ export function showLocaleDatetime(date: string) {
 }
 
 // -----------------------------------------------------------------------------
-// to "08:30 AM - 10:00 PM"
+// to "08:30 AM - 10:00 PM" for the frontend.
 // -----------------------------------------------------------------------------
 export function toLocaleInterval(date: string, minutes: number) {
   const date0 = new Date(date);
@@ -127,7 +166,8 @@ export function toLocaleInterval(date: string, minutes: number) {
 }
 
 // -----------------------------------------------------------------------------
-// time after M min from T
+// time after M min from T as time string.
+// HH:MM
 // -----------------------------------------------------------------------------
 export function getEndTime(time: string, minutes: number) {
   const day = today();
@@ -142,7 +182,7 @@ export function getEndTime(time: string, minutes: number) {
 }
 
 // -----------------------------------------------------------------------------
-// get the duration as minutes
+// get the duration as minutes (number)
 // -----------------------------------------------------------------------------
 export function getDuration(time0: string, time1: string) {
   const day = today();
@@ -182,9 +222,9 @@ export function isToday(date: string) {
 }
 
 // -----------------------------------------------------------------------------
-// It is an all day meeting if started at 00:00 and its duration is 1440 min.
-// minutes is a string value with number content to simplyfy codes because
-// minutes is mostly available as string on UI.
+// It is an all day meeting if started at 00:00 (in local time) and its duration
+// is 1440 min. Minutes is a string value with a number content to simplify
+// codes because minutes is mostly available as string on UI.
 // -----------------------------------------------------------------------------
 export function isAllDay(date: string, minutes: string) {
   const _date = new Date(date);
