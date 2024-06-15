@@ -41,7 +41,7 @@ export function epochToIntervalString(time: number) {
 // The generated value will be used in the backend to set a date string.
 // YYYY-MM-DD
 // -----------------------------------------------------------------------------
-export function today() {
+export function getToday() {
   const now = new Date();
 
   return (
@@ -59,7 +59,9 @@ export function today() {
 // -----------------------------------------------------------------------------
 export function dateAfterXDays(days: number) {
   const now = new Date();
+
   const date = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+  if (isNaN(date.getTime())) throw new Error("invalid date");
 
   return (
     date.getFullYear() +
@@ -72,11 +74,54 @@ export function dateAfterXDays(days: number) {
 
 // -----------------------------------------------------------------------------
 // The generated value will be used in the backend to set a date string.
+// YYYY-MM-DD
+// -----------------------------------------------------------------------------
+export function getFirstDayOfMonth(date: string) {
+  const _date = new Date(date);
+  if (isNaN(_date.getTime())) throw new Error("invalid date");
+
+  const diff = _date.getDate() - 1;
+  const first = new Date(_date.getTime() - diff * 24 * 60 * 60 * 1000);
+
+  return (
+    first.getFullYear() +
+    "-" +
+    ("0" + (first.getMonth() + 1)).slice(-2) +
+    "-" +
+    ("0" + first.getDate()).slice(-2)
+  );
+}
+
+// -----------------------------------------------------------------------------
+// The generated value will be used in the backend to set a date string.
+// Sunday is assumed as the first day of the week.
+// YYYY-MM-DD
+// -----------------------------------------------------------------------------
+export function getFirstDayOfWeek(date: string) {
+  const _date = new Date(date);
+  if (isNaN(_date.getTime())) throw new Error("invalid date");
+
+  const diff = _date.getDay();
+  const sunday = new Date(_date.getTime() - diff * 24 * 60 * 60 * 1000);
+
+  return (
+    sunday.getFullYear() +
+    "-" +
+    ("0" + (sunday.getMonth() + 1)).slice(-2) +
+    "-" +
+    ("0" + sunday.getDate()).slice(-2)
+  );
+}
+
+// -----------------------------------------------------------------------------
+// The generated value will be used in the backend to set a date string.
 // Saturday is assumed as the last day of the week.
 // YYYY-MM-DD
 // -----------------------------------------------------------------------------
-export function lastDayOfWeek(date: string) {
+export function getLastDayOfWeek(date: string) {
   const _date = new Date(date);
+  if (isNaN(_date.getTime())) throw new Error("invalid date");
+
   const diff = 6 - _date.getDay();
   const saturday = new Date(_date.getTime() + diff * 24 * 60 * 60 * 1000);
 
@@ -90,11 +135,35 @@ export function lastDayOfWeek(date: string) {
 }
 
 // -----------------------------------------------------------------------------
+// Get the future day after weeks and days from the first day.
+// YYYY-MM-DD
+// -----------------------------------------------------------------------------
+export function getCalendarDay(firstDay: string, week: number, day: number) {
+  const date0 = new Date(firstDay);
+  if (isNaN(date0.getTime())) throw new Error("invalid date");
+
+  const date1 = new Date(
+    date0.getTime() +
+      week * 7 * 24 * 60 * 60 * 1000 +
+      day * 24 * 60 * 60 * 1000,
+  );
+
+  return (
+    date1.getFullYear() +
+    "-" +
+    ("0" + (date1.getMonth() + 1)).slice(-2) +
+    "-" +
+    ("0" + date1.getDate()).slice(-2)
+  );
+}
+
+// -----------------------------------------------------------------------------
 // The generated value will be used in the backend to set a date string.
 // YYYY-MM-DD
 // -----------------------------------------------------------------------------
 export function toLocaleDate(date: string) {
   const _date = new Date(date);
+  if (isNaN(_date.getTime())) throw new Error("invalid date");
 
   return (
     _date.getFullYear() +
@@ -111,6 +180,7 @@ export function toLocaleDate(date: string) {
 // -----------------------------------------------------------------------------
 export function toLocaleTime(date: string) {
   const _date = new Date(date);
+  if (isNaN(_date.getTime())) throw new Error("invalid date");
 
   return (
     ("0" + _date.getHours()).slice(-2) +
@@ -120,10 +190,21 @@ export function toLocaleTime(date: string) {
 }
 
 // -----------------------------------------------------------------------------
+// e.g. "02" -> "Feb"
+// -----------------------------------------------------------------------------
+export function toLocaleMonthName(date: string) {
+  const _date = new Date(date);
+  if (isNaN(_date.getTime())) throw new Error("invalid date");
+
+  return _date.toLocaleString("default", { month: "short" });
+}
+
+// -----------------------------------------------------------------------------
 // The generated value will be used in the frontend as date in local format.
 // -----------------------------------------------------------------------------
 export function showLocaleDate(date: string) {
   const _date = new Date(date);
+  if (isNaN(_date.getTime())) throw new Error("invalid date");
 
   return _date.toLocaleString(undefined, {
     year: "numeric",
@@ -137,6 +218,7 @@ export function showLocaleDate(date: string) {
 // -----------------------------------------------------------------------------
 export function showLocaleDatetime(date: string) {
   const _date = new Date(date);
+  if (isNaN(_date.getTime())) throw new Error("invalid date");
 
   return _date.toLocaleString(undefined, {
     year: "numeric",
@@ -152,7 +234,11 @@ export function showLocaleDatetime(date: string) {
 // -----------------------------------------------------------------------------
 export function toLocaleInterval(date: string, minutes: number) {
   const date0 = new Date(date);
+  if (isNaN(date0.getTime())) throw new Error("invalid date");
+
   const date1 = new Date(date0.getTime() + minutes * 60 * 1000);
+  if (isNaN(date1.getTime())) throw new Error("invalid date");
+
   const time0 = date0.toLocaleString(undefined, {
     hour: "2-digit",
     minute: "2-digit",
@@ -170,9 +256,13 @@ export function toLocaleInterval(date: string, minutes: number) {
 // HH:MM
 // -----------------------------------------------------------------------------
 export function getEndTime(time: string, minutes: number) {
-  const day = today();
-  const date0 = new Date(`${day}T${time}`);
+  const today = getToday();
+
+  const date0 = new Date(`${today}T${time}`);
+  if (isNaN(date0.getTime())) throw new Error("invalid date");
+
   const date1 = new Date(date0.getTime() + minutes * 60 * 1000);
+  if (isNaN(date1.getTime())) throw new Error("invalid date");
 
   return (
     ("0" + date1.getHours()).slice(-2) +
@@ -185,9 +275,14 @@ export function getEndTime(time: string, minutes: number) {
 // get the duration as minutes (number)
 // -----------------------------------------------------------------------------
 export function getDuration(time0: string, time1: string) {
-  const day = today();
-  const date0 = new Date(`${day}T${time0}`);
-  const date1 = new Date(`${day}T${time1}`);
+  const today = getToday();
+
+  const date0 = new Date(`${today}T${time0}`);
+  if (isNaN(date0.getTime())) throw new Error("invalid date");
+
+  const date1 = new Date(`${today}T${time1}`);
+  if (isNaN(date1.getTime())) throw new Error("invalid date");
+
   const millis = date1.getTime() - date0.getTime();
   const minutes = Math.round(millis / (1000 * 60));
 
@@ -203,7 +298,10 @@ export function getDuration(time0: string, time1: string) {
 // -----------------------------------------------------------------------------
 export function isOnline(date: string) {
   const now = new Date();
+
   const _date = new Date(date);
+  if (isNaN(_date.getTime())) throw new Error("invalid date");
+
   const diff = _date.getTime() - now.getTime();
 
   return diff < 15 * 60 * 1000;
@@ -212,7 +310,9 @@ export function isOnline(date: string) {
 // -----------------------------------------------------------------------------
 export function isToday(date: string) {
   const now = new Date();
+
   const _date = new Date(date);
+  if (isNaN(_date.getTime())) throw new Error("invalid date");
 
   return (
     _date.getFullYear() === now.getFullYear() &&
@@ -228,6 +328,7 @@ export function isToday(date: string) {
 // -----------------------------------------------------------------------------
 export function isAllDay(date: string, minutes: string) {
   const _date = new Date(date);
+  if (isNaN(_date.getTime())) throw new Error("invalid date");
 
   return (
     _date.getHours() === 0 && _date.getMinutes() === 0 && minutes === "1440"
@@ -238,6 +339,8 @@ export function isAllDay(date: string, minutes: string) {
 // Get the start time and duration and return if it is already ended
 // -----------------------------------------------------------------------------
 export function isOver(date: Date, minutes: number) {
+  if (isNaN(date.getTime())) throw new Error("invalid date");
+
   const now = new Date();
   const endTime = date.getTime() + minutes * 60 * 1000;
 
