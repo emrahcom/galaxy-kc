@@ -1,4 +1,9 @@
 import { checkAttr, fetch, pool } from "./common.ts";
+import {
+  addMeetingSession,
+  checkScheduleAttr,
+  delMeetingSessionBySchedule,
+} from "./meeting-session.ts";
 import type {
   Attr,
   Id,
@@ -6,11 +11,6 @@ import type {
   MeetingSchedule111,
   MeetingSchedule222,
 } from "./types.ts";
-import {
-  addMeetingSession,
-  checkScheduleAttr,
-  delMeetingSessionBySchedule,
-} from "./meeting-session.ts";
 
 // -----------------------------------------------------------------------------
 export async function getMeetingSchedule(
@@ -51,10 +51,10 @@ export async function getMeetingScheduleByMeeting(
 ) {
   const sql = {
     text: `
-      SELECT m.id, m.name as meeting_name, m.info as meeting_info,
+      SELECT m.id as meeting_id, m.name as meeting_name, m.info as meeting_info,
         s.name as schedule_name, ses.started_at, ses.ended_at, ses.duration,
         extract('epoch' from age(ses.started_at, now()))::integer
-        as waiting_time, 'host' as join_as
+        as waiting_time, 'host' as join_as, '' as membership_id
       FROM meeting m
         JOIN room r ON m.room_id = r.id
                        AND r.enabled
@@ -111,14 +111,14 @@ export async function getMeetingScheduleByMembership(
 ) {
   const sql = {
     text: `
-      SELECT mem.id, m.name as meeting_name, m.info as meeting_info,
+      SELECT m.id as meeting_id, m.name as meeting_name, m.info as meeting_info,
         s.name as schedule_name, ses.started_at, ses.ended_at, ses.duration,
         extract('epoch' from age(ses.started_at, now()))::integer
           + CASE mem.join_as
               WHEN 'host' THEN 0
-              WHEN 'guest' THEN 3 + floor(random()*27)
+              WHEN 'guest' THEN 3 + floor(random()*17)
             END as waiting_time,
-        mem.join_as
+        mem.join_as, mem.id as membership_id
       FROM meeting_member mem
         JOIN meeting m ON mem.meeting_id = m.id
                           AND m.enabled
@@ -179,7 +179,7 @@ export async function getMeetingScheduleByCode(code: string) {
         extract('epoch' from age(ses.started_at, now()))::integer
           + CASE iv.join_as
               WHEN 'host' THEN 0
-              WHEN 'guest' THEN 3 + floor(random()*27)
+              WHEN 'guest' THEN 3 + floor(random()*17)
             END as waiting_time,
         iv.join_as
       FROM meeting_invite iv
