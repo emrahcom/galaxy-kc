@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import { FORM_WIDTH } from "$lib/config";
   import { epochToIntervalString, showLocaleDatetime } from "$lib/common";
   import { getById } from "$lib/api";
@@ -8,6 +9,7 @@
   import Warning from "$lib/components/common/alert-warning.svelte";
 
   export let p: MeetingSchedule222;
+  const hash = $page.url.hash;
   const REFRESH_SEC = 60;
 
   let warning = false;
@@ -22,7 +24,7 @@
     const interval = (started_at.getTime() - Date.now()) / 1000;
 
     if (interval < 0) {
-      join(p.id);
+      join(p.meeting_id);
       return;
     }
 
@@ -30,7 +32,7 @@
     if (counter > REFRESH_SEC) {
       counter = 0;
 
-      await getById("/api/pri/meeting/schedule/get/bymeeting", p.id)
+      await getById("/api/pri/meeting/schedule/get/bymeeting", p.meeting_id)
         .then((s) => {
           p = s;
           started_at = new Date(Date.now() + p.waiting_time * 1000);
@@ -47,7 +49,12 @@
 
   // ---------------------------------------------------------------------------
   function goBack() {
-    window.location.href = `/pri/meeting`;
+    if (hash.match("^#[0-9]{4}-[01][0-9]-[0123][0-9]$")) {
+      const day = hash.slice(1);
+      window.location.href = `/pri/calendar/month/${day}`;
+    } else {
+      window.location.href = `/pri/meeting`;
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -97,7 +104,7 @@
           <Join
             label="Join Now"
             on:click={() => {
-              join(p.id);
+              join(p.meeting_id);
             }}
           />
         </div>
