@@ -67,3 +67,5 @@
 - Check the result of GitHub actions
 
 - Run and test a system using `docker-compose`
+
+- Switch back to `dev` branch
