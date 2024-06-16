@@ -23,10 +23,9 @@
   diff -qr ~/git-repo/galaxy/machines/eb-app-api/home/api/galaxy galaxy
   diff -ur ~/git-repo/galaxy/machines/eb-app-api/home/api/galaxy galaxy | less
 
-  cd ~/git-repo/galaxy-kc/machines/eb-app-ui/home/ui
-  diff -qr ~/git-repo/galaxy/machines/eb-app-ui/home/ui/galaxy-dev galaxy-dev
-  diff -ur ~/git-repo/galaxy/machines/eb-app-ui/home/ui/galaxy-dev \
-    galaxy-dev | less
+  cd ~/git-repo/galaxy-kc/machines/eb-app-ui/home/ui/galaxy-dev/src
+  diff -qr ~/git-repo/galaxy/machines/eb-app-ui/home/ui/galaxy-dev/src .
+  diff -ur ~/git-repo/galaxy/machines/eb-app-ui/home/ui/galaxy-dev/src . | less
 
   diff -qr ~/git-repo/galaxy/machines/eb-app-api \
     ~/git-repo/galaxy-kc/machines/eb-app-api
