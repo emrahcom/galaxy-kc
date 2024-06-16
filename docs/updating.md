@@ -3,11 +3,8 @@
 - Changes are first applied to `dev` branch of
   [Galaxy](https://github.com/emrahcom/galaxy)
 
-- If they are passed all the tests, they will be merged into `main` branch of
-  [Galaxy](https://github.com/emrahcom/galaxy)
-
 - Find the last commit in [Galaxy](https://github.com/emrahcom/galaxy)
-  transfered to `dev` branch of `galaxy-kc`
+  transfered to `dev` branch of `galaxy-kc`. Do this before merging.
 
 - Find all changed files since this commit in
   [Galaxy](https://github.com/emrahcom/galaxy):
@@ -60,7 +57,11 @@
   yarn run lint
   ```
 
-- Install a test system using `dev` branch and test it
+- Install a test system using `dev` branch of
+  [Galaxy](https://github.com/emrahcom/galaxy) and test it. If they are passed
+  all the tests, they will be merged into `main` branch.
+
+- Install a test system using `dev` branch of `galaxy-kc` and test it
 
 - Merge changes to `main` branch
 
