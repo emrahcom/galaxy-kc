@@ -68,4 +68,4 @@
 
 - Run a system using `docker-compose` and test it
 
-- Switch back to `dev` branch
+- Switch back to `dev` branch in the local repo for future updates
