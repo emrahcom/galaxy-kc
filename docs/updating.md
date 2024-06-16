@@ -60,7 +60,7 @@
   yarn run lint
   ```
 
-- Install a test system and test it using `dev` branch
+- Install a test system using `dev` branch and test it
 
 - Merge changes to `main` branch
 
