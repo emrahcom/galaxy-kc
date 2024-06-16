@@ -21,21 +21,22 @@
   ```bash
   cd ~/git-repo/galaxy-kc/machines/eb-app-api/home/api
   diff -qr ~/git-repo/galaxy/machines/eb-app-api/home/api/galaxy galaxy
-  diff -ur ~/git-repo/galaxy/machines/eb-app-api/home/api/galaxy galaxy
+  diff -ur ~/git-repo/galaxy/machines/eb-app-api/home/api/galaxy galaxy | less
 
   cd ~/git-repo/galaxy-kc/machines/eb-app-ui/home/ui
   diff -qr ~/git-repo/galaxy/machines/eb-app-ui/home/ui/galaxy-dev galaxy-dev
-  diff -ur ~/git-repo/galaxy/machines/eb-app-ui/home/ui/galaxy-dev galaxy-dev
+  diff -ur ~/git-repo/galaxy/machines/eb-app-ui/home/ui/galaxy-dev \
+    galaxy-dev | less
 
   diff -qr ~/git-repo/galaxy/machines/eb-app-api \
     ~/git-repo/galaxy-kc/machines/eb-app-api
   diff -ur ~/git-repo/galaxy/machines/eb-app-api \
-    ~/git-repo/galaxy-kc/machines/eb-app-api
+    ~/git-repo/galaxy-kc/machines/eb-app-api | less
 
   diff -qr ~/git-repo/galaxy/machines/eb-app-ui \
     ~/git-repo/galaxy-kc/machines/eb-app-ui
   diff -ur ~/git-repo/galaxy/machines/eb-app-ui \
-    ~/git-repo/galaxy-kc/machines/eb-app-ui
+    ~/git-repo/galaxy-kc/machines/eb-app-ui | less
   ```
 
 - Check `eb-app-api`
