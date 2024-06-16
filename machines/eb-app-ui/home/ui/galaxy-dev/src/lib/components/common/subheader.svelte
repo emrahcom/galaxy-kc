@@ -3,54 +3,82 @@
   export let hrefBack = "";
   export let hrefCalendar = "";
   export let hrefMeeting = "";
+  export let hrefNext = "";
+  export let hrefPrevious = "";
   export let subheader = "";
 </script>
 
 <!-- -------------------------------------------------------------------------->
 <section id="subheader">
   <div class="d-flex">
-    <h3 class="text-muted my-auto">{subheader}</h3>
+    <h3 class="text-muted my-auto" style="min-width:180px">{subheader}</h3>
 
-    {#if hrefBack}
-      <a
-        class="btn btn-outline-secondary ms-4 me-auto my-auto"
-        role="button"
-        href={hrefBack}
-      >
-        <span class="bi bi-arrow-return-left" />
-      </a>
-    {/if}
+    <div class="ms-4 me-auto my-auto">
+      {#if hrefBack}
+        <button
+          class="btn btn-outline-secondary"
+          on:click={() => {
+            window.location.href = hrefBack;
+          }}
+        >
+          <span class="bi bi-arrow-return-left" />
+        </button>
+      {/if}
 
-    <div class="ms-5 me-auto my-auto">
       {#if hrefMeeting}
-        <a
-          class="btn btn-outline-secondary ms-0 me-auto"
-          role="button"
-          href={hrefMeeting}
+        <button
+          class="btn btn-outline-secondary"
+          on:click={() => {
+            window.location.href = hrefMeeting;
+          }}
         >
           <span class="bi bi-pencil" />
-        </a>
+        </button>
       {/if}
 
       {#if hrefCalendar}
-        <a
-          class="btn btn-outline-secondary ms-0 me-auto"
-          role="button"
-          href={hrefCalendar}
+        <button
+          class="btn btn-outline-secondary"
+          on:click={() => {
+            window.location.href = hrefCalendar;
+          }}
         >
           <span class="bi bi-calendar3" />
-        </a>
+        </button>
+      {/if}
+
+      {#if hrefPrevious}
+        <button
+          class="btn btn-outline-secondary ms-3 me-auto"
+          on:click={() => {
+            window.location.href = hrefPrevious;
+          }}
+        >
+          <span class="bi bi-chevron-left" />
+        </button>
+      {/if}
+
+      {#if hrefNext}
+        <button
+          class="btn btn-outline-secondary"
+          on:click={() => {
+            window.location.href = hrefNext;
+          }}
+        >
+          <span class="bi bi-chevron-right" />
+        </button>
       {/if}
     </div>
 
     {#if hrefAdd}
-      <a
+      <button
         class="btn btn-outline-secondary ms-auto me-2 my-auto"
-        role="button"
-        href={hrefAdd}
+        on:click={() => {
+          window.location.href = hrefAdd;
+        }}
       >
         <span class="bi bi-plus-lg" />
-      </a>
+      </button>
     {/if}
   </div>
 </section>
