@@ -6,18 +6,18 @@
 - If they are passed all the tests, they will be merged into `main` branch of
   [Galaxy](https://github.com/emrahcom/galaxy)
 
-- Find the last commit transfered to `dev` branch of
-  [Galaxy-kc](https://github.com/emrahcom/galaxy-kc)
+- Find the last commit in [Galaxy](https://github.com/emrahcom/galaxy)
+  transfered to `dev` branch of `galaxy-kc`
 
-- Find all changed files since this commit:
+- Find all changed files since this commit in
+  [Galaxy](https://github.com/emrahcom/galaxy):
 
   ```bash
   git diff --name-only <COMMIT-SHA>
   ```
 
-- Syncronize changed files with `dev` branch of
-  [Galaxy-kc](https://github.com/emrahcom/galaxy-kc). For files which are not
-  customized for `galaxy-kc`, just copy them.
+- Syncronize changed files with `galaxy-kc`'s `dev` branch. For files which are
+  not customized for `galaxy-kc`, just copy them.
 
 - Check the differed files and differences at the end:
 
