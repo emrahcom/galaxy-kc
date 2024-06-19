@@ -1,5 +1,5 @@
 import { getCookies } from "https://deno.land/std@0.220.1/http/cookie.ts";
-import { verify } from "https://deno.land/x/djwt@v3.0.1/mod.ts";
+import { verify } from "https://deno.land/x/djwt@v3.0.2/mod.ts";
 import { generateCryptoKeyHS } from "../common/token.ts";
 import { API_SECRET } from "../../config.ts";
 
