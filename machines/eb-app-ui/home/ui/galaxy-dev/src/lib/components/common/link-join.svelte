@@ -1,8 +1,11 @@
 <script lang="ts">
+  import LinkButton from "$lib/components/common/link-button-template.svelte";
+
   export let href: string;
+  export let title = "Join";
+
+  const icon = "bi-link-45deg";
 </script>
 
 <!-- -------------------------------------------------------------------------->
-<a {href} class="btn btn-outline-dark btn-sm" role="button">
-  <i class="bi bi-link-45deg" />
-</a>
+<LinkButton {href} {icon} {title} />
