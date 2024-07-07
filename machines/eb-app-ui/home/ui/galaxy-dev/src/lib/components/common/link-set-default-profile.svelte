@@ -1,8 +1,11 @@
 <script lang="ts">
+  import LinkButton from "$lib/components/common/link-button-template.svelte";
+
   export let href: string;
+  export let title = "Set as default profile";
+
+  const icon = "bi-person-check";
 </script>
 
 <!-- -------------------------------------------------------------------------->
-<a {href} class="btn btn-outline-dark btn-sm" role="button">
-  <i class="bi bi-person-check" />
-</a>
+<LinkButton {href} {icon} {title} />
