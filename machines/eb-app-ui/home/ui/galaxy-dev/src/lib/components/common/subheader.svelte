@@ -3,15 +3,22 @@
   import { activateTooltips } from "$lib/common";
 
   export let hrefAdd = "";
+  export let hrefAddTitle = "Add";
   export let hrefBack = "";
+  export let hrefBackTitle = "Go back";
   export let hrefCalendar = "";
+  export let hrefCalendarTitle = "Calendar";
   export let hrefMeeting = "";
+  export let hrefMeetingTitle = "Edit meetings";
   export let hrefNext = "";
+  export let hrefNextTitle = "Next";
   export let hrefPrevious = "";
+  export let hrefPreviousTitle = "Previous";
   export let subheader = "";
 
   onMount(() => {
-    activateTooltips();
+    // unremovable tooltip's title issue if there is no delay
+    setTimeout(activateTooltips, 200);
   });
 </script>
 
@@ -24,6 +31,8 @@
       {#if hrefBack}
         <button
           class="btn btn-outline-secondary"
+          data-bs-toggle="tooltip"
+          data-bs-title={hrefBackTitle}
           on:click={() => {
             window.location.href = hrefBack;
           }}
@@ -35,6 +44,8 @@
       {#if hrefMeeting}
         <button
           class="btn btn-outline-secondary"
+          data-bs-toggle="tooltip"
+          data-bs-title={hrefMeetingTitle}
           on:click={() => {
             window.location.href = hrefMeeting;
           }}
@@ -47,7 +58,7 @@
         <button
           class="btn btn-outline-secondary"
           data-bs-toggle="tooltip"
-          data-bs-title="Calendar"
+          data-bs-title={hrefCalendarTitle}
           on:click={() => {
             window.location.href = hrefCalendar;
           }}
@@ -59,6 +70,8 @@
       {#if hrefPrevious}
         <button
           class="btn btn-outline-secondary ms-3 me-auto"
+          data-bs-toggle="tooltip"
+          data-bs-title={hrefPreviousTitle}
           on:click={() => {
             window.location.href = hrefPrevious;
           }}
@@ -70,6 +83,8 @@
       {#if hrefNext}
         <button
           class="btn btn-outline-secondary"
+          data-bs-toggle="tooltip"
+          data-bs-title={hrefNextTitle}
           on:click={() => {
             window.location.href = hrefNext;
           }}
@@ -82,6 +97,8 @@
     {#if hrefAdd}
       <button
         class="btn btn-outline-secondary ms-auto me-2 my-auto"
+        data-bs-toggle="tooltip"
+        data-bs-title={hrefAddTitle}
         on:click={() => {
           window.location.href = hrefAdd;
         }}
