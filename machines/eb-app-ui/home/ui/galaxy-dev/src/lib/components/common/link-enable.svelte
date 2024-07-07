@@ -1,8 +1,11 @@
 <script lang="ts">
+  import LinkButton from "$lib/components/common/link-button-template.svelte";
+
   export let href: string;
+  export let title = "Enable";
+
+  const icon = "bi-check-lg";
 </script>
 
 <!-- -------------------------------------------------------------------------->
-<a {href} class="btn btn-outline-dark btn-sm" role="button">
-  <i class="bi bi-check-lg" />
-</a>
+<LinkButton {href} {icon} {title} />
