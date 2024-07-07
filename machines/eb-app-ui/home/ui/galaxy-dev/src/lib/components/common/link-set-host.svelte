@@ -1,6 +1,11 @@
 <script lang="ts">
+  import LinkButton from "$lib/components/common/link-button-template.svelte";
+
   export let href: string;
+  export let title = "Set member level to host";
+
+  const icon = "bi-arrow-bar-up";
 </script>
 
 <!-- -------------------------------------------------------------------------->
-<a {href} class="btn btn-outline-dark btn-sm" role="button">H</a>
+<LinkButton {href} {icon} {title} />
