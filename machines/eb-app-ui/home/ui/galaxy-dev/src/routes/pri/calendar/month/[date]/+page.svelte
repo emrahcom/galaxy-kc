@@ -40,8 +40,11 @@
 <Subheader
   subheader={monthName}
   hrefMeeting="/pri/meeting"
+  hrefMeetingTitle="Edit meetings"
   hrefNext="/pri/calendar/month/{dayOfNextMonth}"
+  hrefNextTitle="Show next month"
   hrefPrevious="/pri/calendar/month/{dayOfPreviousMonth}"
+  hrefPreviousTitle="Show previous month"
 />
 
 {#await pr then calendar}
