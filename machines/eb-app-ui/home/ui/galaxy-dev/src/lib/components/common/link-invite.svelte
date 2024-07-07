@@ -1,8 +1,11 @@
 <script lang="ts">
+  import LinkButton from "$lib/components/common/link-button-template.svelte";
+
   export let href: string;
+  export let title = "Show keys";
+
+  const icon = "bi-key";
 </script>
 
 <!-- -------------------------------------------------------------------------->
-<a {href} class="btn btn-outline-dark btn-sm" role="button">
-  <i class="bi bi-key" />
-</a>
+<LinkButton {href} {icon} {title} />
