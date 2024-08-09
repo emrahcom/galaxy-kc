@@ -1,4 +1,4 @@
-import { v5 as uuid } from "https://deno.land/std@0.224.0/uuid/mod.ts";
+import { v5 as uuid } from "jsr:@std/uuid@1.0.0";
 import { setCookie } from "jsr:@std/http@1.0.2/cookie";
 import { notFound, ok, unauthorized } from "../http/response.ts";
 import { adm as wrapper } from "../http/wrapper.ts";
