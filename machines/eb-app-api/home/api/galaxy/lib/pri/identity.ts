@@ -1,4 +1,4 @@
-import { getCookies } from "https://deno.land/std@0.224.0/http/cookie.ts";
+import { getCookies } from "jsr:@std/http@1.0.2/cookie";
 import { verify } from "jsr:@zaubrik/djwt@3.0.2";
 import { generateCryptoKeyHS } from "../common/token.ts";
 import { API_SECRET } from "../../config.ts";
