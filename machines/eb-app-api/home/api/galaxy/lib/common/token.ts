@@ -1,10 +1,20 @@
-import { Algorithm } from "https://deno.land/x/djwt@v3.0.2/algorithm.ts";
-import {
-  create,
-  getNumericDate,
-  Payload,
-} from "https://deno.land/x/djwt@v3.0.2/mod.ts";
+import { create, getNumericDate, Payload } from "jsr:@zaubrik/djwt@3.0.2";
 import { API_SECRET, API_TIMEOUT } from "../../config.ts";
+
+// https://github.com/Zaubrik/djwt/blob/master/algorithm.ts
+type Algorithm =
+  | "HS256"
+  | "HS384"
+  | "HS512"
+  | "PS256"
+  | "PS384"
+  | "PS512"
+  | "RS256"
+  | "RS384"
+  | "RS512"
+  | "ES256"
+  | "ES384"
+  | "none";
 
 // -----------------------------------------------------------------------------
 export async function generateCryptoKeyHS(
