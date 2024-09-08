@@ -1,5 +1,5 @@
-import { getCookies } from "jsr:@std/http@1.0.2/cookie";
-import { verify } from "jsr:@zaubrik/djwt@3.0.2";
+import { getCookies } from "jsr:@std/http@1.0.5/cookie";
+import { verify } from "jsr:@emrahcom/jwt";
 import { generateCryptoKeyHS } from "../common/token.ts";
 import { API_SECRET } from "../../config.ts";
 
