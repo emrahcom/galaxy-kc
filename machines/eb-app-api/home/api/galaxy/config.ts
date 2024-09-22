@@ -5,7 +5,7 @@ export const PORT_PRIVATE = 8001;
 export const PORT_PUBLIC = 8002;
 
 // postgres
-export const DB_VERSION = "20240309.01";
+export const DB_VERSION = "20240922.01";
 export const DB_NAME = Deno.env.get("DB_NAME") || "galaxy";
 export const DB_USER = Deno.env.get("DB_USER") || "galaxy";
 export const DB_PASSWD = Deno.env.get("DB_PASSWD") || "";
