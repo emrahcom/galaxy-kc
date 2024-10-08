@@ -14,10 +14,7 @@ export async function generateCryptoKeyHS(
   const cryptoKey = await crypto.subtle.importKey(
     "raw",
     keyData,
-    {
-      name: "HMAC",
-      hash: hash,
-    },
+    { name: "HMAC", hash: hash },
     true,
     ["sign", "verify"],
   );
@@ -150,10 +147,7 @@ async function generateCryptoKeyRS(
   const cryptoKey = await crypto.subtle.importKey(
     "pkcs8",
     binaryDer,
-    {
-      name: "RSASSA-PKCS1-v1_5",
-      hash: hash,
-    },
+    { name: "RSASSA-PKCS1-v1_5", hash: hash },
     true,
     ["sign"],
   );
