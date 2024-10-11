@@ -34,7 +34,7 @@
 
   // ---------------------------------------------------------------------------
   function cancel() {
-    window.location.href = "/pri/meeting";
+    globalThis.location.href = "/pri/meeting";
   }
 
   // ---------------------------------------------------------------------------
@@ -42,7 +42,7 @@
     try {
       warning = false;
       await actionById("/api/pri/meeting/del", p.id);
-      window.location.replace("/pri/meeting");
+      globalThis.location.replace("/pri/meeting");
     } catch {
       warning = true;
     }

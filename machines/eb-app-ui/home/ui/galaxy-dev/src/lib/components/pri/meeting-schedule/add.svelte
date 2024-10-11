@@ -124,9 +124,9 @@
   // ---------------------------------------------------------------------------
   function cancel() {
     if (hash === "#0") {
-      window.location.href = `/pri/meeting`;
+      globalThis.location.href = `/pri/meeting`;
     } else {
-      window.location.href = `/pri/meeting/schedule/${meeting.id}`;
+      globalThis.location.href = `/pri/meeting/schedule/${meeting.id}`;
     }
   }
 
@@ -189,9 +189,9 @@
       await action("/api/pri/meeting/schedule/add", p);
 
       if (hash === "#0") {
-        window.location.href = `/pri/meeting/invite/${meeting.id}`;
+        globalThis.location.href = `/pri/meeting/invite/${meeting.id}`;
       } else {
-        window.location.href = `/pri/meeting/schedule/${meeting.id}`;
+        globalThis.location.href = `/pri/meeting/schedule/${meeting.id}`;
       }
     } catch {
       warning = true;

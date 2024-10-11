@@ -18,7 +18,7 @@
 
   // ---------------------------------------------------------------------------
   function cancel() {
-    window.location.href = `/pri/room`;
+    globalThis.location.href = `/pri/room`;
   }
 
   // ---------------------------------------------------------------------------
@@ -26,7 +26,7 @@
     try {
       warning = false;
       await action("/api/pri/room/partnership/add/bycode", p);
-      window.location.href = `/pri/room`;
+      globalThis.location.href = `/pri/room`;
     } catch {
       warning = true;
     }

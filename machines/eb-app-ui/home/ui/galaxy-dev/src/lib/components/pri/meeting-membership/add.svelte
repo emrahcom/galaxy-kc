@@ -58,7 +58,7 @@
 
   // ---------------------------------------------------------------------------
   function cancel() {
-    window.location.href = `/pri/meeting`;
+    globalThis.location.href = `/pri/meeting`;
   }
 
   // ---------------------------------------------------------------------------
@@ -66,7 +66,7 @@
     try {
       warning = false;
       await action("/api/pri/meeting/membership/add/bycode", p);
-      window.location.href = `/pri/meeting`;
+      globalThis.location.href = `/pri/meeting`;
     } catch {
       warning = true;
     }

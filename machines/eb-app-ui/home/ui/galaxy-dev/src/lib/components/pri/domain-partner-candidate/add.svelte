@@ -28,7 +28,7 @@
 
   // ---------------------------------------------------------------------------
   function cancel() {
-    window.location.href = `/pri/domain/partner/${domain.id}`;
+    globalThis.location.href = `/pri/domain/partner/${domain.id}`;
   }
 
   // ---------------------------------------------------------------------------
@@ -36,7 +36,7 @@
     try {
       warning = false;
       await action("/api/pri/domain/partner/candidate/add", p);
-      window.location.href = `/pri/domain/partner/${domain.id}`;
+      globalThis.location.href = `/pri/domain/partner/${domain.id}`;
     } catch {
       warning = true;
     }

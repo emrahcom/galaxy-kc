@@ -14,7 +14,7 @@
 
   // ---------------------------------------------------------------------------
   function cancel() {
-    window.location.href = `/pri/meeting/member/${p.meeting_id}`;
+    globalThis.location.href = `/pri/meeting/member/${p.meeting_id}`;
   }
 
   // ---------------------------------------------------------------------------
@@ -22,7 +22,7 @@
     try {
       warning = false;
       await actionById("/api/pri/meeting/member/candidate/del", p.id);
-      window.location.replace(`/pri/meeting/member/${p.meeting_id}`);
+      globalThis.location.replace(`/pri/meeting/member/${p.meeting_id}`);
     } catch {
       warning = true;
     }

@@ -55,7 +55,7 @@
 
   // ---------------------------------------------------------------------------
   function cancel() {
-    window.location.href = "/pri/meeting";
+    globalThis.location.href = "/pri/meeting";
   }
 
   // ---------------------------------------------------------------------------
@@ -66,7 +66,7 @@
       // if ephemeral, just update and go
       if (p.schedule_type === "ephemeral") {
         await action("/api/pri/meeting/update", p);
-        window.location.href = "/pri/meeting";
+        globalThis.location.href = "/pri/meeting";
         return;
       }
 
@@ -107,7 +107,7 @@
       }
 
       await action("/api/pri/meeting/update", p);
-      window.location.href = "/pri/meeting";
+      globalThis.location.href = "/pri/meeting";
     } catch {
       warning = true;
     }

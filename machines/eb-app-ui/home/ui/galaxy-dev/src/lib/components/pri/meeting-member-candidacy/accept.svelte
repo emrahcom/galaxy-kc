@@ -35,7 +35,7 @@
 
   // ---------------------------------------------------------------------------
   function cancel() {
-    window.location.href = "/pri/meeting";
+    globalThis.location.href = "/pri/meeting";
   }
 
   // ---------------------------------------------------------------------------
@@ -48,7 +48,7 @@
 
       warning = false;
       await action("/api/pri/meeting/member/candidacy/accept", data);
-      window.location.href = "/pri/meeting";
+      globalThis.location.href = "/pri/meeting";
     } catch {
       warning = true;
     }

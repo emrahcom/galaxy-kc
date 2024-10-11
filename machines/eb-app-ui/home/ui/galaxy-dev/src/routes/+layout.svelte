@@ -6,7 +6,8 @@
   import NavBarPri from "$lib/components/nav/bar-pri.svelte";
   import NavBarPub from "$lib/components/nav/bar-pub-kc.svelte";
 
-  const isAuthenticated = window.sessionStorage.getItem("oidc_authenticated");
+  const isAuthenticated =
+    globalThis.sessionStorage.getItem("oidc_authenticated");
 </script>
 
 <!-- -------------------------------------------------------------------------->

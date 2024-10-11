@@ -14,7 +14,7 @@
 
   // ---------------------------------------------------------------------------
   function cancel() {
-    window.location.href = "/pri/room";
+    globalThis.location.href = "/pri/room";
   }
 
   // ---------------------------------------------------------------------------
@@ -22,7 +22,7 @@
     try {
       warning = false;
       await actionById("/api/pri/room/partner/candidacy/reject", p.id);
-      window.location.href = "/pri/room";
+      globalThis.location.href = "/pri/room";
     } catch {
       warning = true;
     }

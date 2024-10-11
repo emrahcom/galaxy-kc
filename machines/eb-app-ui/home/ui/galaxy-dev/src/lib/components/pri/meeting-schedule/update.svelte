@@ -119,7 +119,7 @@
 
   // ---------------------------------------------------------------------------
   function cancel() {
-    window.location.href = `/pri/meeting/schedule/${p.meeting_id}`;
+    globalThis.location.href = `/pri/meeting/schedule/${p.meeting_id}`;
   }
 
   // ---------------------------------------------------------------------------
@@ -186,7 +186,7 @@
       normalizeData();
       await action("/api/pri/meeting/schedule/update", p);
 
-      window.location.href = `/pri/meeting/schedule/${p.meeting_id}`;
+      globalThis.location.href = `/pri/meeting/schedule/${p.meeting_id}`;
     } catch {
       warning = true;
     }

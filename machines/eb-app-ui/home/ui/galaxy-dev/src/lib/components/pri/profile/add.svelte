@@ -16,7 +16,7 @@
 
   // ---------------------------------------------------------------------------
   function cancel() {
-    window.location.href = "/pri/profile";
+    globalThis.location.href = "/pri/profile";
   }
 
   // ---------------------------------------------------------------------------
@@ -24,7 +24,7 @@
     try {
       warning = false;
       await action("/api/pri/profile/add", p);
-      window.location.href = "/pri/profile";
+      globalThis.location.href = "/pri/profile";
     } catch {
       warning = true;
     }

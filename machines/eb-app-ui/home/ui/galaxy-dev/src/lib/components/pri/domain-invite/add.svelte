@@ -20,7 +20,7 @@
 
   // ---------------------------------------------------------------------------
   function cancel() {
-    window.location.href = `/pri/domain/invite/${domain.id}`;
+    globalThis.location.href = `/pri/domain/invite/${domain.id}`;
   }
 
   // ---------------------------------------------------------------------------
@@ -28,7 +28,7 @@
     try {
       warning = false;
       await action("/api/pri/domain/invite/add", p);
-      window.location.href = `/pri/domain/invite/${domain.id}`;
+      globalThis.location.href = `/pri/domain/invite/${domain.id}`;
     } catch {
       warning = true;
     }

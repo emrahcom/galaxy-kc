@@ -14,7 +14,7 @@
 
   // ---------------------------------------------------------------------------
   function cancel() {
-    window.location.href = `/pri/room/invite/${p.room_id}`;
+    globalThis.location.href = `/pri/room/invite/${p.room_id}`;
   }
 
   // ---------------------------------------------------------------------------
@@ -22,7 +22,7 @@
     try {
       warning = false;
       await actionById("/api/pri/room/invite/del", p.id);
-      window.location.replace(`/pri/room/invite/${p.room_id}`);
+      globalThis.location.replace(`/pri/room/invite/${p.room_id}`);
     } catch {
       warning = true;
     }

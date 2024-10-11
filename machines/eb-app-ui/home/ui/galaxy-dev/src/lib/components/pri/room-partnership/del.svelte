@@ -14,7 +14,7 @@
 
   // ---------------------------------------------------------------------------
   function cancel() {
-    window.location.href = `/pri/room`;
+    globalThis.location.href = `/pri/room`;
   }
 
   // ---------------------------------------------------------------------------
@@ -22,7 +22,7 @@
     try {
       warning = false;
       await actionById("/api/pri/room/partnership/del", p.id);
-      window.location.replace(`/pri/room`);
+      globalThis.location.replace(`/pri/room`);
     } catch {
       warning = true;
     }

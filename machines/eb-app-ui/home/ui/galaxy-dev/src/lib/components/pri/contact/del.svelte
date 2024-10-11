@@ -15,7 +15,7 @@
 
   // ---------------------------------------------------------------------------
   function cancel() {
-    window.location.href = "/pri/contact";
+    globalThis.location.href = "/pri/contact";
   }
 
   // ---------------------------------------------------------------------------
@@ -23,7 +23,7 @@
     try {
       warning = false;
       await actionById("/api/pri/contact/del", p.id);
-      window.location.replace("/pri/contact");
+      globalThis.location.replace("/pri/contact");
     } catch {
       warning = true;
     }
