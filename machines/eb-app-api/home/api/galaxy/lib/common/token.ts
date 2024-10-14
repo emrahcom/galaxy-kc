@@ -48,7 +48,7 @@ export async function generateHostTokenHS(
   roomName: string,
   username: string,
   email: string,
-  exp = 3600,
+  exp: number,
 ): Promise<string> {
   let alg: Algorithm = "HS256";
   let hash = "SHA-256";
@@ -96,7 +96,7 @@ export async function generateGuestTokenHS(
   roomName: string,
   username: string,
   email: string,
-  exp = 3600,
+  exp: number,
 ): Promise<string> {
   let alg: Algorithm = "HS256";
   let hash = "SHA-256";
@@ -166,7 +166,7 @@ export async function generateHostTokenJaas(
   roomName: string,
   username: string,
   email: string,
-  exp = 3600,
+  exp: number,
 ): Promise<string> {
   let alg: Algorithm = "RS256";
   let hash = "SHA-256";
@@ -218,7 +218,7 @@ export async function generateGuestTokenJaas(
   roomName: string,
   username: string,
   email: string,
-  exp = 3600,
+  exp: number,
 ): Promise<string> {
   let alg: Algorithm = "RS256";
   let hash = "SHA-256";
