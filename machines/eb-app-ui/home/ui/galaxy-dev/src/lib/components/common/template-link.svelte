@@ -24,9 +24,12 @@
   data-bs-toggle="tooltip"
   data-bs-title={title}
   {href}
-  on:click={() => {
+  on:click={(e) => {
+    if (e.ctrlKey || e.metaKey) return;
+
+    e.preventDefault();
     globalThis.location.href = href;
   }}
 >
-  <i class="bi {icon}" />
+  <i class="bi {icon}"></i>
 </a>
