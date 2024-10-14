@@ -63,7 +63,7 @@ async function getToken(code: string): Promise<string | undefined> {
     const json = await res.json();
     const token = json.access_token;
 
-    if (!token) throw new Error("cannot get Keycloak token");
+    if (!token) throw "cannot get Keycloak token";
 
     return token;
   } catch {
@@ -89,7 +89,7 @@ async function getUserInfo(
     });
     const userInfo = await res.json();
 
-    if (!userInfo.sub) throw ("no user info");
+    if (!userInfo.sub) throw "no user info";
 
     return await userInfo;
   } catch {

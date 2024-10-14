@@ -12,15 +12,15 @@ const PRE = "/api/pri/identity";
 export async function getIdentityId(req: Request): Promise<string | undefined> {
   try {
     const cookies = getCookies(req.headers);
-    if (!cookies) throw new Error("no cookies");
+    if (!cookies) throw "no cookies";
 
     const token = cookies.token;
-    if (!token) throw new Error("no token");
+    if (!token) throw "no token";
 
     const cryptoKey = await generateCryptoKeyHS(API_SECRET, "SHA-256");
     const payload = await verify(token, cryptoKey);
-    if (!payload.userId) throw new Error("no userId");
-    if (typeof payload.userId !== "string") throw new Error("no valid userId");
+    if (!payload.userId) throw "no userId";
+    if (typeof payload.userId !== "string") throw "no valid userId";
 
     return payload.userId;
   } catch {
