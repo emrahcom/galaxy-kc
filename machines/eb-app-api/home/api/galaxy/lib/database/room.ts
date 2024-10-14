@@ -1,5 +1,15 @@
 import { fetch } from "./common.ts";
-import type { Id, Room, Room333, RoomLinkset } from "./types.ts";
+import { generateRoomUrl } from "../common/helper.ts";
+import { getDefaultProfile } from "./profile.ts";
+import type {
+  Affiliation,
+  Id,
+  Profile,
+  RandomRoomName,
+  Room,
+  Room333,
+  RoomLinkset,
+} from "./types.ts";
 
 // -----------------------------------------------------------------------------
 export async function getRoom(identityId: string, roomId: string) {
@@ -85,6 +95,39 @@ export async function getRoomLinkset(identityId: string, roomId: string) {
   };
 
   return await fetch(sql) as RoomLinkset[];
+}
+
+// -----------------------------------------------------------------------------
+export async function getRandomRoomName(prefix: string) {
+  const sql = {
+    text: `
+      SELECT
+        '${prefix}' || md5(gen_random_uuid()::text) as name,
+        md5(gen_random_uuid()::text) as suffix`,
+  };
+
+  return await fetch(sql) as RandomRoomName[];
+}
+
+// -----------------------------------------------------------------------------
+export async function getRoomUrl(
+  identityId: string,
+  roomLinkset: RoomLinkset,
+  affiliation: Affiliation,
+  exp: number,
+  additionalHash: string,
+) {
+  const profiles = await getDefaultProfile(identityId) as Profile[];
+  const profile = profiles[0];
+  if (!profile) throw "profile is not available";
+
+  return await generateRoomUrl(
+    roomLinkset,
+    profile,
+    affiliation,
+    exp,
+    additionalHash,
+  );
 }
 
 // -----------------------------------------------------------------------------
