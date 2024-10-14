@@ -5,6 +5,7 @@ import {
   generateHostTokenJaas,
 } from "./token.ts";
 import type {
+  Affiliation,
   MeetingLinkset,
   Profile,
   RoomLinkset,
@@ -14,7 +15,8 @@ import type {
 async function generateRoomUrlJaas(
   linkset: RoomLinkset,
   profile: Profile,
-  exp = 3600,
+  affiliation: Affiliation,
+  exp: number,
 ): Promise<string> {
   const sub = encodeURIComponent(linkset.domain_attr.jaas_app_id);
   let url = encodeURI(linkset.domain_attr.jaas_url);
@@ -23,7 +25,24 @@ async function generateRoomUrlJaas(
   if (linkset.has_suffix) roomName = `${roomName}-${linkset.suffix}`;
   url = `${url}/${sub}/${roomName}`;
 
-  const jwt = await generateHostTokenJaas(
+  if (affiliation === "host") {
+    const jwt = await generateHostTokenJaas(
+      linkset.domain_attr.jaas_app_id,
+      linkset.domain_attr.jaas_kid,
+      linkset.domain_attr.jaas_key,
+      linkset.domain_attr.jaas_alg,
+      linkset.domain_attr.jaas_aud,
+      linkset.domain_attr.jaas_iss,
+      roomName,
+      profile.name,
+      profile.email,
+      exp,
+    );
+
+    return `${url}?jwt=${jwt}`;
+  }
+
+  const jwt = await generateGuestTokenJaas(
     linkset.domain_attr.jaas_app_id,
     linkset.domain_attr.jaas_kid,
     linkset.domain_attr.jaas_key,
@@ -43,7 +62,8 @@ async function generateRoomUrlJaas(
 async function generateRoomUrlToken(
   linkset: RoomLinkset,
   profile: Profile,
-  exp = 3600,
+  affiliation: Affiliation,
+  exp: number,
 ): Promise<string> {
   let url = encodeURI(linkset.domain_attr.url);
   let roomName = encodeURIComponent(linkset.name);
@@ -51,7 +71,21 @@ async function generateRoomUrlToken(
   if (linkset.has_suffix) roomName = `${roomName}-${linkset.suffix}`;
   url = `${url}/${roomName}`;
 
-  const jwt = await generateHostTokenHS(
+  if (affiliation === "host") {
+    const jwt = await generateHostTokenHS(
+      linkset.domain_attr.app_id,
+      linkset.domain_attr.app_secret,
+      linkset.domain_attr.app_alg,
+      roomName,
+      profile.name,
+      profile.email,
+      exp,
+    );
+
+    return `${url}?jwt=${jwt}`;
+  }
+
+  const jwt = await generateGuestTokenHS(
     linkset.domain_attr.app_id,
     linkset.domain_attr.app_secret,
     linkset.domain_attr.app_alg,
@@ -68,7 +102,9 @@ async function generateRoomUrlToken(
 export async function generateRoomUrl(
   linkset: RoomLinkset,
   profile: Profile,
+  affiliation = "host" as Affiliation,
   exp = 3600,
+  additionalHash = "",
 ): Promise<string> {
   let url: string;
 
@@ -76,9 +112,9 @@ export async function generateRoomUrl(
   if (!profile.email) profile.email = "";
 
   if (linkset.auth_type === "jaas") {
-    url = await generateRoomUrlJaas(linkset, profile, exp);
+    url = await generateRoomUrlJaas(linkset, profile, affiliation, exp);
   } else if (linkset.auth_type === "token") {
-    url = await generateRoomUrlToken(linkset, profile, exp);
+    url = await generateRoomUrlToken(linkset, profile, affiliation, exp);
   } else {
     let roomName = encodeURIComponent(linkset.name);
 
@@ -98,6 +134,7 @@ export async function generateRoomUrl(
   url = `${url}#config.localSubject=${subject}`;
   if (profile.name) url = `${url}&userInfo.displayName=${displayName}`;
   if (profile.email) url = `${url}&userInfo.email=${email}`;
+  if (additionalHash) url = `${url}${additionalHash}`;
 
   return url;
 }
@@ -105,7 +142,7 @@ export async function generateRoomUrl(
 // -----------------------------------------------------------------------------
 async function generateMeetingUrlJaasHost(
   linkset: MeetingLinkset,
-  exp = 3600,
+  exp: number,
 ): Promise<string> {
   const sub = encodeURIComponent(linkset.domain_attr.jaas_app_id);
   let url = encodeURI(linkset.domain_attr.jaas_url);
@@ -133,7 +170,7 @@ async function generateMeetingUrlJaasHost(
 // -----------------------------------------------------------------------------
 async function generateMeetingUrlJaasGuest(
   linkset: MeetingLinkset,
-  exp = 3600,
+  exp: number,
 ): Promise<string> {
   const sub = encodeURIComponent(linkset.domain_attr.jaas_app_id);
   let url = encodeURI(linkset.domain_attr.jaas_url);
@@ -161,7 +198,7 @@ async function generateMeetingUrlJaasGuest(
 // -----------------------------------------------------------------------------
 async function generateMeetingUrlTokenHost(
   linkset: MeetingLinkset,
-  exp = 3600,
+  exp: number,
 ): Promise<string> {
   let url = encodeURI(linkset.domain_attr.url);
   let roomName = encodeURIComponent(linkset.room_name);
@@ -185,7 +222,7 @@ async function generateMeetingUrlTokenHost(
 // -----------------------------------------------------------------------------
 async function generateMeetingUrlTokenGuest(
   linkset: MeetingLinkset,
-  exp = 3600,
+  exp: number,
 ): Promise<string> {
   let url = encodeURI(linkset.domain_attr.url);
   let roomName = encodeURIComponent(linkset.room_name);
@@ -210,6 +247,7 @@ async function generateMeetingUrlTokenGuest(
 export async function generateMeetingUrl(
   linkset: MeetingLinkset,
   exp = 3600,
+  additionalHash = "",
 ): Promise<string> {
   let url: string;
 
@@ -249,6 +287,7 @@ export async function generateMeetingUrl(
   url = `${url}#config.localSubject=${subject}`;
   if (linkset.profile_name) url = `${url}&userInfo.displayName=${displayName}`;
   if (linkset.profile_email) url = `${url}&userInfo.email=${email}`;
+  if (additionalHash) url = `${url}${additionalHash}`;
 
   return url;
 }
@@ -258,7 +297,7 @@ export async function generateMeetingUrl(
 // -----------------------------------------------------------------------------
 export function getFirstDayOfMonth(date: string) {
   const _date = new Date(date);
-  if (isNaN(_date.getTime())) throw new Error("invalid date");
+  if (isNaN(_date.getTime())) throw "invalid date";
 
   const diff = _date.getDate() - 1;
   const first = new Date(_date.getTime() - diff * 24 * 60 * 60 * 1000);
@@ -278,7 +317,7 @@ export function getFirstDayOfMonth(date: string) {
 // -----------------------------------------------------------------------------
 export function getFirstDayOfWeek(date: string) {
   const _date = new Date(date);
-  if (isNaN(_date.getTime())) throw new Error("invalid date");
+  if (isNaN(_date.getTime())) throw "invalid date";
 
   const diff = _date.getDay();
   const sunday = new Date(_date.getTime() - diff * 24 * 60 * 60 * 1000);
@@ -297,10 +336,10 @@ export function getFirstDayOfWeek(date: string) {
 // -----------------------------------------------------------------------------
 export function dateAfterXDays(date: string, days: number) {
   const date0 = new Date(date);
-  if (isNaN(date0.getTime())) throw new Error("invalid date");
+  if (isNaN(date0.getTime())) throw "invalid date";
 
   const date1 = new Date(date0.getTime() + days * 24 * 60 * 60 * 1000);
-  if (isNaN(date1.getTime())) throw new Error("invalid date");
+  if (isNaN(date1.getTime())) throw "invalid date";
 
   return (
     date1.getFullYear() +
