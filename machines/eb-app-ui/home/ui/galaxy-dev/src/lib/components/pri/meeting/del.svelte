@@ -15,6 +15,7 @@
   export let p: Meeting;
 
   let warning = false;
+  let disabled = false;
   let domainName = p.domain_name;
   let roomName = `${p.room_name} on ${p.domain_name}`;
   let profile: string;
@@ -41,10 +42,13 @@
   async function onSubmit() {
     try {
       warning = false;
+      disabled = true;
+
       await actionById("/api/pri/meeting/del", p.id);
       globalThis.location.replace("/pri/meeting");
     } catch {
       warning = true;
+      disabled = false;
     }
   }
 </script>
@@ -103,7 +107,7 @@
 
       <!-- these are temporary disabled on UI, not ready... -->
       <!-- {#if p.schedule_type !== "ephemeral"} -->
-      {#if p.schedule_type === "DONT MATCH"}
+      {#if false}
         <Switch
           name="hidden"
           label="Hidden"
@@ -134,9 +138,9 @@
       {/if}
 
       <div class="d-flex gap-5 mt-5 justify-content-center">
-        <Cancel on:click={cancel} />
+        <Cancel bind:disabled on:click={cancel} />
         <SubmitBlocker />
-        <Submit label="Delete" />
+        <Submit label="Delete" bind:disabled />
       </div>
     </form>
   </div>
