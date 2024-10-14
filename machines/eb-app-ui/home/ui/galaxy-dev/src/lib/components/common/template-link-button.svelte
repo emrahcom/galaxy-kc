@@ -20,5 +20,5 @@
     globalThis.location.href = href;
   }}
 >
-  <i class="bi {icon}" />
+  <i class="bi {icon}"></i>
 </button>
