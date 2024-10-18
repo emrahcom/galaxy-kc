@@ -8,6 +8,10 @@
   export let hrefBackTitle = "Go back";
   export let hrefCalendar = "";
   export let hrefCalendarTitle = "Calendar";
+  export let hrefContact = "";
+  export let hrefContactTitle = "Contacts";
+  export let hrefKey = "";
+  export let hrefKeyTitle = "Keys";
   export let hrefMeeting = "";
   export let hrefMeetingTitle = "Edit meetings";
   export let hrefNext = "";
@@ -27,10 +31,10 @@
   <div class="d-flex">
     <h3 class="text-muted my-auto" style="min-width:180px">{subheader}</h3>
 
-    <div class="ms-4 me-auto my-auto">
+    <div class="ms-3 me-auto my-auto">
       {#if hrefBack}
         <button
-          class="btn btn-outline-secondary"
+          class="btn btn-outline-secondary mx-1"
           data-bs-toggle="tooltip"
           data-bs-title={hrefBackTitle}
           on:click={() => {
@@ -38,6 +42,32 @@
           }}
         >
           <i class="bi bi-arrow-return-left"></i>
+        </button>
+      {/if}
+
+      {#if hrefContact}
+        <button
+          class="btn btn-outline-secondary"
+          data-bs-toggle="tooltip"
+          data-bs-title={hrefContactTitle}
+          on:click={() => {
+            globalThis.location.href = hrefContact;
+          }}
+        >
+          <i class="bi bi-people"></i>
+        </button>
+      {/if}
+
+      {#if hrefKey}
+        <button
+          class="btn btn-outline-secondary"
+          data-bs-toggle="tooltip"
+          data-bs-title={hrefKeyTitle}
+          on:click={() => {
+            globalThis.location.href = hrefKey;
+          }}
+        >
+          <i class="bi bi-key"></i>
         </button>
       {/if}
 
@@ -69,7 +99,7 @@
 
       {#if hrefPrevious}
         <button
-          class="btn btn-outline-secondary ms-3 me-auto"
+          class="btn btn-outline-secondary ms-1 me-auto"
           data-bs-toggle="tooltip"
           data-bs-title={hrefPreviousTitle}
           on:click={() => {
@@ -96,7 +126,7 @@
 
     {#if hrefAdd}
       <button
-        class="btn btn-outline-secondary ms-auto me-2 my-auto"
+        class="btn btn-outline-secondary ms-auto me-0 my-auto"
         data-bs-toggle="tooltip"
         data-bs-title={hrefAddTitle}
         on:click={() => {
