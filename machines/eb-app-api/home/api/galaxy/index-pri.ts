@@ -4,7 +4,7 @@ import {
   notFound,
   unauthorized,
 } from "./lib/http/response.ts";
-import { getIdentityId } from "./lib/pri/identity.ts";
+import { getIdentityId } from "./lib/pri/identity-kc.ts";
 import { getVersion } from "./lib/database/common.ts";
 import calendar from "./lib/pri/calendar.ts";
 import contact from "./lib/pri/contact.ts";
