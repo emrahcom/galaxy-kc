@@ -3,7 +3,7 @@ import { setCookie } from "jsr:@std/http@1.0.2/cookie";
 import { notFound, ok, unauthorized } from "../http/response.ts";
 import { adm as wrapper } from "../http/wrapper-kc.ts";
 import { generateAPIToken } from "../common/token-kc.ts";
-import { addIdentity } from "../database/identity.ts";
+import { addIdentity } from "../database/identity-kc.ts";
 import { addProfile } from "../database/profile.ts";
 import {
   GALAXY_FQDN,
