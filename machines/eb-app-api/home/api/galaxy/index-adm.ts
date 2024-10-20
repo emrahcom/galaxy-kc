@@ -3,7 +3,7 @@ import { methodNotAllowed, notFound } from "./lib/http/response.ts";
 import migrate from "./lib/adm/migration.ts";
 import doit from "./lib/adm/cronjob.ts";
 import hello from "./lib/adm/hello.ts";
-import config from "./lib/adm/config.ts";
+import config from "./lib/adm/config-kc.ts";
 import identity from "./lib/adm/identity-kc.ts";
 
 const PRE = "/api/adm";
