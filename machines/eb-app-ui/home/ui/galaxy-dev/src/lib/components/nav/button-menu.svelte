@@ -13,6 +13,7 @@
   data-bs-toggle="offcanvas"
   data-bs-target="#offcanvasMenu"
   aria-controls="offcanvasMenu"
+  aria-label="Menu"
 >
   <i class="bi bi-list"></i>
 </button>
@@ -31,7 +32,7 @@
       id="closeMenuButton"
       data-bs-dismiss="offcanvas"
       aria-label="Close"
-    />
+    ></button>
   </div>
 
   <div class="offcanvas-body">
