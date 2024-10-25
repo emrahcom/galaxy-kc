@@ -21,9 +21,10 @@
   data-bs-toggle="offcanvas"
   data-bs-target="#offcanvasAccount"
   aria-controls="offcanvasAccount"
+  aria-label="My account"
   on:click={updateUsername}
 >
-  <span class="bi bi-person" />
+  <i class="bi bi-person"></i>
 </button>
 
 <div
@@ -42,7 +43,7 @@
       id="closeAccountButton"
       data-bs-dismiss="offcanvas"
       aria-label="Close"
-    />
+    ></button>
   </div>
 
   <div class="offcanvas-body">
