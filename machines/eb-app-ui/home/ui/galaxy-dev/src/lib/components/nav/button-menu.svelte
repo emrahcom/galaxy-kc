@@ -1,8 +1,10 @@
 <script lang="ts">
-  function closeMenu() {
-    let closeButton = document.getElementById("closeMenuButton");
+  function onclick(href: string, e: MouseEvent) {
+    if (e.ctrlKey || e.metaKey) return;
 
-    if (closeButton) closeButton.click();
+    e.preventDefault();
+
+    globalThis.location.href = href;
   }
 </script>
 
@@ -41,10 +43,7 @@
         <a
           class="nav-link"
           href="/pri/calendar"
-          on:click|preventDefault={() => {
-            closeMenu();
-            globalThis.location.href = "/pri/calendar";
-          }}
+          onclick={(e) => onclick("/pri/calendar", e)}
         >
           Calendar
         </a>
@@ -53,10 +52,7 @@
         <a
           class="nav-link"
           href="/pri/meeting"
-          on:click|preventDefault={() => {
-            closeMenu();
-            globalThis.location.href = "/pri/meeting";
-          }}
+          onclick={(e) => onclick("/pri/meeting", e)}
         >
           Meetings
         </a>
@@ -65,10 +61,7 @@
         <a
           class="nav-link"
           href="/pri/room"
-          on:click|preventDefault={() => {
-            closeMenu();
-            globalThis.location.href = "/pri/room";
-          }}
+          onclick={(e) => onclick("/pri/room", e)}
         >
           Rooms
         </a>
@@ -77,10 +70,7 @@
         <a
           class="nav-link"
           href="/pri/domain"
-          on:click|preventDefault={() => {
-            closeMenu();
-            globalThis.location.href = "/pri/domain";
-          }}
+          onclick={(e) => onclick("/pri/domain", e)}
         >
           Domains
         </a>
@@ -89,10 +79,7 @@
         <a
           class="nav-link"
           href="/pri/profile"
-          on:click|preventDefault={() => {
-            closeMenu();
-            globalThis.location.href = "/pri/profile";
-          }}
+          onclick={(e) => onclick("/pri/profile", e)}
         >
           Profiles
         </a>
@@ -101,10 +88,7 @@
         <a
           class="nav-link"
           href="/pri/contact"
-          on:click|preventDefault={() => {
-            closeMenu();
-            globalThis.location.href = "/pri/contact";
-          }}
+          onclick={(e) => onclick("/pri/contact", e)}
         >
           Contacts
         </a>
