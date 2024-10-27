@@ -25,33 +25,38 @@
   import Time from "$lib/components/common/form-time.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
-  export let meeting: Meeting;
+  interface Props {
+    meeting: Meeting;
+  }
+
+  let { meeting }: Props = $props();
+
   const hash = $page.url.hash;
 
   const timezoneOffset = new Date().getTimezoneOffset();
   const notBefore = getToday();
   const defaultDuration = 30;
-  let duration = defaultDuration;
-  let date0 = getToday();
+  let duration = $state(defaultDuration);
+  let date0 = $state(getToday());
   const dateAfter90Days = dateAfterXDays(90);
-  let date1 = getLastDayOfWeek(`${dateAfter90Days}T00:00:00`);
-  let time0 = "08:30";
-  let time1 = getEndTime(time0, defaultDuration);
-  let allDay = false;
-  let everyDay = 1;
-  let everyWeek = 1;
-  let times = 10;
-  let d0 = false;
-  let d1 = true;
-  let d2 = true;
-  let d3 = true;
-  let d4 = true;
-  let d5 = true;
-  let d6 = false;
+  let date1 = $state(getLastDayOfWeek(`${dateAfter90Days}T00:00:00`));
+  let time0 = $state("08:30");
+  let time1 = $state(getEndTime("08:30", defaultDuration));
+  let allDay = $state(false);
+  let everyDay = $state(1);
+  let everyWeek = $state(1);
+  let times = $state(10);
+  let d0 = $state(false);
+  let d1 = $state(true);
+  let d2 = $state(true);
+  let d3 = $state(true);
+  let d4 = $state(true);
+  let d5 = $state(true);
+  let d6 = $state(false);
 
-  let warning = false;
-  let disabled = false;
-  let p = {
+  let warning = $state(false);
+  let disabled = $state(false);
+  let p = $state({
     name: "",
     meeting_id: meeting.id,
     schedule_attr: {
@@ -65,7 +70,7 @@
       rep_days: "",
       timezone_offset: `${timezoneOffset}`,
     },
-  };
+  });
 
   // ---------------------------------------------------------------------------
   function startTimeUpdated() {
@@ -182,7 +187,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  async function onSubmit() {
+  async function onsubmit() {
     try {
       warning = false;
       disabled = true;
@@ -205,7 +210,7 @@
 <!-- -------------------------------------------------------------------------->
 <section id="add">
   <div class="d-flex mt-2 justify-content-center">
-    <form on:submit|preventDefault={onSubmit} style="width:{FORM_WIDTH};">
+    <form {onsubmit} style="width:{FORM_WIDTH};">
       <div class="d-flex gap-3 my-5 justify-content-center">
         <RadioInline
           bind:value={p.schedule_attr.type}
@@ -287,14 +292,14 @@
           label="Start time"
           bind:value={time0}
           required={true}
-          on:change={startTimeUpdated}
+          onchange={startTimeUpdated}
         />
         <Time
           name="time1"
           label="End time"
           bind:value={time1}
           required={true}
-          on:change={endTimeUpdated}
+          onchange={endTimeUpdated}
         />
         <Range
           name="duration"
@@ -304,8 +309,8 @@
           max={180}
           step={5}
           required={true}
-          on:change={durationUpdated}
-          on:input={durationTyped}
+          onchange={durationUpdated}
+          oninput={durationTyped}
         />
       {/if}
 
@@ -324,12 +329,12 @@
 
       <div class="d-flex gap-5 mt-5 justify-content-center">
         <Cancel
+          {disabled}
           label={hash === "#0" ? "Not Now" : "Cancel"}
-          bind:disabled
-          on:click={cancel}
+          onclick={cancel}
         />
         <SubmitBlocker />
-        <Submit label="Create" bind:disabled />
+        <Submit {disabled} label="Create" />
       </div>
     </form>
   </div>
