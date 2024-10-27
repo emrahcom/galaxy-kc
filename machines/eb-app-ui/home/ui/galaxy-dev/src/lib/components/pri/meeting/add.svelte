@@ -13,10 +13,10 @@
   import Textarea from "$lib/components/common/form-textarea.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
-  let warning = false;
-  let disabled = false;
-  let domainId = "";
-  let p = {
+  let warning = $state(false);
+  let disabled = $state(false);
+  let domainId = $state("");
+  let p = $state({
     profile_id: "",
     room_id: "",
     room_static: false,
@@ -26,7 +26,7 @@
     hidden: true,
     restricted: false,
     subscribable: true,
-  };
+  });
 
   const pr1 = get("/api/pri/profile/get/default").then((item: Profile) => {
     if (item) p.profile_id = item.id;
@@ -103,7 +103,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  async function onSubmit() {
+  async function onsubmit() {
     try {
       warning = false;
       disabled = true;
@@ -141,7 +141,7 @@
   <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
   {#await Promise.all([pr1, pr2, pr3, pr4]) then [_p, profiles, domains, rooms]}
     <div class="d-flex mt-2 justify-content-center">
-      <form on:submit|preventDefault={onSubmit} style="width:{FORM_WIDTH};">
+      <form {onsubmit} style="width:{FORM_WIDTH};">
         <Text name="name" label="Name" bind:value={p.name} required={true} />
         <Textarea
           name="info"
@@ -215,9 +215,9 @@
         {/if}
 
         <div class="d-flex gap-5 mt-5 justify-content-center">
-          <Cancel bind:disabled on:click={cancel} />
+          <Cancel {disabled} onclick={cancel} />
           <SubmitBlocker />
-          <Submit label="Add" bind:disabled />
+          <Submit {disabled} label="Add" />
         </div>
       </form>
     </div>
