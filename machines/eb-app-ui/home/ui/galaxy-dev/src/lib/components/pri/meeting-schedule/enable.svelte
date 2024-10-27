@@ -11,25 +11,31 @@
   import Text from "$lib/components/common/form-text.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
-  export let p: MeetingSchedule;
+  interface Props {
+    p: MeetingSchedule;
+  }
 
-  const date0 = toLocaleDate(p.schedule_attr.started_at);
-  const interval = toLocaleInterval(
-    p.schedule_attr.started_at,
-    Number(p.schedule_attr.duration),
+  let { p }: Props = $props();
+
+  const date0 = $state(toLocaleDate(p.schedule_attr.started_at));
+  const interval = $state(
+    toLocaleInterval(
+      p.schedule_attr.started_at,
+      Number(p.schedule_attr.duration),
+    ),
   );
-  let date1 = "";
-  let every = "";
-  let times = "1 time";
-  let d0 = false;
-  let d1 = false;
-  let d2 = false;
-  let d3 = false;
-  let d4 = false;
-  let d5 = false;
-  let d6 = false;
-  let warning = false;
-  let disabled = false;
+  let date1 = $state("");
+  let every = $state("");
+  let times = $state("1 time");
+  let d0 = $state(false);
+  let d1 = $state(false);
+  let d2 = $state(false);
+  let d3 = $state(false);
+  let d4 = $state(false);
+  let d5 = $state(false);
+  let d6 = $state(false);
+  let warning = $state(false);
+  let disabled = $state(false);
 
   if (p.schedule_attr.type === "d") {
     if (p.schedule_attr.rep_every === "1") {
@@ -65,7 +71,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  async function onSubmit() {
+  async function onsubmit() {
     try {
       warning = false;
       disabled = true;
@@ -82,7 +88,7 @@
 <!-- -------------------------------------------------------------------------->
 <section id="enable">
   <div class="d-flex mt-2 justify-content-center">
-    <form on:submit|preventDefault={onSubmit} style="width:{FORM_WIDTH};">
+    <form {onsubmit} style="width:{FORM_WIDTH};">
       {#if p.schedule_attr.type === "o"}
         <Day
           name="date0"
@@ -186,9 +192,9 @@
       {/if}
 
       <div class="d-flex gap-5 mt-5 justify-content-center">
-        <Cancel bind:disabled on:click={cancel} />
+        <Cancel {disabled} onclick={cancel} />
         <SubmitBlocker />
-        <Submit label="Enable" bind:disabled />
+        <Submit {disabled} label="Enable" />
       </div>
     </form>
   </div>
