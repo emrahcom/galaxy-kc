@@ -10,10 +10,14 @@
   import Text from "$lib/components/common/form-text.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
-  export let p: Domain;
+  interface Props {
+    p: Domain;
+  }
 
-  let warning = false;
-  let disabled = false;
+  let { p }: Props = $props();
+
+  let warning = $state(false);
+  let disabled = $state(false);
 
   // ---------------------------------------------------------------------------
   function cancel() {
@@ -21,7 +25,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  async function onSubmit() {
+  async function onsubmit() {
     try {
       disabled = true;
       warning = false;
@@ -38,7 +42,7 @@
 <!-- -------------------------------------------------------------------------->
 <section id="disable">
   <div class="d-flex mt-2 justify-content-center">
-    <form on:submit|preventDefault={onSubmit} style="width:{FORM_WIDTH};">
+    <form {onsubmit} style="width:{FORM_WIDTH};">
       <div class="d-flex gap-3 my-5 justify-content-center">
         <RadioInline
           value={p.auth_type}
@@ -73,9 +77,9 @@
       {/if}
 
       <div class="d-flex gap-5 mt-5 justify-content-center">
-        <Cancel bind:disabled on:click={cancel} />
+        <Cancel {disabled} onclick={cancel} />
         <SubmitBlocker />
-        <Submit label="Disable" bind:disabled />
+        <Submit {disabled} label="Disable" />
       </div>
     </form>
   </div>
