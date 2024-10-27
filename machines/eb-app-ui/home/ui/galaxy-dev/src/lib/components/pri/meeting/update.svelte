@@ -16,13 +16,17 @@
   import Textarea from "$lib/components/common/form-textarea.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
-  export let p: Meeting;
+  interface Props {
+    p: Meeting;
+  }
 
-  let warning = false;
-  let disabled = false;
-  let domainId = p.domain_id;
-  let roomId = p.room_id;
-  let roomStatic = !p.room_ephemeral;
+  let { p }: Props = $props();
+
+  let warning = $state(false);
+  let disabled = $state(false);
+  let domainId = $state(p.domain_id);
+  let roomId = $state(p.room_id);
+  let roomStatic = $state(!p.room_ephemeral);
 
   const pr1 = list("/api/pri/profile/list", 100).then((items: Profile[]) => {
     return items.map((i) => {
@@ -60,7 +64,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  async function onSubmit() {
+  async function onsubmit() {
     try {
       warning = false;
       disabled = true;
@@ -122,7 +126,7 @@
   <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
   {#await Promise.all([pr1, pr2, pr3]) then [profiles, domains, rooms]}
     <div class="d-flex mt-2 justify-content-center">
-      <form on:submit|preventDefault={onSubmit} style="width:{FORM_WIDTH};">
+      <form {onsubmit} style="width:{FORM_WIDTH};">
         <Text name="name" label="Name" bind:value={p.name} required={true} />
         <Textarea
           name="info"
@@ -215,9 +219,9 @@
         {/if}
 
         <div class="d-flex gap-5 mt-5 justify-content-center">
-          <Cancel bind:disabled on:click={cancel} />
+          <Cancel {disabled} onclick={cancel} />
           <SubmitBlocker />
-          <Submit label="Update" bind:disabled />
+          <Submit {disabled} label="Update" />
         </div>
       </form>
     </div>
