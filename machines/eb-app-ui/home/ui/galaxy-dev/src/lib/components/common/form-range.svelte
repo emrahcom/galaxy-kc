@@ -1,13 +1,31 @@
 <script lang="ts">
-  export let label: string;
-  export let max: number;
-  export let min: number;
-  export let name: string;
-  export let disabled = false;
-  export let readonly = false;
-  export let required = false;
-  export let step: number;
-  export let value: number;
+  interface Props {
+    disabled?: boolean;
+    label: string;
+    max: number;
+    min: number;
+    name: string;
+    onchange: (e: Event) => void;
+    oninput: (e: Event) => void;
+    readonly?: boolean;
+    required?: boolean;
+    step: number;
+    value: number;
+  }
+
+  let {
+    disabled = false,
+    label,
+    max,
+    min,
+    name,
+    onchange,
+    oninput,
+    readonly = false,
+    required = false,
+    step,
+    value = $bindable(),
+  }: Props = $props();
 </script>
 
 <!-- -------------------------------------------------------------------------->
@@ -23,8 +41,8 @@
     {readonly}
     {required}
     tabindex={disabled || readonly ? -1 : undefined}
-    on:change
-    on:input
+    {onchange}
+    {oninput}
   />
   <label for={name}>{label}</label>
 </div>
@@ -40,5 +58,5 @@
   {max}
   {step}
   tabindex={readonly ? -1 : undefined}
-  on:input
+  {oninput}
 />
