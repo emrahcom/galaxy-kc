@@ -9,10 +9,14 @@
   import Text from "$lib/components/common/form-text.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
-  export let p: Profile;
+  interface Props {
+    p: Profile;
+  }
 
-  let warning = false;
-  let disabled = false;
+  let { p }: Props = $props();
+
+  let warning = $state(false);
+  let disabled = $state(false);
 
   // ---------------------------------------------------------------------------
   function cancel() {
@@ -20,7 +24,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  async function onSubmit() {
+  async function onsubmit() {
     try {
       warning = false;
       disabled = true;
@@ -37,7 +41,7 @@
 <!-- -------------------------------------------------------------------------->
 <section id="set-default">
   <div class="d-flex mt-2 justify-content-center">
-    <form on:submit|preventDefault={onSubmit} style="width:{FORM_WIDTH};">
+    <form {onsubmit} style="width:{FORM_WIDTH};">
       <Text
         name="name"
         label="Name"
@@ -58,9 +62,9 @@
       {/if}
 
       <div class="d-flex gap-5 mt-5 justify-content-center">
-        <Cancel bind:disabled on:click={cancel} />
+        <Cancel {disabled} onclick={cancel} />
         <SubmitBlocker />
-        <Submit label="Set" bind:disabled />
+        <Submit {disabled} label="Set" />
       </div>
     </form>
   </div>
