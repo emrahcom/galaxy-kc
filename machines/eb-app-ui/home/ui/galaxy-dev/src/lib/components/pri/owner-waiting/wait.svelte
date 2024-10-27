@@ -8,13 +8,18 @@
   import Join from "$lib/components/common/button-on-click.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
-  export let p: MeetingSchedule222;
+  interface Props {
+    p: MeetingSchedule222;
+  }
+
+  let { p }: Props = $props();
+
   const hash = $page.url.hash;
   const REFRESH_SEC = 60;
 
-  let warning = false;
+  let warning = $state(false);
   let started_at = new Date(Date.now() + p.waiting_time * 1000);
-  let remainingTime = "";
+  let remainingTime = $state("");
   let counter = 0;
 
   getRemainingTime();
@@ -100,10 +105,10 @@
           class="card-footer d-flex justify-content-center bg-body border-0
           mt-3 gap-5"
         >
-          <Back label="Back" on:click={goBack} />
+          <Back label="Back" onclick={goBack} />
           <Join
             label="Join Now"
-            on:click={() => {
+            onclick={() => {
               join(p.meeting_id);
             }}
           />
