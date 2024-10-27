@@ -19,7 +19,11 @@
   import Textarea from "$lib/components/common/form-textarea.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
-  export let p: Domain;
+  interface Props {
+    p: Domain;
+  }
+
+  let { p }: Props = $props();
 
   // set default if there is no value
   if (!p.domain_attr.url) p.domain_attr.url = "";
@@ -34,8 +38,8 @@
   if (!p.domain_attr.jaas_aud) p.domain_attr.jaas_aud = JAAS_AUD;
   if (!p.domain_attr.jaas_iss) p.domain_attr.jaas_iss = JAAS_ISS;
 
-  let warning = false;
-  let disabled = false;
+  let warning = $state(false);
+  let disabled = $state(false);
 
   // ---------------------------------------------------------------------------
   function cancel() {
@@ -43,7 +47,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  async function onSubmit() {
+  async function onsubmit() {
     try {
       warning = false;
       disabled = true;
@@ -60,7 +64,7 @@
 <!-- -------------------------------------------------------------------------->
 <section id="update">
   <div class="d-flex mt-2 justify-content-center">
-    <form on:submit|preventDefault={onSubmit} style="width:{FORM_WIDTH};">
+    <form {onsubmit} style="width:{FORM_WIDTH};">
       <div class="d-flex gap-3 my-5 justify-content-center">
         <RadioInline bind:value={p.auth_type} options={AUTH_TYPE_OPTIONS} />
       </div>
@@ -129,9 +133,9 @@
       {/if}
 
       <div class="d-flex gap-5 mt-5 justify-content-center">
-        <Cancel bind:disabled on:click={cancel} />
+        <Cancel {disabled} onclick={cancel} />
         <SubmitBlocker />
-        <Submit label="Update" bind:disabled />
+        <Submit {disabled} label="Update" />
       </div>
     </form>
   </div>
