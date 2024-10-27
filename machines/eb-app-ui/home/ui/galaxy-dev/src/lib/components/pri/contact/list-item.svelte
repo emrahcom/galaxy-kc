@@ -4,8 +4,13 @@
   import Del from "$lib/components/common/link-del.svelte";
   import Update from "$lib/components/common/link-update.svelte";
 
-  export let p: Contact;
-  let status = 0;
+  interface Props {
+    p: Contact;
+  }
+
+  let { p }: Props = $props();
+
+  let status = $state(0);
 
   function updateStatus() {
     try {
