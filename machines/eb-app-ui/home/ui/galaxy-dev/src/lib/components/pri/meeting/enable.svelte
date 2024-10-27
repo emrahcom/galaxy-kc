@@ -12,13 +12,17 @@
   import Textarea from "$lib/components/common/form-textarea.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
-  export let p: Meeting;
+  interface Props {
+    p: Meeting;
+  }
 
-  let warning = false;
-  let disabled = false;
-  let domainName = p.domain_name;
-  let roomName = `${p.room_name} on ${p.domain_name}`;
-  let profile: string;
+  let { p }: Props = $props();
+
+  let warning = $state(false);
+  let disabled = $state(false);
+  let domainName = $state(p.domain_name);
+  let roomName = $state(`${p.room_name} on ${p.domain_name}`);
+  let profile = $state("");
 
   if (p.profile_email) {
     profile = `${p.profile_name || ""} (${p.profile_email})`;
@@ -39,7 +43,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  async function onSubmit() {
+  async function onsubmit() {
     try {
       warning = false;
       disabled = true;
@@ -56,7 +60,7 @@
 <!-- -------------------------------------------------------------------------->
 <section id="enable">
   <div class="d-flex mt-2 justify-content-center">
-    <form on:submit|preventDefault={onSubmit} style="width:{FORM_WIDTH};">
+    <form {onsubmit} style="width:{FORM_WIDTH};">
       <Text
         name="name"
         label="Name"
@@ -138,9 +142,9 @@
       {/if}
 
       <div class="d-flex gap-5 mt-5 justify-content-center">
-        <Cancel bind:disabled on:click={cancel} />
+        <Cancel {disabled} onclick={cancel} />
         <SubmitBlocker />
-        <Submit label="Enable" bind:disabled />
+        <Submit {disabled} label="Enable" />
       </div>
     </form>
   </div>
