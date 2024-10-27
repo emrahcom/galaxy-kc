@@ -1,5 +1,5 @@
 <script lang="ts">
-  let username = "";
+  let username = $state("");
 
   // ---------------------------------------------------------------------------
   function updateUsername() {
@@ -22,7 +22,7 @@
   data-bs-target="#offcanvasAccount"
   aria-controls="offcanvasAccount"
   aria-label="My account"
-  on:click={updateUsername}
+  onclick={updateUsername}
 >
   <i class="bi bi-person"></i>
 </button>
@@ -49,9 +49,7 @@
   <div class="offcanvas-body">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" href="/oidc/logout" on:click={closeMenu}>
-          Log Out
-        </a>
+        <a class="nav-link" href="/oidc/logout" onclick={closeMenu}>Log Out</a>
       </li>
     </ul>
   </div>
