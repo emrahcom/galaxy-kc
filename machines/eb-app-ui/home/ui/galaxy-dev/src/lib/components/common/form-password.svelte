@@ -1,12 +1,23 @@
 <script lang="ts">
-  export let label: string;
-  export let name: string;
-  export let disabled = false;
-  export let readonly = false;
-  export let required = false;
-  export let value: string;
+  interface Props {
+    disabled?: boolean;
+    label: string;
+    name: string;
+    readonly?: boolean;
+    required?: boolean;
+    value: string;
+  }
 
-  let isHidden = true;
+  let {
+    label,
+    name,
+    disabled = false,
+    readonly = false,
+    required = false,
+    value = $bindable(),
+  }: Props = $props();
+
+  let isHidden = $state(true);
 
   // ---------------------------------------------------------------------------
   function toggleVisibility() {
@@ -15,7 +26,7 @@
 </script>
 
 <!-- -------------------------------------------------------------------------->
-<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div class="form-floating d-flex my-3">
   {#if isHidden}
     <input
@@ -48,7 +59,7 @@
     class="input-group-text"
     role="button"
     tabindex="0"
-    on:click={toggleVisibility}
+    onclick={toggleVisibility}
   >
     {#if isHidden}
       <i class="bi bi-eye-fill"></i>
