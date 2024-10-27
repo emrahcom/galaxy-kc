@@ -2,23 +2,45 @@
   import { onMount } from "svelte";
   import { activateTooltips } from "$lib/common";
 
-  export let hrefAdd = "";
-  export let hrefAddTitle = "Add";
-  export let hrefBack = "";
-  export let hrefBackTitle = "Go back";
-  export let hrefCalendar = "";
-  export let hrefCalendarTitle = "Calendar";
-  export let hrefContact = "";
-  export let hrefContactTitle = "Contacts";
-  export let hrefKey = "";
-  export let hrefKeyTitle = "Keys";
-  export let hrefMeeting = "";
-  export let hrefMeetingTitle = "Edit meetings";
-  export let hrefNext = "";
-  export let hrefNextTitle = "Next";
-  export let hrefPrevious = "";
-  export let hrefPreviousTitle = "Previous";
-  export let subheader = "";
+  interface Props {
+    hrefAdd?: string;
+    hrefAddTitle?: string;
+    hrefBack?: string;
+    hrefBackTitle?: string;
+    hrefCalendar?: string;
+    hrefCalendarTitle?: string;
+    hrefContact?: string;
+    hrefContactTitle?: string;
+    hrefKey?: string;
+    hrefKeyTitle?: string;
+    hrefMeeting?: string;
+    hrefMeetingTitle?: string;
+    hrefNext?: string;
+    hrefNextTitle?: string;
+    hrefPrevious?: string;
+    hrefPreviousTitle?: string;
+    subheader?: string;
+  }
+
+  let {
+    hrefAdd = "",
+    hrefAddTitle = "Add",
+    hrefBack = "",
+    hrefBackTitle = "Go back",
+    hrefCalendar = "",
+    hrefCalendarTitle = "Calendar",
+    hrefContact = "",
+    hrefContactTitle = "Contacts",
+    hrefKey = "",
+    hrefKeyTitle = "Keys",
+    hrefMeeting = "",
+    hrefMeetingTitle = "Edit meetings",
+    hrefNext = "",
+    hrefNextTitle = "Next",
+    hrefPrevious = "",
+    hrefPreviousTitle = "Previous",
+    subheader = "",
+  }: Props = $props();
 
   onMount(() => {
     // unremovable tooltip's title issue if there is no delay
@@ -38,7 +60,7 @@
           data-bs-toggle="tooltip"
           data-bs-title={hrefBackTitle}
           aria-label={hrefBackTitle}
-          on:click={() => {
+          onclick={() => {
             globalThis.location.href = hrefBack;
           }}
         >
@@ -52,7 +74,7 @@
           data-bs-toggle="tooltip"
           data-bs-title={hrefContactTitle}
           aria-label={hrefContactTitle}
-          on:click={() => {
+          onclick={() => {
             globalThis.location.href = hrefContact;
           }}
         >
@@ -66,7 +88,7 @@
           data-bs-toggle="tooltip"
           data-bs-title={hrefKeyTitle}
           aria-label={hrefKeyTitle}
-          on:click={() => {
+          onclick={() => {
             globalThis.location.href = hrefKey;
           }}
         >
@@ -80,7 +102,7 @@
           data-bs-toggle="tooltip"
           data-bs-title={hrefMeetingTitle}
           aria-label={hrefMeetingTitle}
-          on:click={() => {
+          onclick={() => {
             globalThis.location.href = hrefMeeting;
           }}
         >
@@ -94,7 +116,7 @@
           data-bs-toggle="tooltip"
           data-bs-title={hrefCalendarTitle}
           aria-label={hrefCalendarTitle}
-          on:click={() => {
+          onclick={() => {
             globalThis.location.href = hrefCalendar;
           }}
         >
@@ -108,7 +130,7 @@
           data-bs-toggle="tooltip"
           data-bs-title={hrefPreviousTitle}
           aria-label={hrefPreviousTitle}
-          on:click={() => {
+          onclick={() => {
             globalThis.location.href = hrefPrevious;
           }}
         >
@@ -122,7 +144,7 @@
           data-bs-toggle="tooltip"
           data-bs-title={hrefNextTitle}
           aria-label={hrefNextTitle}
-          on:click={() => {
+          onclick={() => {
             globalThis.location.href = hrefNext;
           }}
         >
@@ -137,7 +159,7 @@
         data-bs-toggle="tooltip"
         data-bs-title={hrefAddTitle}
         aria-label={hrefAddTitle}
-        on:click={() => {
+        onclick={() => {
           globalThis.location.href = hrefAdd;
         }}
       >
