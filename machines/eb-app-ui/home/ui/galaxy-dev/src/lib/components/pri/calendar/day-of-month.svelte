@@ -7,12 +7,16 @@
   } from "$lib/common";
   import type { MeetingSchedule222 } from "$lib/types";
 
-  export let calendarDay: string;
-  export let today: string;
-  export let firstDay: string;
-  export let week: number;
-  export let day: number;
-  export let calendar: MeetingSchedule222[];
+  interface Props {
+    calendar: MeetingSchedule222[];
+    calendarDay: string;
+    day: number;
+    firstDay: string;
+    today: string;
+    week: number;
+  }
+
+  let { calendar, calendarDay, day, firstDay, today, week }: Props = $props();
 
   const focusedDay = getCalendarDay(firstDay, week, day);
   const dayOfMonth = Number(focusedDay.slice(-2));
@@ -20,10 +24,10 @@
     (m) => focusedDay === toLocaleDate(m.started_at),
   );
 
-  let month = "";
+  let month = $state("");
   if (dayOfMonth === 1) month = toLocaleMonthName(focusedDay);
 
-  let bgColor = "";
+  let bgColor = $state("");
   if (today === focusedDay) {
     bgColor = "bg-primary-subtle";
   } else if (focusedDay < today) {
