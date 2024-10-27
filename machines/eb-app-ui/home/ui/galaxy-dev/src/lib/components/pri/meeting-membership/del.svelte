@@ -9,11 +9,15 @@
   import Textarea from "$lib/components/common/form-textarea.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
-  export let p: MeetingMembership;
+  interface Props {
+    p: MeetingMembership;
+  }
 
-  let warning = false;
-  let disabled = false;
-  let profile: string;
+  let { p }: Props = $props();
+
+  let warning = $state(false);
+  let disabled = $state(false);
+  let profile = $state("");
 
   if (p.profile_email) {
     profile = `${p.profile_name || ""} (${p.profile_email})`;
@@ -27,7 +31,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  async function onSubmit() {
+  async function onsubmit() {
     try {
       warning = false;
       disabled = true;
@@ -44,7 +48,7 @@
 <!-- -------------------------------------------------------------------------->
 <section id="del">
   <div class="d-flex mt-2 justify-content-center">
-    <form on:submit|preventDefault={onSubmit} style="width:{FORM_WIDTH};">
+    <form {onsubmit} style="width:{FORM_WIDTH};">
       <Text
         name="meeting_name"
         label="Meeting"
@@ -72,9 +76,9 @@
       {/if}
 
       <div class="d-flex gap-5 mt-5 justify-content-center">
-        <Cancel bind:disabled on:click={cancel} />
+        <Cancel {disabled} onclick={cancel} />
         <SubmitBlocker />
-        <Submit label="Unsubscribe" bind:disabled />
+        <Submit {disabled} label="Unsubscribe" />
       </div>
     </form>
   </div>
