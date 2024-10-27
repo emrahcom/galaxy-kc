@@ -10,10 +10,14 @@
   import Textarea from "$lib/components/common/form-textarea.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
-  export let invite: MeetingInvite111;
-  export let isExist: boolean;
+  interface Props {
+    invite: MeetingInvite111;
+    isExist: boolean;
+  }
 
-  let schedules = "";
+  let { invite, isExist }: Props = $props();
+
+  let _schedules = "";
   for (const s of invite.session_list) {
     const startTime = new Date(s[0]);
     const localStartTime = startTime.toLocaleString(undefined, {
@@ -27,16 +31,16 @@
     const diff = endTime.getTime() - startTime.getTime();
     const minutes = Math.round(diff / (1000 * 60));
 
-    schedules = `${schedules}\n${localStartTime} (${minutes} min)`;
+    _schedules = `${_schedules}\n${localStartTime} (${minutes} min)`;
   }
-  schedules = schedules.trim();
+  const schedules = _schedules.trim();
 
-  let warning = false;
-  let disabled = false;
-  let p = {
+  let warning = $state(false);
+  let disabled = $state(false);
+  let p = $state({
     code: invite.code,
     profile_id: "",
-  };
+  });
 
   const pr1 = get("/api/pri/profile/get/default").then((item: Profile) => {
     if (item) p.profile_id = item.id;
@@ -63,7 +67,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  async function onSubmit() {
+  async function onsubmit() {
     try {
       warning = false;
       disabled = true;
@@ -82,7 +86,7 @@
   <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
   {#await Promise.all([pr1, pr2]) then [_p, profiles]}
     <div class="d-flex mt-2 justify-content-center">
-      <form on:submit|preventDefault={onSubmit} style="width:{FORM_WIDTH};">
+      <form {onsubmit} style="width:{FORM_WIDTH};">
         <Text
           name="meeting_name"
           label="Meeting"
@@ -132,13 +136,13 @@
           </Warning>
 
           <div class="d-flex gap-5 mt-5 justify-content-center">
-            <Cancel label="Abort" on:click={cancel} />
+            <Cancel label="Abort" onclick={cancel} />
           </div>
         {:else}
           <div class="d-flex gap-5 mt-5 justify-content-center">
-            <Cancel bind:disabled on:click={cancel} />
+            <Cancel {disabled} onclick={cancel} />
             <SubmitBlocker />
-            <Submit label="Subscribe" bind:disabled />
+            <Submit {disabled} label="Subscribe" />
           </div>
         {/if}
       </form>
