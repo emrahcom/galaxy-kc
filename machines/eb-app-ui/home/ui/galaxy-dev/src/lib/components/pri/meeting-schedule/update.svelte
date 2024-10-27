@@ -23,45 +23,69 @@
   import Time from "$lib/components/common/form-time.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
-  export let p: MeetingSchedule;
+  interface Props {
+    p: MeetingSchedule;
+  }
+
+  let { p }: Props = $props();
 
   const timezoneOffset = new Date().getTimezoneOffset();
   const defaultDuration = Number(p.schedule_attr.duration);
-  let duration = defaultDuration;
-  let date0 = toLocaleDate(p.schedule_attr.started_at);
-  let date1 = p.schedule_attr.rep_end_at
-    ? toLocaleDate(p.schedule_attr.rep_end_at)
-    : date0;
-  let time0 = toLocaleTime(p.schedule_attr.started_at);
-  let time1 = getEndTime(time0, duration);
-  let allDay = isAllDay(p.schedule_attr.started_at, p.schedule_attr.duration);
-  let every = Number(p.schedule_attr.rep_every) || 1;
-  let times = Number(p.schedule_attr.rep_end_x) || 10;
-  let notBefore = getToday();
-  if (date0 < notBefore) notBefore = date0;
-  let d0 = p.schedule_attr.rep_days
-    ? Boolean(Number(p.schedule_attr.rep_days[0]))
-    : false;
-  let d1 = p.schedule_attr.rep_days
-    ? Boolean(Number(p.schedule_attr.rep_days[1]))
-    : false;
-  let d2 = p.schedule_attr.rep_days
-    ? Boolean(Number(p.schedule_attr.rep_days[2]))
-    : false;
-  let d3 = p.schedule_attr.rep_days
-    ? Boolean(Number(p.schedule_attr.rep_days[3]))
-    : false;
-  let d4 = p.schedule_attr.rep_days
-    ? Boolean(Number(p.schedule_attr.rep_days[4]))
-    : false;
-  let d5 = p.schedule_attr.rep_days
-    ? Boolean(Number(p.schedule_attr.rep_days[5]))
-    : false;
-  let d6 = p.schedule_attr.rep_days
-    ? Boolean(Number(p.schedule_attr.rep_days[6]))
-    : false;
-  let warning = false;
-  let disabled = false;
+  const _date0 = toLocaleDate(p.schedule_attr.started_at);
+  const _time0 = toLocaleTime(p.schedule_attr.started_at);
+  const notBefore = _date0 < getToday() ? _date0 : getToday();
+
+  let duration = $state(defaultDuration);
+  let date0 = $state(_date0);
+  let date1 = $state(
+    p.schedule_attr.rep_end_at
+      ? toLocaleDate(p.schedule_attr.rep_end_at)
+      : _date0,
+  );
+  let time0 = $state(_time0);
+  let time1 = $state(getEndTime(_time0, defaultDuration));
+  let allDay = $state(
+    isAllDay(p.schedule_attr.started_at, p.schedule_attr.duration),
+  );
+  let every = $state(Number(p.schedule_attr.rep_every) || 1);
+  let times = $state(Number(p.schedule_attr.rep_end_x) || 10);
+  let d0 = $state(
+    p.schedule_attr.rep_days
+      ? Boolean(Number(p.schedule_attr.rep_days[0]))
+      : false,
+  );
+  let d1 = $state(
+    p.schedule_attr.rep_days
+      ? Boolean(Number(p.schedule_attr.rep_days[1]))
+      : false,
+  );
+  let d2 = $state(
+    p.schedule_attr.rep_days
+      ? Boolean(Number(p.schedule_attr.rep_days[2]))
+      : false,
+  );
+  let d3 = $state(
+    p.schedule_attr.rep_days
+      ? Boolean(Number(p.schedule_attr.rep_days[3]))
+      : false,
+  );
+  let d4 = $state(
+    p.schedule_attr.rep_days
+      ? Boolean(Number(p.schedule_attr.rep_days[4]))
+      : false,
+  );
+  let d5 = $state(
+    p.schedule_attr.rep_days
+      ? Boolean(Number(p.schedule_attr.rep_days[5]))
+      : false,
+  );
+  let d6 = $state(
+    p.schedule_attr.rep_days
+      ? Boolean(Number(p.schedule_attr.rep_days[6]))
+      : false,
+  );
+  let warning = $state(false);
+  let disabled = $state(false);
 
   // ---------------------------------------------------------------------------
   function startTimeUpdated() {
@@ -180,7 +204,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  async function onSubmit() {
+  async function onsubmit() {
     try {
       warning = false;
       disabled = true;
@@ -199,7 +223,7 @@
 <!-- -------------------------------------------------------------------------->
 <section id="update">
   <div class="d-flex mt-2 justify-content-center">
-    <form on:submit|preventDefault={onSubmit} style="width:{FORM_WIDTH};">
+    <form {onsubmit} style="width:{FORM_WIDTH};">
       {#if p.schedule_attr.type === "o"}
         <Day
           name="date0"
@@ -274,14 +298,14 @@
           label="Start time"
           bind:value={time0}
           required={true}
-          on:change={startTimeUpdated}
+          onchange={startTimeUpdated}
         />
         <Time
           name="time1"
           label="End time"
           bind:value={time1}
           required={true}
-          on:change={endTimeUpdated}
+          onchange={endTimeUpdated}
         />
         <Range
           name="duration"
@@ -291,8 +315,8 @@
           max={180}
           step={5}
           required={true}
-          on:change={durationUpdated}
-          on:input={durationTyped}
+          onchange={durationUpdated}
+          oninput={durationTyped}
         />
       {/if}
 
@@ -310,9 +334,9 @@
       {/if}
 
       <div class="d-flex gap-5 mt-5 justify-content-center">
-        <Cancel bind:disabled on:click={cancel} />
+        <Cancel {disabled} onclick={cancel} />
         <SubmitBlocker />
-        <Submit label="Update" bind:disabled />
+        <Submit {disabled} label="Update" />
       </div>
     </form>
   </div>
