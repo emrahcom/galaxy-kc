@@ -2,9 +2,13 @@
   import { onMount } from "svelte";
   import { activateTooltips } from "$lib/common";
 
-  export let href: string;
-  export let icon = "bi-question";
-  export let title = "?";
+  interface Props {
+    href: string;
+    icon?: string;
+    title?: string;
+  }
+
+  let { href, icon = "bi-question", title = "?" }: Props = $props();
 
   onMount(() => {
     setTimeout(activateTooltips, 200);
@@ -17,7 +21,7 @@
   data-bs-toggle="tooltip"
   data-bs-title={title}
   aria-label={title}
-  on:click={() => {
+  onclick={() => {
     globalThis.location.href = href;
   }}
 >
