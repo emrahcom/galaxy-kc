@@ -16,15 +16,19 @@
   import Text from "$lib/components/common/form-text.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
-  export let p: Contact;
+  interface Props {
+    p: Contact;
+  }
 
-  let warning = false;
-  let disabled = false;
-  let inCall = false;
+  let { p }: Props = $props();
+
+  let warning = $state(false);
+  let disabled = $state(false);
+  let inCall = $state(false);
   let call: IntercomCall;
   let ring: IntercomRing;
   let ringCounter = 0;
-  let domainId = "";
+  let domainId = $state("");
 
   const pr = list("/api/pri/domain/list", 100).then((items: Domain333[]) => {
     const enableds = items
@@ -87,7 +91,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  async function onSubmit() {
+  async function onsubmit() {
     try {
       const data = {
         contact_id: p.id,
@@ -117,7 +121,7 @@
 <section id="call">
   {#await pr then domains}
     <div class="d-flex mt-2 justify-content-center">
-      <form on:submit|preventDefault={onSubmit} style="width:{FORM_WIDTH};">
+      <form {onsubmit} style="width:{FORM_WIDTH};">
         <Text
           name="name"
           label="Contact"
@@ -156,11 +160,11 @@
 
         <div class="d-flex gap-5 mt-5 justify-content-center">
           {#if inCall}
-            <Cancel on:click={endCall} />
+            <Cancel onclick={endCall} />
           {:else}
-            <Cancel bind:disabled on:click={cancel} />
+            <Cancel {disabled} onclick={cancel} />
             <SubmitBlocker />
-            <Submit label="Call" bind:disabled />
+            <Submit {disabled} label="Call" />
           {/if}
         </div>
       </form>
