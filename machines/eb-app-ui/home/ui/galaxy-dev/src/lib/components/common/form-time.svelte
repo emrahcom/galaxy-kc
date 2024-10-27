@@ -1,10 +1,23 @@
 <script lang="ts">
-  export let label: string;
-  export let name: string;
-  export let disabled = false;
-  export let readonly = false;
-  export let required = false;
-  export let value: string;
+  interface Props {
+    disabled?: boolean;
+    label: string;
+    name: string;
+    onchange: (e: Event) => void;
+    readonly?: boolean;
+    required?: boolean;
+    value: string;
+  }
+
+  let {
+    disabled = false,
+    label,
+    name,
+    onchange,
+    readonly = false,
+    required = false,
+    value = $bindable(),
+  }: Props = $props();
 </script>
 
 <!-- -------------------------------------------------------------------------->
@@ -20,7 +33,7 @@
     {readonly}
     {required}
     tabindex={disabled || readonly ? -1 : undefined}
-    on:change
+    {onchange}
   />
   <label for={name}>{label}</label>
 </div>
