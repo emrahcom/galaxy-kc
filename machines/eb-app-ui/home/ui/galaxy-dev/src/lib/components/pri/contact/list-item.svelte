@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { list } from "$lib/api";
   import type { Contact, ContactStatus } from "$lib/types";
   import Call from "$lib/components/common/link-call.svelte";
   import Del from "$lib/components/common/link-del.svelte";
@@ -10,10 +11,47 @@
 
   let { p }: Props = $props();
 
+  const PERIOD_API_REQUEST = 30000;
+  const PERIOD_UI_REFRESH = 10000;
+
   let status = $state(0);
 
-  function updateStatus() {
+  // ---------------------------------------------------------------------------
+  // even all items run this function periodically, only one of them sends an
+  // API request in each period because of the time checking
+  // ---------------------------------------------------------------------------
+  async function getContactStatus() {
     try {
+      const now = new Date().getTime();
+      const checkedAt =
+        globalThis.localStorage.getItem("contact_checked_at") || "0";
+
+      if (isNaN(Number(checkedAt))) {
+        globalThis.localStorage.setItem("contact_checked_at", String(now));
+      }
+
+      if (now - Number(checkedAt) > PERIOD_API_REQUEST) {
+        globalThis.localStorage.setItem("contact_checked_at", String(now));
+
+        const status: ContactStatus[] = await list(
+          "/api/pri/contact/list/status",
+          1000,
+        );
+        globalThis.localStorage.setItem(
+          "contact_status",
+          JSON.stringify(status),
+        );
+      }
+    } catch {
+      // do nothing
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  async function refreshStatus() {
+    try {
+      await getContactStatus();
+
       const statusData = globalThis.localStorage.getItem("contact_status");
       if (!statusData) return;
 
@@ -28,13 +66,13 @@
       else if (seen < 3600) status = 2;
       else status = 0;
     } finally {
-      setTimeout(updateStatus, 20000);
+      setTimeout(refreshStatus, PERIOD_UI_REFRESH);
     }
   }
 
-  // wait for a while to allow contactHandler to get the initital status before
-  // showing the status on UI
-  setTimeout(updateStatus, 4000);
+  // initialize the status and trigger the refresh status loop
+  getContactStatus();
+  setTimeout(refreshStatus, 2000);
 </script>
 
 <!-- -------------------------------------------------------------------------->
