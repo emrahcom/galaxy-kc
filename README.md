@@ -82,7 +82,7 @@ Run the following commands as `root`:
 
 - Update `KEYCLOAK_*` parameters according to your `Keycloak` configuration.
 
-- Update the mailer variables according to your email system.
+- Update `MAILER_*` parameters according to your email system.
 
   _See [NodeMailer reference](https://nodemailer.com/smtp/) for more details_
 
