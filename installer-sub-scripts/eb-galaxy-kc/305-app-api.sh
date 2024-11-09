@@ -183,13 +183,27 @@ rm -rf $ROOTFS/home/api/galaxy/test
 API_SECRET=$(openssl rand -hex 20)
 
 sed -i \
-  -e "s~DB_PASSWD =.*~DB_PASSWD = \"$DB_PASSWD\"~" \
-  -e "s~GALAXY_FQDN =.*~GALAXY_FQDN = \"$GALAXY_FQDN\"~" \
-  -e "s~API_SECRET =.*~API_SECRET = \"$API_SECRET\"~" \
-  -e "s~KEYCLOAK_ORIGIN =.*~KEYCLOAK_ORIGIN = \"$KEYCLOAK_ORIGIN\"~" \
-  -e "s~KEYCLOAK_REALM =.*~KEYCLOAK_REALM = \"$KEYCLOAK_REALM\"~" \
-  -e "s~KEYCLOAK_CLIENT_ID =.*~KEYCLOAK_CLIENT_ID = \"$KEYCLOAK_CLIENT_ID\"~" \
+  -e "s~DB_PASSWD =.*~DB_PASSWD = \"$DB_PASSWD\";~" \
+  -e "s~GALAXY_FQDN =.*~GALAXY_FQDN = \"$GALAXY_FQDN\";~" \
+  -e "s~API_SECRET =.*~API_SECRET = \"$API_SECRET\";~" \
+  -e "s~KEYCLOAK_ORIGIN =.*~KEYCLOAK_ORIGIN = \"$KEYCLOAK_ORIGIN\";~" \
+  -e "s~KEYCLOAK_REALM =.*~KEYCLOAK_REALM = \"$KEYCLOAK_REALM\";~" \
+  -e "s~KEYCLOAK_CLIENT_ID =.*~KEYCLOAK_CLIENT_ID = \"$KEYCLOAK_CLIENT_ID\";~" \
   $ROOTFS/home/api/galaxy/config.ts
+
+sed -i \
+  -e "s~host:.*~host: \"$MAILER_HOST\",~" \
+  -e "s~port:.*~port: $MAILER_PORT,~" \
+  -e "s~user:.*~user: \"$MAILER_USER\",~" \
+  -e "s~pass:.*~pass: \"$MAILER_PASS\",~" \
+  -e "s~MAILER_FROM =.*~MAILER_FROM = \"$MAILER_FROM\";~" \
+  $ROOTFS/home/api/galaxy/config.mailer.ts
+
+if [[ "$MAILER_SECURE" = false ]]; then
+  sed -i "s/secure:.*/secure: false,/" $ROOTFS/home/api/galaxy/config.mailer.ts
+else
+  sed -i "s/secure:.*/secure: true,/" $ROOTFS/home/api/galaxy/config.mailer.ts
+fi
 
 lxc-attach -n $MACH -- zsh <<EOS
 set -e
