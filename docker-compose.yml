@@ -46,6 +46,13 @@ services:
       - API_SECRET
       - DB_HOST
       - DB_PASSWD
+      - GALAXY_FQDN
+      - MAILER_HOST
+      - MAILER_PORT
+      - MAILER_SECURE
+      - MAILER_USER
+      - MAILER_PASS
+      - MAILER_FROM
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api-pri-http.entrypoints=reverse-proxy-http"
