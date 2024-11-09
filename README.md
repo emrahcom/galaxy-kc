@@ -10,7 +10,7 @@ identity management system.
 ### Try it
 
 Try `Galaxy` using publicly available implementation on
-[https://eparto.net](https://eparto.net).
+[https://eparto.net](https://eparto.net)
 
 ### Features
 
@@ -76,10 +76,29 @@ docker-compose up -d
 
 #### Installation
 
-Run the following commands as `root`.
+Run the following commands as `root`:
 
-_Update the value of `GALAXY_FQDN` according to your domain name and
-`KEYCLOAK_*` parameters according to your `Keycloak` configuration._
+- Update `GALAXY_FQDN` according to your domain name.
+
+- Update `KEYCLOAK_*` parameters according to your `Keycloak` configuration.
+
+- Update the mailer variables according to your email system.
+
+  _See [NodeMailer reference](https://nodemailer.com/smtp/) for more details_
+
+- If this is a test setup and you don't have resolvable FQDNs, please set
+  `SKIP_DNS_CHECK` before installation.
+
+  ```bash
+  export SKIP_DNS_CHECK=true
+  ```
+
+- If this is a test setup and your `Keycloak` doesn't have a trusted
+  certificate, please set `IGNORE_CERT_ERRORS` before installation.
+
+  ```bash
+  export IGNORE_CERT_ERRORS=true
+  ```
 
 ```bash
 wget https://raw.githubusercontent.com/emrahcom/bookworm-lxc-base/main/installer/eb
@@ -89,22 +108,14 @@ export GALAXY_FQDN="app.galaxy.corp"
 export KEYCLOAK_ORIGIN="https://ucs-sso-ng.mydomain.corp"
 export KEYCLOAK_REALM="ucs"
 export KEYCLOAK_CLIENT_ID="galaxy"
+export MAILER_HOST="mail.galaxy.corp"
+export MAILER_PORT=465
+export MAILER_SECURE=true
+export MAILER_USER="username"
+export MAILER_PASS="password"
+export MAILER_FROM="no-reply@galaxy.corp"
 
 bash eb eb-galaxy-kc
-```
-
-_If this is a test setup and you don't have resolvable FQDN, please set
-`SKIP_DNS_CHECK` before installation_
-
-```bash
-export SKIP_DNS_CHECK=true
-```
-
-_If this is a test setup and your `Keycloak` doesn't have a trusted certificate,
-please set `IGNORE_CERT_ERRORS` before installation_
-
-```bash
-export IGNORE_CERT_ERRORS=true
 ```
 
 #### Let's Encrypt certificate
