@@ -1,21 +1,19 @@
 import { fetch } from "./common.ts";
-import type { Id } from "./types.ts";
+import type { Id, Identity } from "./types.ts";
 
 // -----------------------------------------------------------------------------
-// Keycloak setup has its own version of addIdentity. See identity-kc.ts
-// -----------------------------------------------------------------------------
-export async function addIdentity(identityId: string) {
+export async function getIdentity(identityId: string) {
   const sql = {
     text: `
-      INSERT INTO identity (id)
-      VALUES ($1)
-      RETURNING id, created_at as at`,
+      SELECT identity_attr, enabled, created_at, updated_at, seen_at
+      FROM identity
+      WHERE id = $1`,
     args: [
       identityId,
     ],
   };
 
-  return await fetch(sql) as Id[];
+  return await fetch(sql) as Identity[];
 }
 
 // -----------------------------------------------------------------------------
