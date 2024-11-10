@@ -1,9 +1,11 @@
 import { notFound } from "../http/response.ts";
 import { pri as wrapper } from "../http/wrapper.ts";
+import { mailMissedCall } from "../common/mail.ts";
 import { getLimit, getOffset } from "../database/common.ts";
 import {
   delIntercom,
   getIntercom,
+  getIntercomForOwner,
   listIntercom,
   setStatusIntercom,
 } from "../database/intercom.ts";
@@ -69,6 +71,24 @@ async function ring(req: Request, identityId: string): Promise<unknown> {
 }
 
 // -----------------------------------------------------------------------------
+async function notifyAboutCall(
+  req: Request,
+  identityId: string,
+): Promise<unknown> {
+  const pl = await req.json();
+  const intercomId = pl.id;
+  const intercomMessages = await getIntercomForOwner(identityId, intercomId);
+
+  if (intercomMessages[0]?.remote_id) {
+    // dont wait for the async function
+    mailMissedCall(identityId, intercomMessages[0].remote_id);
+  }
+
+  // UI has nothing to do if mailer fails. So, it is always "ok".
+  return ["ok"];
+}
+
+// -----------------------------------------------------------------------------
 export default async function (
   req: Request,
   path: string,
@@ -88,6 +108,8 @@ export default async function (
     return await wrapper(setSeen, req, identityId);
   } else if (path === `${PRE}/call/ring`) {
     return await wrapper(ring, req, identityId);
+  } else if (path === `${PRE}/notify/aboutcall`) {
+    return await wrapper(notifyAboutCall, req, identityId);
   } else {
     return notFound();
   }
