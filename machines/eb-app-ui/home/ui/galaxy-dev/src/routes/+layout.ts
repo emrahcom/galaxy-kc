@@ -27,7 +27,7 @@ export async function load() {
     globalThis.localStorage.setItem("keycloak_realm", config.keycloak_realm);
   }
 
-  // Am I authenticated
+  // Am I authenticated?
   const res = await post("/api/pri/hello", "{}");
 
   globalThis.sessionStorage.removeItem("oidc_authenticated");
