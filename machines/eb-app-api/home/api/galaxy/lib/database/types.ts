@@ -39,6 +39,17 @@ export interface Id {
 }
 
 // -----------------------------------------------------------------------------
+export interface Identity {
+  identity_attr: {
+    [key: string]: string;
+  };
+  enabled: boolean;
+  created_at: string;
+  updated_at: string;
+  seen_at: string;
+}
+
+// -----------------------------------------------------------------------------
 export interface Contact {
   id: string;
   name: string;
@@ -173,6 +184,18 @@ export interface IntercomCall {
 
 // -----------------------------------------------------------------------------
 export interface IntercomMessage {
+  id: string;
+  remote_id: string;
+  status: IntercomStatus;
+  message_type: Message;
+  intercom_attr: {
+    [key: string]: string;
+  };
+  expired_at: string;
+}
+
+// -----------------------------------------------------------------------------
+export interface IntercomMessage222 {
   id: string;
   contact_id: string;
   contact_name: string;
