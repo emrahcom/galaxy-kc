@@ -4,6 +4,7 @@ import { notFound, ok, unauthorized } from "../http/response.ts";
 import { adm as wrapper } from "../http/wrapper-kc.ts";
 import { generateAPIToken } from "../common/token-kc.ts";
 import { addIdentity } from "../database/identity-kc.ts";
+import { setIdentityEmail } from "../database/identity.ts";
 import { addProfile } from "../database/profile.ts";
 import {
   GALAXY_FQDN,
@@ -16,7 +17,8 @@ const PRE = "/api/adm/identity";
 const UUID_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
 
 // -----------------------------------------------------------------------------
-// Add the identity if not exists
+// Add the identity if not exists.
+// Update the identity's email after each login.
 // -----------------------------------------------------------------------------
 async function add(
   userId: string,
@@ -26,7 +28,9 @@ async function add(
     ? userInfo.preferred_username
     : "Guest";
   const email = (typeof userInfo.email === "string") ? userInfo.email : "";
-  const rows = await addIdentity(userId, email);
+  const rows = await addIdentity(userId);
+
+  await setIdentityEmail(userId, email);
 
   if (rows[0] !== undefined) {
     await addProfile(
