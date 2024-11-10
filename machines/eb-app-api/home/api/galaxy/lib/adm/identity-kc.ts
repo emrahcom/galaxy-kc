@@ -25,8 +25,8 @@ async function add(
   const name = (typeof userInfo.preferred_username === "string")
     ? userInfo.preferred_username
     : "Guest";
-  const email = (typeof userInfo.email === "string") ? userInfo.email : "Guest";
-  const rows = await addIdentity(userId);
+  const email = (typeof userInfo.email === "string") ? userInfo.email : "";
+  const rows = await addIdentity(userId, email);
 
   if (rows[0] !== undefined) {
     await addProfile(
