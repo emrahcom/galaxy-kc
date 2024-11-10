@@ -82,6 +82,9 @@ else
     echo "KEYCLOAK_CLIENT_ID: $KEYCLOAK_CLIENT_ID"
 fi
 
+# get the mailer config
+cp /home/api/galaxy/config.mailer.ts /tmp/
+
 # clone
 cat <<EOF
 
@@ -94,13 +97,15 @@ git clone --depth=1 --branch $BRANCH $REMOTE $LOCAL
 
 sed -i \
   -e "s~DB_PASSWD =.*~DB_PASSWD = \"$DB_PASSWD\"~" \
-  -e "s~API_SECRET =.*~API_SECRET = \"$API_SECRET\"~" \
   -e "s~GALAXY_FQDN =.*~GALAXY_FQDN = \"$GALAXY_FQDN\"~" \
+  -e "s~API_SECRET =.*~API_SECRET = \"$API_SECRET\"~" \
   -e "s~KEYCLOAK_ORIGIN =.*~KEYCLOAK_ORIGIN = \"$KEYCLOAK_ORIGIN\"~" \
   -e "s~KEYCLOAK_REALM =.*~KEYCLOAK_REALM = \"$KEYCLOAK_REALM\"~" \
   -e "s~KEYCLOAK_CLIENT_ID =.*~KEYCLOAK_CLIENT_ID = \"$KEYCLOAK_CLIENT_ID\"~" \
   $APP/config.ts
+cp /tmp/config.mailer.ts $APP/
 cat $APP/config.ts
+cat $APP/config.mailer.ts
 
 # upgrade app
 rm -rf /tmp/galaxy.old
