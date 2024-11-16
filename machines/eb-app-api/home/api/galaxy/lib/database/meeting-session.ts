@@ -1,5 +1,6 @@
 import { Transaction } from "https://deno.land/x/postgres@v0.19.3/mod.ts";
-import type { Attr } from "./types.ts";
+import { fetch } from "./common.ts";
+import type { Attr, MeetingSessionForReminder } from "./types.ts";
 
 // -----------------------------------------------------------------------------
 function isOver(date: string, minutes: number) {
@@ -281,4 +282,71 @@ export async function delMeetingSessionBySchedule(
   };
 
   await trans.queryObject(sql);
+}
+
+// -----------------------------------------------------------------------------
+export async function listMeetingSessionForReminder(lastCheckTime: string) {
+  // limit should be higher than the number of expected participants in a
+  // minute, otherwise lastCheckTime will be skipped before fetching all records
+  // for this period.
+  const limit = 1000;
+
+  const sql = {
+    text: `
+      SELECT mem.id, 'member' as role, i.identity_attr->>'email' as email,
+        m.name as meeting_name, s.name as meeting_schedule_name, ses.started_at
+      FROM meeting m
+        JOIN room r ON m.room_id = r.id
+                       AND r.enabled
+        JOIN domain d ON r.domain_id = d.id
+                         AND d.enabled
+        JOIN identity i1 ON d.identity_id = i1.id
+                            AND i1.enabled
+        JOIN identity i2 ON r.identity_id = i2.id
+                            AND i2.enabled
+        JOIN identity i3 ON m.identity_id = i3.id
+                            AND i3.enabled
+        JOIN meeting_schedule s ON m.id = s.meeting_id
+                                   AND s.enabled
+        JOIN meeting_session ses ON s.id = ses.meeting_schedule_id
+        JOIN meeting_member mem ON mem.meeting_id = s.meeting_id
+                                   AND mem.enabled
+        JOIN identity i ON i.id = mem.identity_id
+                           AND i.enabled
+      WHERE ses.started_at > $1
+        AND ses.started_at > now() + interval '25 minutes'
+        AND ses.started_at < now() + interval '31 minutes'
+        AND m.enabled
+
+      UNION
+
+      SELECT m.id, 'owner' as role, i3.identity_attr->>'email' as email,
+        m.name as meeting_name, s.name as meeting_schedule_name, ses.started_at
+      FROM meeting m
+        JOIN room r ON m.room_id = r.id
+                       AND r.enabled
+        JOIN domain d ON r.domain_id = d.id
+                         AND d.enabled
+        JOIN identity i1 ON d.identity_id = i1.id
+                            AND i1.enabled
+        JOIN identity i2 ON r.identity_id = i2.id
+                            AND i2.enabled
+        JOIN identity i3 ON m.identity_id = i3.id
+                            AND i3.enabled
+        JOIN meeting_schedule s ON m.id = s.meeting_id
+                                   AND s.enabled
+        JOIN meeting_session ses ON s.id = ses.meeting_schedule_id
+      WHERE ses.started_at > $1
+        AND ses.started_at > now() + interval '25 minutes'
+        AND ses.started_at < now() + interval '31 minutes'
+        AND m.enabled
+
+      LIMIT $2`,
+    args: [
+      lastCheckTime,
+      limit,
+    ],
+  };
+
+  return await fetch(sql) as MeetingSessionForReminder[];
 }
