@@ -14,6 +14,7 @@ async function migrateTo(upgradeTo: string, sqls: (string | QueryObject)[]) {
     const trans = client.createTransaction("transaction");
     await trans.begin();
 
+    // run migration sqls
     for (const sql of sqls) {
       if (typeof sql === "string") {
         await trans.queryObject(sql as string);
@@ -21,6 +22,13 @@ async function migrateTo(upgradeTo: string, sqls: (string | QueryObject)[]) {
         await trans.queryObject(sql as QueryObject);
       }
     }
+
+    // set the new version in metadata
+    const versionSql = `
+      UPDATE metadata
+        SET mvalue='${upgradeTo}'
+        WHERE mkey = 'database_version'`;
+    await trans.queryObject(versionSql);
 
     await trans.commit();
     console.log(`Upgraded to database ${upgradeTo}`);
@@ -34,10 +42,6 @@ async function migrateTo2024092201() {
     `ALTER TABLE identity
        ADD COLUMN IF NOT EXISTS
          "seen_at" timestamp with time zone NOT NULL DEFAULT now()`,
-
-    `UPDATE metadata
-       SET mvalue='${upgradeTo}'
-       WHERE mkey = 'database_version'`,
   ];
 
   await migrateTo(upgradeTo, sqls);
@@ -79,10 +83,6 @@ async function migrateTo2024092801() {
     `CREATE INDEX ON intercom("remote_id", "expired_at")`,
 
     `CREATE INDEX ON intercom("expired_at")`,
-
-    `UPDATE metadata
-     SET mvalue='${upgradeTo}'
-     WHERE mkey = 'database_version'`,
   ];
 
   await migrateTo(upgradeTo, sqls);
@@ -121,14 +121,11 @@ async function migrateTo2024101501() {
     `CREATE INDEX ON meeting_request("expired_at")`,
 
     `CREATE INDEX ON meeting_session("ended_at")`,
-
-    `UPDATE metadata
-       SET mvalue='${upgradeTo}'
-       WHERE mkey = 'database_version'`,
   ];
 
   await migrateTo(upgradeTo, sqls);
 }
+
 // -----------------------------------------------------------------------------
 async function migrateTo2024110301() {
   const upgradeTo = "20241103.01";
@@ -136,10 +133,16 @@ async function migrateTo2024110301() {
     `ALTER TABLE identity
        ADD COLUMN IF NOT EXISTS
          "identity_attr" jsonb NOT NULL DEFAULT '{}'::jsonb`,
+  ];
 
-    `UPDATE metadata
-       SET mvalue='${upgradeTo}'
-       WHERE mkey = 'database_version'`,
+  await migrateTo(upgradeTo, sqls);
+}
+
+// -----------------------------------------------------------------------------
+async function migrateTo2024111601() {
+  const upgradeTo = "20241116.01";
+  const sqls = [
+    `CREATE INDEX ON meeting_session("started_at")`,
   ];
 
   await migrateTo(upgradeTo, sqls);
@@ -156,4 +159,5 @@ export default async function () {
   await migrateTo2024092801();
   await migrateTo2024101501();
   await migrateTo2024110301();
+  await migrateTo2024111601();
 }
