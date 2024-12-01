@@ -3,7 +3,7 @@
   import { getByCode } from "$lib/api";
   import Home from "$lib/components/common/button-on-click.svelte";
   import Subheader from "$lib/components/common/subheader-center.svelte";
-  import Wait from "$lib/components/aud-waiting/wait.svelte";
+  import Wait from "$lib/components/aud/wait.svelte";
   import Warning from "$lib/components/common/alert-warning.svelte";
 
   const code = $page.params.code;
