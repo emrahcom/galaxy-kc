@@ -11,13 +11,7 @@ export type CandidateStatus = "pending" | "rejected";
 export type DomainAuthType = "none" | "token" | "jaas";
 export type IntercomStatus = "none" | "seen" | "accepted" | "rejected";
 export type InviteTo = "audience" | "member";
-export type Message =
-  | "call"
-  | "alarm_for_meeting"
-  | "invite_for_domain"
-  | "invite_for_room"
-  | "invite_for_meeting"
-  | "request_for_meeting_membership";
+export type Message = "call" | "phone";
 export type Schedule = "permanent" | "scheduled" | "ephemeral";
 
 // -----------------------------------------------------------------------------
@@ -166,8 +160,7 @@ export interface IntercomCall {
 // -----------------------------------------------------------------------------
 export interface IntercomMessage222 {
   id: string;
-  contact_id: string;
-  contact_name: string;
+  contact_name: string | null;
   status: IntercomStatus;
   message_type: Message;
   intercom_attr: {
@@ -353,6 +346,32 @@ export interface MeetingSchedule222 {
   waiting_time: number;
   join_as: Affiliation;
   membership_id: string | null;
+}
+
+// -----------------------------------------------------------------------------
+export interface Phone {
+  id: string;
+  name: string;
+  code: string;
+  domain_id: string;
+  domain_name: string;
+  domain_url: string;
+  domain_enabled: boolean;
+  profile_id: string;
+  profile_name: string;
+  profile_email: string;
+  email_enabled: boolean;
+  enabled: boolean;
+  created_at: string;
+  updated_at: string;
+  called_at: string;
+}
+
+// -----------------------------------------------------------------------------
+export interface Phone111 {
+  profile_name: string;
+  profile_email: string;
+  code: string;
 }
 
 // -----------------------------------------------------------------------------
