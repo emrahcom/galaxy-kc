@@ -49,17 +49,17 @@
     ringCounter += 1;
 
     try {
-      // stop ringing if it is stopped from UI or if already a lot of attempts
+      // stop ringing if it is stopped on UI or if already a lot of attempts
       // send also a notification to the callee about the call
       if (!inCall || ringCounter > 10) {
         await actionById("/api/pri/intercom/del-with-notification", call.id);
-
         inCall = false;
         disabled = false;
+
         return;
       }
 
-      // refresh the call and check if there is a response from the peer
+      // ring and check if there is a response from the other peer
       ring = await actionById("/api/pri/intercom/call/ring", call.id);
 
       // ring again after a while if still no response from the peer
@@ -68,10 +68,8 @@
         return;
       }
 
-      // since there are only two options (rejected or accepted) at this stage,
-      // end the call
+      // end the call (it is accepted or rejected at this stage)
       await actionById("/api/pri/intercom/del", call.id);
-
       inCall = false;
       disabled = false;
 
@@ -94,7 +92,7 @@
   // ---------------------------------------------------------------------------
   async function onsubmit() {
     try {
-      const data = {
+      const payload = {
         contact_id: p.id,
         domain_id: domainId,
       };
@@ -104,8 +102,8 @@
       disabled = true;
       ringCounter = 0;
 
-      // initialize the call and get the call data
-      call = await action("/api/pri/contact/call", data);
+      // initialize the call and get the call payload
+      call = await action("/api/pri/contact/call", payload);
       if (!call.url) throw "no url for call";
 
       // start ringing
