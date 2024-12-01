@@ -1,6 +1,8 @@
 import { get } from "$lib/api";
 
 // -----------------------------------------------------------------------------
+// Trigger an update query on the server side (postgres), /api/pri/identity/ping
+// -----------------------------------------------------------------------------
 export async function ping() {
   try {
     const now = new Date().getTime();
