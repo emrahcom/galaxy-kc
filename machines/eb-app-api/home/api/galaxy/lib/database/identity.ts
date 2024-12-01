@@ -17,6 +17,30 @@ export async function getIdentity(identityId: string) {
 }
 
 // -----------------------------------------------------------------------------
+// The consumer is the mailer. So, dont return the identity if the email for
+// this phone is disabled.
+// -----------------------------------------------------------------------------
+export async function getIdentityByPhoneCode(code: string) {
+  const sql = {
+    text: `
+      SELECT identity_attr, i.enabled, i.created_at, i.updated_at, seen_at
+      FROM identity i
+        JOIN phone ph ON ph.identity_id = i.id
+                         AND ph.code = $1
+                         AND ph.enabled
+                         AND ph.email_enabled
+        JOIN domain d ON ph.domain_id = d.id
+                         AND d.enabled
+      WHERE i.enabled`,
+    args: [
+      code,
+    ],
+  };
+
+  return await fetch(sql) as Identity[];
+}
+
+// -----------------------------------------------------------------------------
 export async function setIdentityEmail(identityId: string, email: string) {
   const sql = {
     text: `
