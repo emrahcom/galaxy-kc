@@ -44,9 +44,7 @@
   cd ~/git-repo/galaxy-kc/machines/eb-app-api/home/api/galaxy
   deno fmt --check
   deno lint
-  deno check index-adm.ts
-  deno check index-pri.ts
-  deno check index-pub.ts
+  deno check *.ts
   ```
 
 - Check `eb-app-ui`
