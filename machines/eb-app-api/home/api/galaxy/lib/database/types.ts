@@ -11,13 +11,7 @@ export type CandidateStatus = "pending" | "rejected";
 export type DomainAuthType = "none" | "token" | "jaas";
 export type IntercomStatus = "none" | "seen" | "accepted" | "rejected";
 export type InviteTo = "audience" | "member";
-export type Message =
-  | "call"
-  | "alarm_for_meeting"
-  | "invite_for_domain"
-  | "invite_for_room"
-  | "invite_for_meeting"
-  | "request_for_meeting_membership";
+export type Message = "call" | "phone";
 export type RequestStatus = "pending" | "rejected";
 export type Schedule = "permanent" | "scheduled" | "ephemeral";
 
@@ -191,8 +185,7 @@ export interface IntercomMessage {
 // -----------------------------------------------------------------------------
 export interface IntercomMessage222 {
   id: string;
-  contact_id: string;
-  contact_name: string;
+  contact_name: string | null;
   status: IntercomStatus;
   message_type: Message;
   intercom_attr: {
@@ -447,6 +440,55 @@ export interface MeetingSessionForReminder {
 // -----------------------------------------------------------------------------
 export interface Meta {
   mvalue: string;
+}
+
+// -----------------------------------------------------------------------------
+export interface Phone {
+  id: string;
+  name: string;
+  code: string;
+  domain_id: string;
+  domain_name: string;
+  domain_url: string;
+  domain_enabled: boolean;
+  profile_id: string;
+  profile_name: string;
+  profile_email: string;
+  email_enabled: boolean;
+  enabled: boolean;
+  created_at: string;
+  updated_at: string;
+  called_at: string;
+}
+
+// -----------------------------------------------------------------------------
+export interface Phone111 {
+  profile_name: string;
+  profile_email: string;
+  code: string;
+}
+
+// -----------------------------------------------------------------------------
+export interface Phone333 {
+  id: string;
+  name: string;
+  owner_id: string;
+  profile_name: string;
+  profile_email: string;
+  auth_type: DomainAuthType;
+  domain_attr: {
+    url: string;
+    app_id: string;
+    app_secret: string;
+    app_alg: string;
+    jaas_url: string;
+    jaas_app_id: string;
+    jaas_kid: string;
+    jaas_key: string;
+    jaas_alg: string;
+    jaas_aud: string;
+    jaas_iss: string;
+  };
 }
 
 // -----------------------------------------------------------------------------
