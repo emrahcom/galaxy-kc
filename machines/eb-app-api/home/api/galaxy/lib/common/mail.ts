@@ -1,6 +1,6 @@
 import { GALAXY_FQDN } from "../../config.ts";
 import { MAILER_FROM, MAILER_TRANSPORT_OPTIONS } from "../../config.mailer.ts";
-import { getIdentity } from "../database/identity.ts";
+import { getIdentity, getIdentityByPhoneCode } from "../database/identity.ts";
 import {
   getContactByIdentity,
   getContactIdentity,
@@ -67,6 +67,37 @@ export async function mailMissedCall(caller: string, callee: string) {
 }
 
 // -----------------------------------------------------------------------------
+export async function mailPhoneCall(code: string, phoneName: string) {
+  try {
+    // This will not return an identity if email is disabled for this phone.
+    const ownerIdentities = await getIdentityByPhoneCode(code);
+    const ownerIdentity = ownerIdentities[0];
+    if (!ownerIdentity) throw "owner not found";
+
+    const mailTo = ownerIdentity.identity_attr.email;
+    if (!mailTo) throw "email not found";
+
+    // The recommended link can be anywhere in the application since the ring
+    // popup is visible everywhere in the application.
+    const recommendedLink = `https://${GALAXY_FQDN}/pri/phone`;
+    const mailSubject = `Your virtual phone is ringing, ${phoneName}`;
+    const mailText = `
+      Your virtual phone is ringing:
+      ${phoneName}
+
+      ${recommendedLink}
+    `.replace(/^ +/gm, "");
+
+    const res = await sendMail(mailTo, mailSubject, mailText);
+    if (!res) throw "sendMail failed";
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// -----------------------------------------------------------------------------
 export async function mailMeetingSession(
   meetingSession: MeetingSessionForReminder,
 ) {
@@ -80,7 +111,7 @@ export async function mailMeetingSession(
     }
 
     const baseLinkForRole = `https://${GALAXY_FQDN}/pri/${meetingSession.role}`;
-    const meetingLink = `${baseLinkForRole}/waiting/${meetingSession.id}`;
+    const meetingLink = `${baseLinkForRole}/wait/${meetingSession.id}`;
 
     const mailSubject = `You have a meeting in 30 minutes, ${meetingName}`;
     const mailText = `
