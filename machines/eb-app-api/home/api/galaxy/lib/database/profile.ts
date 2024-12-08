@@ -87,6 +87,90 @@ export async function delProfile(identityId: string, profileId: string) {
   const trans = client.createTransaction("transaction");
   await trans.begin();
 
+  // Select the default profile instead of the deleted one in meeting.
+  const sql1 = {
+    text: `
+      UPDATE meeting
+      SET
+        profile_id = (SELECT id
+                      FROM profile
+                      WHERE identity_id = $1
+                        AND is_default
+                        AND id != $2
+                     ),
+        updated_at = now()
+      WHERE identity_id = $1
+        AND profile_id = $2`,
+    args: [
+      identityId,
+      profileId,
+    ],
+  };
+  await trans.queryObject(sql1);
+
+  // Select the default profile instead of the deleted one in meeting_member.
+  const sql2 = {
+    text: `
+      UPDATE meeting_member
+      SET
+        profile_id = (SELECT id
+                      FROM profile
+                      WHERE identity_id = $1
+                        AND is_default
+                        AND id != $2
+                     ),
+        updated_at = now()
+      WHERE identity_id = $1
+        AND profile_id = $2`,
+    args: [
+      identityId,
+      profileId,
+    ],
+  };
+  await trans.queryObject(sql2);
+
+  // Select the default profile instead of the deleted one in meeting_request.
+  const sql3 = {
+    text: `
+      UPDATE meeting_request
+      SET
+        profile_id = (SELECT id
+                      FROM profile
+                      WHERE identity_id = $1
+                        AND is_default
+                        AND id != $2
+                     ),
+        updated_at = now()
+      WHERE identity_id = $1
+        AND profile_id = $2`,
+    args: [
+      identityId,
+      profileId,
+    ],
+  };
+  await trans.queryObject(sql3);
+
+  // Select the default profile instead of the deleted one in phone.
+  const sql4 = {
+    text: `
+      UPDATE phone
+      SET
+        profile_id = (SELECT id
+                      FROM profile
+                      WHERE identity_id = $1
+                        AND is_default
+                        AND id != $2
+                     ),
+        updated_at = now()
+      WHERE identity_id = $1
+        AND profile_id = $2`,
+    args: [
+      identityId,
+      profileId,
+    ],
+  };
+  await trans.queryObject(sql4);
+
   const sql = {
     text: `
       DELETE FROM profile
@@ -100,82 +184,6 @@ export async function delProfile(identityId: string, profileId: string) {
     ],
   };
   const { rows: rows } = await trans.queryObject(sql);
-
-  // select the default profile for the deleted one in meeting
-  const sql1 = {
-    text: `
-      UPDATE meeting
-      SET
-        profile_id = (SELECT id
-                      FROM profile
-                      WHERE identity_id = $1
-                        AND is_default
-                     ),
-        updated_at = now()
-      WHERE identity_id = $1
-        AND profile_id IS NULL`,
-    args: [
-      identityId,
-    ],
-  };
-  if (rows[0] !== undefined) await trans.queryObject(sql1);
-
-  // select the default profile for the deleted one in meeting_member
-  const sql2 = {
-    text: `
-      UPDATE meeting_member
-      SET
-        profile_id = (SELECT id
-                      FROM profile
-                      WHERE identity_id = $1
-                        AND is_default
-                     ),
-        updated_at = now()
-      WHERE identity_id = $1
-        AND profile_id IS NULL`,
-    args: [
-      identityId,
-    ],
-  };
-  if (rows[0] !== undefined) await trans.queryObject(sql2);
-
-  // select the default profile for the deleted one in meeting_request
-  const sql3 = {
-    text: `
-      UPDATE meeting_request
-      SET
-        profile_id = (SELECT id
-                      FROM profile
-                      WHERE identity_id = $1
-                        AND is_default
-                     ),
-        updated_at = now()
-      WHERE identity_id = $1
-        AND profile_id IS NULL`,
-    args: [
-      identityId,
-    ],
-  };
-  if (rows[0] !== undefined) await trans.queryObject(sql3);
-
-  // select the default profile for the deleted one in phone
-  const sql4 = {
-    text: `
-      UPDATE phone
-      SET
-        profile_id = (SELECT id
-                      FROM profile
-                      WHERE identity_id = $1
-                        AND is_default
-                     ),
-        updated_at = now()
-      WHERE identity_id = $1
-        AND profile_id IS NULL`,
-    args: [
-      identityId,
-    ],
-  };
-  if (rows[0] !== undefined) await trans.queryObject(sql4);
 
   await trans.commit();
 
@@ -216,9 +224,9 @@ export async function setDefaultProfile(identityId: string, profileId: string) {
   const trans = client.createTransaction("transaction");
   await trans.begin();
 
-  // note: don't add an is_default checking into WHERE. user should set a
-  // profile as default although it's already default to solve the duplicated
-  // defaults issue. Also UI should support this.
+  // Note: Don't add is_default checking into WHERE. User can set a profile as
+  // as default even though it is default to solve the duplicated defaults
+  // issue. UI should also support this feature.
   const sql = {
     text: `
       UPDATE profile
@@ -235,7 +243,7 @@ export async function setDefaultProfile(identityId: string, profileId: string) {
   };
   const { rows: rows } = await trans.queryObject(sql);
 
-  // reset the old default if the set action is successful
+  // Reset the old default if the set action is successful.
   const sql1 = {
     text: `
       UPDATE profile
