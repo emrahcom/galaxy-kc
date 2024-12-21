@@ -185,6 +185,7 @@ API_SECRET=$(openssl rand -hex 20)
 sed -i \
   -e "s~DB_PASSWD =.*~DB_PASSWD = \"$DB_PASSWD\";~" \
   -e "s~GALAXY_FQDN =.*~GALAXY_FQDN = \"$GALAXY_FQDN\";~" \
+  -e "s~CONTACT_EMAIL =.*~CONTACT_EMAIL = \"$CONTACT_EMAIL\";~" \
   -e "s~API_SECRET =.*~API_SECRET = \"$API_SECRET\";~" \
   -e "s~KEYCLOAK_ORIGIN =.*~KEYCLOAK_ORIGIN = \"$KEYCLOAK_ORIGIN\";~" \
   -e "s~KEYCLOAK_REALM =.*~KEYCLOAK_REALM = \"$KEYCLOAK_REALM\";~" \
