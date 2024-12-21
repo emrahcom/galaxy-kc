@@ -3,6 +3,7 @@
 
   const isAuthenticated =
     globalThis.sessionStorage.getItem("oidc_authenticated");
+  const contact_email = globalThis.localStorage.getItem("contact_email");
 </script>
 
 <!-- -------------------------------------------------------------------------->
@@ -38,6 +39,11 @@
           to start.
         </h4>
       {/if}
+
+      <h4 class="text-muted small mb-5">
+        If you have any questions or feedback, please feel free to email
+        <span class="fw-semibold fst-italic">{contact_email}</span>
+      </h4>
     </div>
   </div>
 </section>
