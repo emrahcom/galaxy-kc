@@ -1,9 +1,9 @@
 <script lang="ts">
   import { FORM_WIDTH } from "$lib/config";
 
+  const contact_email = globalThis.localStorage.getItem("contact_email");
   const isAuthenticated =
     globalThis.sessionStorage.getItem("oidc_authenticated");
-  const contact_email = globalThis.localStorage.getItem("contact_email");
 </script>
 
 <!-- -------------------------------------------------------------------------->
