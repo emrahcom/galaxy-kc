@@ -19,6 +19,7 @@ services:
       - ALLOW_UNSECURE_CERT
       - API_SECRET
       - API_TIMEOUT
+      - CONTACT_EMAIL
       - DB_HOST
       - DB_PASSWD
       - GALAXY_FQDN

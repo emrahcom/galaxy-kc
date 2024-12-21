@@ -26,3 +26,6 @@ export const API_TIMEOUT = Number(Deno.env.get("API_TIMEOUT") || 86400);
 export const KEYCLOAK_ORIGIN = Deno.env.get("KEYCLOAK_ORIGIN") || "";
 export const KEYCLOAK_REALM = Deno.env.get("KEYCLOAK_REALM") || "";
 export const KEYCLOAK_CLIENT_ID = Deno.env.get("KEYCLOAK_CLIENT_ID") || "";
+
+// contact
+export const CONTACT_EMAIL = Deno.env.get("CONTACT_EMAIL") || "";
