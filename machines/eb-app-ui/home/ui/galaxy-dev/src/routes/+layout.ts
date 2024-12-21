@@ -11,6 +11,7 @@ export async function load() {
 
   // Get Keycloak related parameters if they are not available in the storage
   if (
+    !globalThis.localStorage.getItem("contact_email") ||
     !globalThis.localStorage.getItem("galaxy_fqdn") ||
     !globalThis.localStorage.getItem("keycloak_client_id") ||
     !globalThis.localStorage.getItem("keycloak_origin") ||
@@ -18,6 +19,7 @@ export async function load() {
   ) {
     const config = await get("/api/adm/config");
 
+    globalThis.localStorage.setItem("contact_email", config.contact_email);
     globalThis.localStorage.setItem("galaxy_fqdn", config.galaxy_fqdn);
     globalThis.localStorage.setItem(
       "keycloak_client_id",
