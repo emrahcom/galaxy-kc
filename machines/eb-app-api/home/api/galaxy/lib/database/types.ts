@@ -28,6 +28,7 @@ export interface Contact {
   profile_email: string;
   created_at: string;
   updated_at: string;
+  seen_second_ago: number;
 }
 
 // -----------------------------------------------------------------------------
@@ -155,6 +156,7 @@ export interface Id {
 
 // -----------------------------------------------------------------------------
 export interface Identity {
+  id: string;
   identity_attr: {
     [key: string]: string;
   };
@@ -162,6 +164,32 @@ export interface Identity {
   created_at: string;
   updated_at: string;
   seen_at: string;
+}
+
+// -----------------------------------------------------------------------------
+export interface IdentityKey {
+  id: string;
+  name: string;
+  value: string;
+  domain_id: string;
+  domain_name: string;
+  domain_url: string;
+  domain_enabled: boolean;
+  enabled: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// -----------------------------------------------------------------------------
+export interface IdentityKey333 {
+  id: string;
+  name: string;
+  value: string;
+  domain_name: string;
+  domain_url: string;
+  enabled: boolean;
+  chain_enabled: boolean;
+  updated_at: string;
 }
 
 // -----------------------------------------------------------------------------
