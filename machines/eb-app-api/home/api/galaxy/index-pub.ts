@@ -1,7 +1,9 @@
 import { DB_VERSION, HOSTNAME, PORT_PUBLIC } from "./config.ts";
 import { methodNotAllowed, notFound } from "./lib/http/response.ts";
 import { getVersion } from "./lib/database/common.ts";
+import contact from "./lib/pub/contact.ts";
 import hello from "./lib/pub/hello.ts";
+import identity from "./lib/pub/identity.ts";
 import intercom from "./lib/pub/intercom.ts";
 import meeting from "./lib/pub/meeting.ts";
 import meetingSchedule from "./lib/pub/meeting-schedule.ts";
@@ -13,6 +15,10 @@ const PRE = "/api/pub";
 async function route(req: Request, path: string): Promise<Response> {
   if (path === `${PRE}/hello`) {
     return hello();
+  } else if (path.match(`^${PRE}/contact/`)) {
+    return await contact(req, path);
+  } else if (path.match(`^${PRE}/identity/`)) {
+    return await identity(req, path);
   } else if (path.match(`^${PRE}/intercom/`)) {
     return await intercom(req, path);
   } else if (path.match(`^${PRE}/meeting/schedule/`)) {
