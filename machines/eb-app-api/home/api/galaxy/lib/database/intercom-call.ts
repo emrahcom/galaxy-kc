@@ -26,9 +26,39 @@ export async function addCall(
 }
 
 // -----------------------------------------------------------------------------
-// consumer is public
+// Consumer is the owner with an identity key.
 // -----------------------------------------------------------------------------
-export async function addPhoneCall(code: string, callAttr: Attr) {
+export async function addCallByKey(
+  keyValue: string,
+  remoteId: string,
+  callAttr: Attr,
+) {
+  const sql = {
+    text: `
+      INSERT INTO intercom (identity_id, remote_id, status, message_type,
+        intercom_attr)
+      VALUES (
+        (SELECT identity_id
+         FROM identity_key
+         WHERE value = $1
+           AND enabled
+        ),
+        $2, 'none', 'call', $3::jsonb)
+      RETURNING id, created_at as at`,
+    args: [
+      keyValue,
+      remoteId,
+      callAttr,
+    ],
+  };
+
+  return await fetch(sql) as Id[];
+}
+
+// -----------------------------------------------------------------------------
+// Consumer is a public user with a public phone code.
+// -----------------------------------------------------------------------------
+export async function addPhoneCallByCode(code: string, callAttr: Attr) {
   const sql = {
     text: `
       INSERT INTO intercom (identity_id, remote_id, status, message_type,
@@ -76,7 +106,34 @@ export async function ringCall(identityId: string, intercomId: string) {
 }
 
 // -----------------------------------------------------------------------------
-export async function ringPhone(code: string, intercomId: string) {
+// Consumer is the owner with an identity key.
+// -----------------------------------------------------------------------------
+export async function ringCallByKey(keyValue: string, intercomId: string) {
+  const sql = {
+    text: `
+      UPDATE intercom
+      SET
+        expired_at = now() + interval '10 seconds'
+      WHERE id = $2
+        AND identity_id = (SELECT identity_id
+                           FROM identity_key
+                           WHERE value = $1
+                             AND enabled
+                          )
+      RETURNING id, status`,
+    args: [
+      keyValue,
+      intercomId,
+    ],
+  };
+
+  return await fetch(sql) as IntercomRing[];
+}
+
+// -----------------------------------------------------------------------------
+// Consumer is a public user with a public phone code.
+// -----------------------------------------------------------------------------
+export async function ringPhoneByCode(code: string, intercomId: string) {
   const sql = {
     text: `
       UPDATE intercom
