@@ -58,8 +58,8 @@ cp env.sample .env
 
 # Edit .env
 
-docker-compose pull
-docker-compose up -d
+docker compose pull
+docker compose up -d
 ```
 
 ### Standalone setup
