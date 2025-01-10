@@ -2,7 +2,7 @@ import { fetch } from "./common.ts";
 import { mailPhoneCall } from "../common/mail.ts";
 import { generateRoomUrl } from "../common/helper.ts";
 import { getRandomRoomName } from "./room.ts";
-import { addPhoneCall } from "../database/intercom-call.ts";
+import { addPhoneCallByCode } from "../database/intercom-call.ts";
 import type {
   Id,
   Phone,
@@ -48,6 +48,8 @@ export async function getPhone(identityId: string, phoneId: string) {
 }
 
 // -----------------------------------------------------------------------------
+// Consumer is a public user with a public phone code.
+// -----------------------------------------------------------------------------
 export async function getPhoneByCode(code: string) {
   const sql = {
     text: `
@@ -68,6 +70,8 @@ export async function getPhoneByCode(code: string) {
   return await fetch(sql) as Phone111[];
 }
 
+// -----------------------------------------------------------------------------
+// Consumer is internal.
 // -----------------------------------------------------------------------------
 export async function getPhonePrivatesByCode(code: string) {
   const sql = {
@@ -283,6 +287,8 @@ async function increasePhoneCallCounter(phoneId: string) {
 }
 
 // -----------------------------------------------------------------------------
+// Consumer is a public user with a public phone code.
+// -----------------------------------------------------------------------------
 export async function callPhoneByCode(code: string) {
   // It will not return a phone if there is a disabled component such as domain,
   // identity, etc.
@@ -346,5 +352,5 @@ export async function callPhoneByCode(code: string) {
     phone_name: phone.name,
   };
 
-  return await addPhoneCall(code, callAttr);
+  return await addPhoneCallByCode(code, callAttr);
 }
