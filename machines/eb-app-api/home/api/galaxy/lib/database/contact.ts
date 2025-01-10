@@ -1,7 +1,7 @@
 import { fetch, pool } from "./common.ts";
-import { addCall } from "./intercom-call.ts";
-import { getDomainIfAllowed } from "./domain.ts";
-import { getRandomRoomName, getRoomUrl } from "./room.ts";
+import { addCall, addCallByKey } from "./intercom-call.ts";
+import { getDomainByKeyIfAllowed, getDomainIfAllowed } from "./domain.ts";
+import { getRandomRoomName, getRoomUrl, getRoomUrlByKey } from "./room.ts";
 import type {
   Contact,
   ContactStatus,
@@ -23,8 +23,10 @@ export async function getContact(identityId: string, contactId: string) {
   const sql = {
     text: `
       SELECT co.id, co.name, pr.name as profile_name, pr.email as profile_email,
-        co.created_at, co.updated_at
+        co.created_at, co.updated_at,
+        floor(extract(epoch FROM now() - i.seen_at)) as seen_second_ago
       FROM contact co
+        JOIN identity i ON co.remote_id = i.id
         LEFT JOIN profile pr ON co.remote_id = pr.identity_id
                                 AND pr.is_default
       WHERE co.id = $2
@@ -46,8 +48,10 @@ export async function getContactByIdentity(
   const sql = {
     text: `
       SELECT co.id, co.name, pr.name as profile_name, pr.email as profile_email,
-        co.created_at, co.updated_at
+        co.created_at, co.updated_at,
+        floor(extract(epoch FROM now() - i.seen_at)) as seen_second_ago
       FROM contact co
+        JOIN identity i ON co.remote_id = i.id
         LEFT JOIN profile pr ON co.remote_id = pr.identity_id
                                 AND pr.is_default
       WHERE co.identity_id = $1
@@ -82,6 +86,30 @@ export async function getContactIdentity(
 }
 
 // -----------------------------------------------------------------------------
+export async function getContactIdentityByKey(
+  keyValue: string,
+  contactId: string,
+) {
+  const sql = {
+    text: `
+      SELECT remote_id as Id, created_at
+      FROM contact
+      WHERE id = $2
+        AND identity_id = (SELECT identity_id
+                           FROM identity_key
+                           WHERE value = $1
+                             AND enabled
+                          )`,
+    args: [
+      keyValue,
+      contactId,
+    ],
+  };
+
+  return await fetch(sql) as Id[];
+}
+
+// -----------------------------------------------------------------------------
 export async function listContact(
   identityId: string,
   limit: number,
@@ -90,8 +118,10 @@ export async function listContact(
   const sql = {
     text: `
       SELECT co.id, co.name, pr.name as profile_name, pr.email as profile_email,
-        co.created_at, co.updated_at
+        co.created_at, co.updated_at,
+        floor(extract(epoch FROM now() - i.seen_at)) as seen_second_ago
       FROM contact co
+        JOIN identity i ON co.remote_id = i.id
         LEFT JOIN profile pr ON co.remote_id = pr.identity_id
                                 AND pr.is_default
       WHERE co.identity_id = $1
@@ -99,6 +129,40 @@ export async function listContact(
       LIMIT $2 OFFSET $3`,
     args: [
       identityId,
+      limit,
+      offset,
+    ],
+  };
+
+  return await fetch(sql) as Contact[];
+}
+
+// -----------------------------------------------------------------------------
+// Consumer is the user with an identity key.
+// -----------------------------------------------------------------------------
+export async function listContactByKey(
+  keyValue: string,
+  limit: number,
+  offset: number,
+) {
+  const sql = {
+    text: `
+      SELECT co.id, co.name, pr.name as profile_name, pr.email as profile_email,
+        co.created_at, co.updated_at,
+        floor(extract(epoch FROM now() - i.seen_at)) as seen_second_ago
+      FROM contact co
+        JOIN identity i ON co.remote_id = i.id
+        LEFT JOIN profile pr ON co.remote_id = pr.identity_id
+                                AND pr.is_default
+      WHERE co.identity_id = (SELECT identity_id
+                              FROM identity_key
+                              WHERE value = $1
+                                AND enabled
+                             )
+      ORDER BY name, profile_name, profile_email
+      LIMIT $2 OFFSET $3`,
+    args: [
+      keyValue,
       limit,
       offset,
     ],
@@ -117,8 +181,10 @@ export async function listContactByDomain(
   const sql = {
     text: `
       SELECT co.id, co.name, pr.name as profile_name, pr.email as profile_email,
-        co.created_at, co.updated_at
+        co.created_at, co.updated_at,
+        floor(extract(epoch FROM now() - i.seen_at)) as seen_second_ago
       FROM contact co
+        JOIN identity i ON co.remote_id = i.id
         LEFT JOIN profile pr ON co.remote_id = pr.identity_id
                                 AND pr.is_default
       WHERE co.identity_id = $1
@@ -155,8 +221,10 @@ export async function listContactByRoom(
   const sql = {
     text: `
       SELECT co.id, co.name, pr.name as profile_name, pr.email as profile_email,
-        co.created_at, co.updated_at
+        co.created_at, co.updated_at,
+        floor(extract(epoch FROM now() - i.seen_at)) as seen_second_ago
       FROM contact co
+        JOIN identity i ON co.remote_id = i.id
         LEFT JOIN profile pr ON co.remote_id = pr.identity_id
                                 AND pr.is_default
       WHERE co.identity_id = $1
@@ -193,8 +261,10 @@ export async function listContactByMeeting(
   const sql = {
     text: `
       SELECT co.id, co.name, pr.name as profile_name, pr.email as profile_email,
-        co.created_at, co.updated_at
+        co.created_at, co.updated_at,
+        floor(extract(epoch FROM now() - i.seen_at)) as seen_second_ago
       FROM contact co
+        JOIN identity i ON co.remote_id = i.id
         LEFT JOIN profile pr ON co.remote_id = pr.identity_id
                                 AND pr.is_default
       WHERE co.identity_id = $1
@@ -361,6 +431,53 @@ export async function callContact(
 
   // Create the intercom message to initialize the direct call.
   const calls = await addCall(identityId, remoteId, callAttr);
+  const call = calls[0];
+  if (!call) throw "call cannot be created";
+
+  return [{ id: call.id, url: callerUrl }] as IntercomCall[];
+}
+
+// -----------------------------------------------------------------------------
+export async function callContactByKey(keyValue: string, contactId: string) {
+  // Get the domain by identity key if allowed.
+  const domains = await getDomainByKeyIfAllowed(keyValue);
+  const domain = domains[0];
+  if (!domain) throw "domain is not available";
+
+  // Get the contact identity by identity key.
+  const contacts = await getContactIdentityByKey(keyValue, contactId);
+  const contact = contacts[0];
+  if (!contact) throw "contact is not available";
+  const remoteId = contact.id;
+
+  // Get the room (with a random name and suffix) for the direct call.
+  const randomRooms = await getRandomRoomName("call-");
+  const randomRoom = randomRooms[0];
+  if (!randomRoom) throw "no room for the call";
+
+  // The linkset for the call.
+  const roomLinkset = {
+    name: randomRoom.name,
+    has_suffix: true,
+    suffix: randomRoom.suffix,
+    auth_type: domain.auth_type,
+    domain_attr: domain.domain_attr,
+  } as RoomLinkset;
+
+  // Get the meeting link for caller.
+  const callerUrl = await getRoomUrlByKey(
+    keyValue,
+    roomLinkset,
+    "host",
+    EXP,
+    HASH,
+  );
+  // Get the meeting link for the callee.
+  const calleeUrl = await getRoomUrl(remoteId, roomLinkset, "guest", EXP, HASH);
+  const callAttr = { url: calleeUrl };
+
+  // Create the intercom message to initialize the direct call.
+  const calls = await addCallByKey(keyValue, remoteId, callAttr);
   const call = calls[0];
   if (!call) throw "call cannot be created";
 
