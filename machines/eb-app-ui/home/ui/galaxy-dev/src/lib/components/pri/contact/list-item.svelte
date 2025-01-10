@@ -16,6 +16,10 @@
 
   let status = $state(0);
 
+  if (p.seen_second_ago < 100) status = 1;
+  else if (p.seen_second_ago < 3600) status = 2;
+  else status = 0;
+
   // ---------------------------------------------------------------------------
   // even all items run this function periodically, only one of them sends an
   // API request in each period because of the time checking
@@ -42,16 +46,14 @@
           JSON.stringify(status),
         );
       }
-    } catch {
-      // do nothing
+    } finally {
+      setTimeout(getContactStatus, PERIOD_UI_REFRESH);
     }
   }
 
   // ---------------------------------------------------------------------------
   async function refreshStatus() {
     try {
-      await getContactStatus();
-
       const statusData = globalThis.localStorage.getItem("contact_status");
       if (!statusData) return;
 
@@ -72,7 +74,7 @@
 
   // initialize the status and trigger the refresh status loop
   getContactStatus();
-  setTimeout(refreshStatus, 2000);
+  setTimeout(refreshStatus, PERIOD_API_REQUEST + 2000);
 </script>
 
 <!-- -------------------------------------------------------------------------->
