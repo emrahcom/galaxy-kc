@@ -42,8 +42,10 @@
 
   ```bash
   cd ~/git-repo/galaxy-kc/machines/eb-app-api/home/api/galaxy
+  rm -rf ~/.cache/deno
   rm -rf deno.lock node_modules
   deno check *.ts
+  deno install
   ```
 
 - Check `eb-app-api`
