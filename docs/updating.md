@@ -38,6 +38,14 @@
     ~/git-repo/galaxy-kc/machines/eb-app-ui | less
   ```
 
+- Regenerating deno.lock
+
+  ```bash
+  cd ~/git-repo/galaxy-kc/machines/eb-app-api/home/api/galaxy
+  rm -rf deno.lock node_modules
+  deno check *.ts
+  ```
+
 - Check `eb-app-api`
 
   ```bash
