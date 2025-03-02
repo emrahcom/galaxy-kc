@@ -23,7 +23,7 @@ export async function getContact(identityId: string, contactId: string) {
   const sql = {
     text: `
       SELECT co.id, co.name, pr.name as profile_name, pr.email as profile_email,
-        co.created_at, co.updated_at,
+        co.visible, co.created_at, co.updated_at,
         floor(extract(epoch FROM now() - i.seen_at)) as seen_second_ago
       FROM contact co
         JOIN identity i ON co.remote_id = i.id
@@ -48,7 +48,7 @@ export async function getContactByIdentity(
   const sql = {
     text: `
       SELECT co.id, co.name, pr.name as profile_name, pr.email as profile_email,
-        co.created_at, co.updated_at,
+        co.visible, co.created_at, co.updated_at,
         floor(extract(epoch FROM now() - i.seen_at)) as seen_second_ago
       FROM contact co
         JOIN identity i ON co.remote_id = i.id
@@ -118,7 +118,7 @@ export async function listContact(
   const sql = {
     text: `
       SELECT co.id, co.name, pr.name as profile_name, pr.email as profile_email,
-        co.created_at, co.updated_at,
+        co.visible, co.created_at, co.updated_at,
         floor(extract(epoch FROM now() - i.seen_at)) as seen_second_ago
       FROM contact co
         JOIN identity i ON co.remote_id = i.id
@@ -148,7 +148,7 @@ export async function listContactByKey(
   const sql = {
     text: `
       SELECT co.id, co.name, pr.name as profile_name, pr.email as profile_email,
-        co.created_at, co.updated_at,
+        co.visible, co.created_at, co.updated_at,
         floor(extract(epoch FROM now() - i.seen_at)) as seen_second_ago
       FROM contact co
         JOIN identity i ON co.remote_id = i.id
@@ -159,6 +159,7 @@ export async function listContactByKey(
                               WHERE value = $1
                                 AND enabled
                              )
+        AND co.visible
       ORDER BY name, profile_name, profile_email
       LIMIT $2 OFFSET $3`,
     args: [
@@ -181,7 +182,7 @@ export async function listContactByDomain(
   const sql = {
     text: `
       SELECT co.id, co.name, pr.name as profile_name, pr.email as profile_email,
-        co.created_at, co.updated_at,
+        co.visible, co.created_at, co.updated_at,
         floor(extract(epoch FROM now() - i.seen_at)) as seen_second_ago
       FROM contact co
         JOIN identity i ON co.remote_id = i.id
@@ -221,7 +222,7 @@ export async function listContactByRoom(
   const sql = {
     text: `
       SELECT co.id, co.name, pr.name as profile_name, pr.email as profile_email,
-        co.created_at, co.updated_at,
+        co.visible, co.created_at, co.updated_at,
         floor(extract(epoch FROM now() - i.seen_at)) as seen_second_ago
       FROM contact co
         JOIN identity i ON co.remote_id = i.id
@@ -261,7 +262,7 @@ export async function listContactByMeeting(
   const sql = {
     text: `
       SELECT co.id, co.name, pr.name as profile_name, pr.email as profile_email,
-        co.created_at, co.updated_at,
+        co.visible, co.created_at, co.updated_at,
         floor(extract(epoch FROM now() - i.seen_at)) as seen_second_ago
       FROM contact co
         JOIN identity i ON co.remote_id = i.id
@@ -366,12 +367,14 @@ export async function updateContact(
   identityId: string,
   contactId: string,
   name: string,
+  visible: boolean,
 ) {
   const sql = {
     text: `
       UPDATE contact
       SET
         name = $3,
+        visible = $4,
         updated_at = now()
       WHERE id = $2
         AND identity_id = $1
@@ -380,6 +383,7 @@ export async function updateContact(
       identityId,
       contactId,
       name,
+      visible,
     ],
   };
 
