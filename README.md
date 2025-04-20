@@ -133,3 +133,29 @@ Let's Encrypt certificate:
 ```bash
 set-letsencrypt-cert app.galaxy.corp
 ```
+
+### Keycloak config
+
+Create `client` inside `realm`:
+
+- Create the `realm` (_e.g. `ucs`_)
+- Switch to the newly created realm
+- Create the client in this realm.
+  - Client type: `OpenID Connect`
+  - Client ID: `galaxy`
+  - Client authentication: `off`
+  - Authorization: `off`
+  - Authentication flow
+    - `Standard flow`
+    - `Direct access grants`
+  - Add Galaxy URL into `Valid redirect URIs` (e.g. `https:/app.galaxy.corp`_)
+  - Valid post logout redirect URIs: `+`
+  - Web origins: `+`
+  - For Keycloak versions < 20.x, set Access type to `public`:
+
+    ![Screenshot Keycloak pre-20](docs/images/keycloak-pre-20.png)
+
+  - For Keycloak versions >= 20.x, disable `Client authentication`:
+
+    ![Screenshot Keycloak 20](docs/images/keycloak-20.png)
+- Create the users inside this realm.
