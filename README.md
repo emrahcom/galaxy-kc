@@ -143,6 +143,7 @@ Create the client and users inside the realm`:
 - Create the client in this realm.
   - Client type: `OpenID Connect`
   - Client ID: `galaxy`
+- Configure the client:
   - Client authentication: `off`
   - Authorization: `off`
   - Authentication flow
