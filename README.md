@@ -138,7 +138,7 @@ set-letsencrypt-cert app.galaxy.corp
 
 Create the client and users inside the realm`:
 
-- Create the `realm` (_e.g. `ucs`_)
+- Create the realm (_e.g. `ucs`_)
 - Switch to the newly created realm
 - Create the client in this realm.
   - Client type: `OpenID Connect`
