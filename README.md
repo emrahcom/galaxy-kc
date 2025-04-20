@@ -149,7 +149,7 @@ Create the client and users inside the realm`:
   - Authentication flow
     - `Standard flow`
     - `Direct access grants`
-  - Add Galaxy URL into `Valid redirect URIs` (_e.g. `https:/app.galaxy.corp`_)
+  - Add Galaxy URL into `Valid redirect URIs` (_e.g. `https:/app.galaxy.corp/*`_)
   - Valid post logout redirect URIs: `+`
   - Web origins: `+`
   - For Keycloak versions < 20.x, set Access type to `public`:
