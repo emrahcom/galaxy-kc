@@ -136,7 +136,7 @@ set-letsencrypt-cert app.galaxy.corp
 
 ### Keycloak config
 
-Create `client` inside `realm`:
+Create the client and `users` inside the realm`:
 
 - Create the `realm` (_e.g. `ucs`_)
 - Switch to the newly created realm
