@@ -8,6 +8,7 @@ on:
       - ".github/workflows/galaxy-api-pri.yml"
       - "machines/eb-app-api/pri.Dockerfile"
       - "machines/eb-app-api/**.ts"
+      - "machines/eb-app-api/home/api/galaxy/deno.*"
 
 env:
   CONTEXT: galaxy-api-pri
