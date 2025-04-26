@@ -4,12 +4,12 @@
     "jsr:@emrahcom/jwt@*": "0.4.1",
     "jsr:@std/bytes@^1.0.1-rc.3": "1.0.5",
     "jsr:@std/crypto@^1.0.0-rc.1": "1.0.4",
-    "jsr:@std/encoding@*": "1.0.7",
-    "jsr:@std/encoding@^1.0.7": "1.0.7",
+    "jsr:@std/encoding@*": "1.0.10",
+    "jsr:@std/encoding@^1.0.7": "1.0.10",
     "jsr:@std/http@1.0.2": "1.0.2",
     "jsr:@std/http@1.0.5": "1.0.5",
     "jsr:@std/uuid@1.0.0": "1.0.0",
-    "npm:nodemailer@*": "6.10.0"
+    "npm:nodemailer@*": "6.10.1"
   },
   "jsr": {
     "@emrahcom/jwt@0.4.1": {
@@ -24,8 +24,8 @@
     "@std/crypto@1.0.4": {
       "integrity": "cee245c453bd5366207f4d8aa25ea3e9c86cecad2be3fefcaa6cb17203d79340"
     },
-    "@std/encoding@1.0.7": {
-      "integrity": "f631247c1698fef289f2de9e2a33d571e46133b38d042905e3eac3715030a82d"
+    "@std/encoding@1.0.10": {
+      "integrity": "8783c6384a2d13abd5e9e87a7ae0520a30e9f56aeeaa3bdf910a3eaaf5c811a1"
     },
     "@std/http@1.0.2": {
       "integrity": "e28d612e2b5e0a40704e8c64d9a5d55cf8c6accf6d798cd1cfb43aad02d1e4fe"
@@ -42,8 +42,8 @@
     }
   },
   "npm": {
-    "nodemailer@6.10.0": {
-      "integrity": "sha512-SQ3wZCExjeSatLE/HBaXS5vqUOQk6GtBdIIKxiFdmm01mOQZX/POJkO3SUX1wDiYcwUOJwT23scFSC9fY2H8IA=="
+    "nodemailer@6.10.1": {
+      "integrity": "sha512-Z+iLaBGVaSjbIzQ4pX6XV41HrooLsQ10ZWPUehGmuantvzWoDVBnmsdUcOIDM1t+yPor5pDhVlDESgOMEGxhHA=="
     }
   },
   "remote": {
