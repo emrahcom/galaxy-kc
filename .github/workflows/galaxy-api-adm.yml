@@ -8,6 +8,7 @@ on:
       - ".github/workflows/galaxy-api-adm.yml"
       - "machines/eb-app-api/adm.Dockerfile"
       - "machines/eb-app-api/**.ts"
+      - "machines/eb-app-api/home/api/galaxy/deno.*"
 
 env:
   CONTEXT: galaxy-api-adm
