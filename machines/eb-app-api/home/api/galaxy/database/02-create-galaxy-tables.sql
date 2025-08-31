@@ -33,7 +33,7 @@ CREATE TABLE metadata (
 ALTER TABLE metadata OWNER TO galaxy;
 
 -- database version
-INSERT INTO metadata VALUES ('database_version', '20241222.01');
+INSERT INTO metadata VALUES ('database_version', '20250802.01');
 
 -- -----------------------------------------------------------------------------
 -- IDENTITY
@@ -620,6 +620,16 @@ ALTER TABLE phone OWNER TO galaxy;
 --
 --   phone_name: string,    // Phone name
 -- }
+--
+-- intercom_message_type:
+--   - call
+--     Direct call from one user to another
+--
+--   - phone
+--     Call via a public phone from anonymous person
+--
+--   - text
+--     Text message from one user to another
 -- -----------------------------------------------------------------------------
 CREATE TYPE intercom_status_type AS ENUM (
     'none',
@@ -629,7 +639,8 @@ CREATE TYPE intercom_status_type AS ENUM (
 );
 CREATE TYPE intercom_message_type AS ENUM (
     'call',
-    'phone'
+    'phone',
+    'text'
 );
 CREATE TABLE intercom (
     "id" uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
