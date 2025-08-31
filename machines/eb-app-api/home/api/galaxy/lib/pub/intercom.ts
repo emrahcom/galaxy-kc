@@ -1,4 +1,3 @@
-import { getLimit, getOffset } from "../database/common.ts";
 import { notFound } from "../http/response.ts";
 import { pub as wrapper } from "../http/wrapper.ts";
 import { mailMissedCall } from "../common/mail.ts";
@@ -7,6 +6,7 @@ import {
   delIntercomByCode,
   delIntercomByKey,
   getIntercomAttrByCode,
+  getIntercomByKey,
   getIntercomForOwner,
   listIntercomByKey,
   setStatusIntercomByKey,
@@ -25,13 +25,23 @@ async function getAttrByCode(req: Request): Promise<unknown> {
 }
 
 // -----------------------------------------------------------------------------
+async function getByKey(req: Request): Promise<unknown> {
+  const pl = await req.json();
+  const keyValue = pl.key_value;
+  const intercomId = pl.id;
+
+  return await getIntercomByKey(keyValue, intercomId);
+}
+
+// -----------------------------------------------------------------------------
 async function listByKey(req: Request): Promise<unknown> {
   const pl = await req.json();
   const keyValue = pl.key_value;
-  const limit = getLimit(pl.limit);
-  const offset = getOffset(pl.offset);
+  const microsec = Number(pl.value) || 0;
+  const limit = 10;
+  const offset = 0;
 
-  return await listIntercomByKey(keyValue, limit, offset);
+  return await listIntercomByKey(keyValue, microsec, limit, offset);
 }
 
 // -----------------------------------------------------------------------------
@@ -50,6 +60,17 @@ async function setRejectedByKey(req: Request): Promise<unknown> {
   const intercomId = pl.id;
 
   return await setStatusIntercomByKey(keyValue, intercomId, "rejected");
+}
+
+// -----------------------------------------------------------------------------
+async function setSeenByKey(req: Request): Promise<unknown> {
+  const pl = await req.json();
+  const keyValue = pl.key_value;
+  const intercomId = pl.id;
+
+  // The optional fourth argument is "ifNone".
+  // Update as "seen" if the current status is "none". Otherwise, dont update.
+  return await setStatusIntercomByKey(keyValue, intercomId, "seen", true);
 }
 
 // -----------------------------------------------------------------------------
@@ -113,6 +134,8 @@ async function ringByCode(req: Request): Promise<unknown> {
 export default async function (req: Request, path: string): Promise<Response> {
   if (path === `${PRE}/get/attr/bycode`) {
     return await wrapper(getAttrByCode, req);
+  } else if (path === `${PRE}/get/bykey`) {
+    return await wrapper(getByKey, req);
   } else if (path === `${PRE}/list/bykey`) {
     return await wrapper(listByKey, req);
   } else if (path === `${PRE}/del/bycode`) {
@@ -125,6 +148,8 @@ export default async function (req: Request, path: string): Promise<Response> {
     return await wrapper(setAcceptedByKey, req);
   } else if (path === `${PRE}/set/rejected/bykey`) {
     return await wrapper(setRejectedByKey, req);
+  } else if (path === `${PRE}/set/seen/bykey`) {
+    return await wrapper(setSeenByKey, req);
   } else if (path === `${PRE}/call/ring/bykey`) {
     return await wrapper(ringByKey, req);
   } else if (path === `${PRE}/phone/ring/bycode`) {
