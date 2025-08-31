@@ -11,7 +11,7 @@ export type CandidateStatus = "pending" | "rejected";
 export type DomainAuthType = "none" | "token" | "jaas";
 export type IntercomStatus = "none" | "seen" | "accepted" | "rejected";
 export type InviteTo = "audience" | "member";
-export type Message = "call" | "phone";
+export type Message = "call" | "phone" | "text";
 export type RequestStatus = "pending" | "rejected";
 export type Schedule = "permanent" | "scheduled" | "ephemeral";
 
@@ -220,6 +220,8 @@ export interface IntercomMessage222 {
   intercom_attr: {
     [key: string]: string;
   };
+  created_at: string;
+  microsec_created_at: number;
   expired_at: string;
 }
 
