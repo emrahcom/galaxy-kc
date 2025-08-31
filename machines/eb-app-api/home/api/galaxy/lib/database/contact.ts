@@ -487,3 +487,82 @@ export async function callContactByKey(keyValue: string, contactId: string) {
 
   return [{ id: call.id, url: callerUrl }] as IntercomCall[];
 }
+
+// -----------------------------------------------------------------------------
+export async function textContact(
+  identityId: string,
+  contactId: string,
+  message: string,
+) {
+  // Get the contact identity.
+  const contacts = await getContactIdentity(identityId, contactId);
+  const contact = contacts[0];
+  if (!contact) throw "contact is not available";
+  const remoteId = contact.id;
+
+  // Check the text message.
+  if (!message) throw "empty message";
+  if (message.length > 8000) throw "message is too long";
+  const messageBytes = new TextEncoder().encode(message);
+
+  const sql = {
+    text: `
+      INSERT INTO intercom (identity_id, remote_id, status, message_type,
+        intercom_attr, expired_at)
+      VALUES (
+        $1, $2, 'none', 'text',
+        jsonb_build_object('message', encode($3::bytea, 'base64')),
+        now() + interval '6 hours'
+      )
+      RETURNING id, created_at as at`,
+    args: [
+      identityId,
+      remoteId,
+      messageBytes,
+    ],
+  };
+
+  return await fetch(sql) as Id[];
+}
+
+// -----------------------------------------------------------------------------
+export async function textContactByKey(
+  keyValue: string,
+  contactId: string,
+  message: string,
+) {
+  // Get the contact identity by identity key.
+  const contacts = await getContactIdentityByKey(keyValue, contactId);
+  const contact = contacts[0];
+  if (!contact) throw "contact is not available";
+  const remoteId = contact.id;
+
+  // Check the text message.
+  if (!message) throw "empty message";
+  if (message.length > 8000) throw "message is too long";
+  const messageBytes = new TextEncoder().encode(message);
+
+  const sql = {
+    text: `
+      INSERT INTO intercom (identity_id, remote_id, status, message_type,
+        intercom_attr, expired_at)
+      VALUES (
+        (SELECT identity_id
+         FROM identity_key
+         WHERE value = $1
+           AND enabled
+        ),
+        $2, 'none', 'text',
+        jsonb_build_object('message', encode($3::bytea, 'base64')),
+        now() + interval '6 hours'
+      )
+      RETURNING id, created_at as at`,
+    args: [
+      keyValue,
+      remoteId,
+      messageBytes,
+    ],
+  };
+
+  return await fetch(sql) as Id[];
+}
