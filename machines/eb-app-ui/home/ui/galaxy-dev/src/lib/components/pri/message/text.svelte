@@ -3,6 +3,7 @@
   import { Toast } from "bootstrap";
   import { actionById } from "$lib/api";
   import { delMessage, watchTextMessage } from "$lib/pri/intercom";
+  import { toLocaleTime } from "$lib/common";
   import type { IntercomMessage222 } from "$lib/types";
 
   interface Props {
@@ -57,6 +58,9 @@
         {msg.contact_name || "unknown"}
       </span>
       <span class="fs-6 me-auto mt-auto mb-1"></span>
+      <span class="text-muted fw-bold me-3 mt-auto mb-1">
+        {toLocaleTime(msg.created_at) || ""}
+      </span>
       <button
         type="button"
         class="btn-close"
@@ -68,7 +72,7 @@
     <div class="d-flex justify-content-left overflow-auto">
       <p
         class="d-inline-block card-text text-muted text-start w-auto mt-3"
-        style="max-height: 200px; max-width: 90%; white-space: pre"
+        style="max-height: 200px; max-width: 90%; white-space: pre-wrap"
       >
         {msg.intercom_attr.message || ""}
       </p>
