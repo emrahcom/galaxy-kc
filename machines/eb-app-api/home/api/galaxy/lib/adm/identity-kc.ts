@@ -1,5 +1,5 @@
-import { v5 as uuid } from "jsr:@std/uuid@1.0.0";
-import { setCookie } from "jsr:@std/http@1.0.2/cookie";
+import { v5 as uuid } from "@std/uuid";
+import { setCookie } from "@std/http/cookie";
 import { notFound, ok, unauthorized } from "../http/response.ts";
 import { adm as wrapper } from "../http/wrapper-kc.ts";
 import { generateAPIToken } from "../common/token-kc.ts";
