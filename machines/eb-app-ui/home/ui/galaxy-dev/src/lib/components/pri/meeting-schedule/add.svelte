@@ -29,7 +29,7 @@
     meeting: Meeting;
   }
 
-  let { meeting }: Props = $props();
+  const { meeting }: Props = $props();
 
   const hash = $page.url.hash;
 
@@ -58,7 +58,9 @@
   let disabled = $state(false);
   let p = $state({
     name: "",
-    meeting_id: meeting.id,
+    get meeting_id() {
+      return meeting.id;
+    },
     schedule_attr: {
       type: "o",
       started_at: "",
