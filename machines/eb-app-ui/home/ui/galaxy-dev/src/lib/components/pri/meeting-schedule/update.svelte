@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import { FORM_WIDTH } from "$lib/config";
   import { action } from "$lib/api";
   import {
@@ -27,62 +28,86 @@
     p: MeetingSchedule;
   }
 
-  let { p }: Props = $props();
+  const { p }: Props = $props();
 
   const timezoneOffset = new Date().getTimezoneOffset();
-  const defaultDuration = Number(p.schedule_attr.duration);
-  const _date0 = toLocaleDate(p.schedule_attr.started_at);
-  const _time0 = toLocaleTime(p.schedule_attr.started_at);
-  const notBefore = _date0 < getToday() ? _date0 : getToday();
+  const defaultDuration = $derived(Number(p.schedule_attr.duration));
+  const _date0 = $derived(toLocaleDate(p.schedule_attr.started_at));
+  const notBefore = $derived(_date0 < getToday() ? _date0 : getToday());
 
-  let duration = $state(defaultDuration);
-  let date0 = $state(_date0);
+  let duration = $state(untrack(() => Number(p.schedule_attr.duration)));
+  let date0 = $state(untrack(() => toLocaleDate(p.schedule_attr.started_at)));
   let date1 = $state(
-    p.schedule_attr.rep_end_at
-      ? toLocaleDate(p.schedule_attr.rep_end_at)
-      : _date0,
+    untrack(() =>
+      p.schedule_attr.rep_end_at
+        ? toLocaleDate(p.schedule_attr.rep_end_at)
+        : toLocaleDate(p.schedule_attr.started_at),
+    ),
   );
-  let time0 = $state(_time0);
-  let time1 = $state(getEndTime(_time0, defaultDuration));
+  let time0 = $state(untrack(() => toLocaleTime(p.schedule_attr.started_at)));
+  let time1 = $state(
+    untrack(() =>
+      getEndTime(
+        toLocaleTime(p.schedule_attr.started_at),
+        Number(p.schedule_attr.duration),
+      ),
+    ),
+  );
   let allDay = $state(
-    isAllDay(p.schedule_attr.started_at, p.schedule_attr.duration),
+    untrack(() =>
+      isAllDay(p.schedule_attr.started_at, p.schedule_attr.duration),
+    ),
   );
-  let every = $state(Number(p.schedule_attr.rep_every) || 1);
-  let times = $state(Number(p.schedule_attr.rep_end_x) || 10);
+  let every = $state(untrack(() => Number(p.schedule_attr.rep_every) || 1));
+  let times = $state(untrack(() => Number(p.schedule_attr.rep_end_x) || 10));
   let d0 = $state(
-    p.schedule_attr.rep_days
-      ? Boolean(Number(p.schedule_attr.rep_days[0]))
-      : false,
+    untrack(() =>
+      p.schedule_attr.rep_days
+        ? Boolean(Number(p.schedule_attr.rep_days[0]))
+        : false,
+    ),
   );
   let d1 = $state(
-    p.schedule_attr.rep_days
-      ? Boolean(Number(p.schedule_attr.rep_days[1]))
-      : false,
+    untrack(() =>
+      p.schedule_attr.rep_days
+        ? Boolean(Number(p.schedule_attr.rep_days[1]))
+        : false,
+    ),
   );
   let d2 = $state(
-    p.schedule_attr.rep_days
-      ? Boolean(Number(p.schedule_attr.rep_days[2]))
-      : false,
+    untrack(() =>
+      p.schedule_attr.rep_days
+        ? Boolean(Number(p.schedule_attr.rep_days[2]))
+        : false,
+    ),
   );
   let d3 = $state(
-    p.schedule_attr.rep_days
-      ? Boolean(Number(p.schedule_attr.rep_days[3]))
-      : false,
+    untrack(() =>
+      p.schedule_attr.rep_days
+        ? Boolean(Number(p.schedule_attr.rep_days[3]))
+        : false,
+    ),
   );
   let d4 = $state(
-    p.schedule_attr.rep_days
-      ? Boolean(Number(p.schedule_attr.rep_days[4]))
-      : false,
+    untrack(() =>
+      p.schedule_attr.rep_days
+        ? Boolean(Number(p.schedule_attr.rep_days[4]))
+        : false,
+    ),
   );
   let d5 = $state(
-    p.schedule_attr.rep_days
-      ? Boolean(Number(p.schedule_attr.rep_days[5]))
-      : false,
+    untrack(() =>
+      p.schedule_attr.rep_days
+        ? Boolean(Number(p.schedule_attr.rep_days[5]))
+        : false,
+    ),
   );
   let d6 = $state(
-    p.schedule_attr.rep_days
-      ? Boolean(Number(p.schedule_attr.rep_days[6]))
-      : false,
+    untrack(() =>
+      p.schedule_attr.rep_days
+        ? Boolean(Number(p.schedule_attr.rep_days[6]))
+        : false,
+    ),
   );
   let warning = $state(false);
   let disabled = $state(false);
