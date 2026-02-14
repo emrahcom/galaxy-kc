@@ -14,11 +14,15 @@
 
   let { p }: Props = $props();
 
+  let started_at = new Date(Date.now() + 80 * 1000);
+  $effect(() => {
+    started_at = new Date(Date.now() + p.waiting_time * 1000);
+  });
+
   const hash = $page.url.hash;
   const REFRESH_SEC = 60;
 
   let warning = $state(false);
-  let started_at = new Date(Date.now() + p.waiting_time * 1000);
   let remainingTime = $state("");
   let counter = 0;
 
