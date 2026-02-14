@@ -13,17 +13,18 @@
     p: MeetingMembership;
   }
 
-  let { p }: Props = $props();
+  const { p }: Props = $props();
+
+  const profile = $derived.by(() => {
+    if (p.profile_email) {
+      return `${p.profile_name || ""} (${p.profile_email})`;
+    }
+
+    return p.profile_name || "";
+  });
 
   let warning = $state(false);
   let disabled = $state(false);
-  let profile = $state("");
-
-  if (p.profile_email) {
-    profile = `${p.profile_name || ""} (${p.profile_email})`;
-  } else {
-    profile = p.profile_name || "";
-  }
 
   // ---------------------------------------------------------------------------
   function cancel() {
