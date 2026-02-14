@@ -15,24 +15,29 @@
     meeting: Meeting;
   }
 
-  let { meeting }: Props = $props();
+  const { meeting }: Props = $props();
 
-  const pr = listById("/api/pri/contact/list/bymeeting", meeting.id, 1000).then(
-    (items: Contact[]) => {
-      return items.map((i) => [
-        i.id,
-        `${i.name}${i.profile_email ? ` (${i.profile_email})` : ""}`,
-      ]);
-    },
+  const pr = $derived(
+    listById("/api/pri/contact/list/bymeeting", meeting.id, 1000).then(
+      (items: Contact[]) => {
+        return items.map((i) => [
+          i.id,
+          `${i.name}${i.profile_email ? ` (${i.profile_email})` : ""}`,
+        ]);
+      },
+    ),
   );
+
+  let p = $state({
+    contact_id: "",
+    join_as: "guest",
+    get meeting_id() {
+      return meeting.id;
+    },
+  });
 
   let warning = $state(false);
   let disabled = $state(false);
-  let p = $state({
-    contact_id: "",
-    meeting_id: meeting.id,
-    join_as: "guest",
-  });
 
   // ---------------------------------------------------------------------------
   function cancel() {
