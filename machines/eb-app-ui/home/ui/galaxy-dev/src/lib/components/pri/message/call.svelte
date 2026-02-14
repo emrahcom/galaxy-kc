@@ -9,13 +9,15 @@
     msg: IntercomMessage222;
   }
 
-  let { msg }: Props = $props();
+  const { msg }: Props = $props();
 
-  const href = `/pri/call/join/${msg.id}`;
+  const href = $derived(`/pri/call/join/${msg.id}`);
   let toast: HTMLElement;
   let ring: HTMLAudioElement;
 
-  watchMessage(msg.id);
+  $effect(() => {
+    watchMessage(msg.id);
+  });
 
   // ---------------------------------------------------------------------------
   onMount(() => {
