@@ -10,9 +10,11 @@
     p: IdentityKey333;
   }
 
-  let { p }: Props = $props();
+  const { p }: Props = $props();
 
-  const shadowedKey = p.value.slice(0, 2) + "*****" + p.value.slice(-2);
+  const shadowedKey = $derived(
+    p.value.slice(0, 2) + "*****" + p.value.slice(-2),
+  );
 
   // ---------------------------------------------------------------------------
   function copy(keyValue: string) {
