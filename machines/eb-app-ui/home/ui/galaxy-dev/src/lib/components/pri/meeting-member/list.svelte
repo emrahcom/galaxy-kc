@@ -9,9 +9,9 @@
     candidates: MeetingMemberCandidate[];
   }
 
-  let { members, candidates }: Props = $props();
+  const { members, candidates }: Props = $props();
 
-  const isEmpty = !(members.length || candidates.length);
+  const isEmpty = $derived(!(members.length || candidates.length));
 </script>
 
 <!-- -------------------------------------------------------------------------->
