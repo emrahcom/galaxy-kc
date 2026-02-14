@@ -12,14 +12,18 @@
     p: IdentityKey;
   }
 
-  let { p }: Props = $props();
+  const { p }: Props = $props();
+
+  const domain_name = $derived.by(() => {
+    if (!p.domain_enabled) {
+      return `${p.domain_name} - DISABLED`;
+    }
+
+    return p.domain_name;
+  });
 
   let warning = $state(false);
   let disabled = $state(false);
-
-  if (!p.domain_enabled) {
-    p.domain_name = `${p.domain_name} - DISABLED`;
-  }
 
   // ---------------------------------------------------------------------------
   function cancel() {
@@ -55,7 +59,7 @@
       <Text
         name="domain_name"
         label="Jitsi Domain Name"
-        value={p.domain_name}
+        value={domain_name}
         disabled={true}
         readonly={true}
       />
