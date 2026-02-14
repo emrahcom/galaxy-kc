@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import { FORM_WIDTH } from "$lib/config";
   import { action } from "$lib/api";
   import type { ContactInvite111 } from "$lib/types";
@@ -14,13 +15,15 @@
     isExist: boolean;
   }
 
-  let { invite, isExist }: Props = $props();
+  const { invite, isExist }: Props = $props();
 
   let warning = $state(false);
   let disabled = $state(false);
   let p = $state({
-    code: invite.code,
-    name: invite.profile_name,
+    name: untrack(() => invite.profile_name),
+    get code() {
+      return invite.code;
+    },
   });
 
   // ---------------------------------------------------------------------------
