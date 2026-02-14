@@ -10,12 +10,14 @@
     msg: IntercomMessage222;
   }
 
-  let { msg }: Props = $props();
+  const { msg }: Props = $props();
 
   let toast: HTMLElement;
   let sound: HTMLAudioElement;
 
-  watchTextMessage(msg.id);
+  $effect(() => {
+    watchTextMessage(msg.id);
+  });
 
   // ---------------------------------------------------------------------------
   onMount(() => {
