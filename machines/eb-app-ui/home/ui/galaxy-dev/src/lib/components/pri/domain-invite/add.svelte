@@ -12,7 +12,7 @@
     domain: Domain;
   }
 
-  let { domain }: Props = $props();
+  const { domain }: Props = $props();
 
   const date = new Date();
 
@@ -20,7 +20,9 @@
   let disabled = $state(false);
   let p = $state({
     name: `invite-${date.getTime() % 10000000000}`,
-    domain_id: domain.id,
+    get domain_id() {
+      return domain.id;
+    },
   });
 
   // ---------------------------------------------------------------------------
