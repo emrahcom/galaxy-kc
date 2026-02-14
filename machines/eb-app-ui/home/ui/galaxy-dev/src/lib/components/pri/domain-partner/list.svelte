@@ -9,9 +9,9 @@
     candidates: DomainPartnerCandidate[];
   }
 
-  let { partners, candidates }: Props = $props();
+  const { partners, candidates }: Props = $props();
 
-  const isEmpty = !(partners.length || candidates.length);
+  const isEmpty = $derived(!(partners.length || candidates.length));
 </script>
 
 <!-- -------------------------------------------------------------------------->
