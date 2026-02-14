@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import { FORM_WIDTH } from "$lib/config";
   import { action, list } from "$lib/api";
   import {
@@ -20,44 +21,50 @@
     p: Meeting;
   }
 
-  let { p }: Props = $props();
+  const { p }: Props = $props();
 
   let warning = $state(false);
   let disabled = $state(false);
-  let domainId = $state(p.domain_id);
-  let roomId = $state(p.room_id);
-  let roomStatic = $state(!p.room_ephemeral);
-  let scheduleType = $state(p.schedule_type);
+  let domainId = $state(untrack(() => p.domain_id));
+  let roomId = $state(untrack(() => p.room_id));
+  let roomStatic = $state(untrack(() => !p.room_ephemeral));
+  let scheduleType = $state(untrack(() => p.schedule_type));
 
-  const pr1 = list("/api/pri/profile/list", 100).then((items: Profile[]) => {
-    return items.map((i) => {
-      let desc: string;
+  const pr1 = $derived(
+    list("/api/pri/profile/list", 100).then((items: Profile[]) => {
+      return items.map((i) => {
+        let desc: string;
 
-      if (i.email) {
-        desc = `${i.name} (${i.email})`;
-      } else {
-        desc = i.name;
-      }
+        if (i.email) {
+          desc = `${i.name} (${i.email})`;
+        } else {
+          desc = i.name;
+        }
 
-      return [i.id, desc];
-    });
-  });
+        return [i.id, desc];
+      });
+    }),
+  );
 
-  const pr2 = list("/api/pri/domain/list", 100).then((items: Domain333[]) => {
-    return items.map((i) => [
-      i.id,
-      `${i.name}${i.enabled ? "" : " - DISABLED"}`,
-    ]);
-  });
+  const pr2 = $derived(
+    list("/api/pri/domain/list", 100).then((items: Domain333[]) => {
+      return items.map((i) => [
+        i.id,
+        `${i.name}${i.enabled ? "" : " - DISABLED"}`,
+      ]);
+    }),
+  );
 
-  const pr3 = list("/api/pri/room/list", 100).then((items: Room333[]) => {
-    return items.map((i) => [
-      i.id,
-      `${i.name} on ${i.domain_name}${
-        i.enabled && i.chain_enabled ? "" : " - DISABLED"
-      }`,
-    ]);
-  });
+  const pr3 = $derived(
+    list("/api/pri/room/list", 100).then((items: Room333[]) => {
+      return items.map((i) => [
+        i.id,
+        `${i.name} on ${i.domain_name}${
+          i.enabled && i.chain_enabled ? "" : " - DISABLED"
+        }`,
+      ]);
+    }),
+  );
 
   // ---------------------------------------------------------------------------
   function cancel() {
