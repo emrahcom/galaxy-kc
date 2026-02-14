@@ -5,12 +5,12 @@
     data: string;
   }
 
-  let { data }: Props = $props();
+  const { data }: Props = $props();
 
   let canvas: HTMLCanvasElement;
 
   $effect(() => {
-    toCanvas(canvas, data);
+    if (canvas && data) toCanvas(canvas, data);
   });
 </script>
 
