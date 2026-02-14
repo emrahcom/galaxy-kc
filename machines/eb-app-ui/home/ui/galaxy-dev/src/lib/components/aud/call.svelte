@@ -14,7 +14,14 @@
     p: Phone111;
   }
 
-  let { p }: Props = $props();
+  const { p }: Props = $props();
+
+  let payload = $state({
+    id: "",
+    get code() {
+      return p.code;
+    },
+  });
 
   let warning = $state(false);
   let disabled = $state(false);
@@ -23,10 +30,6 @@
   let ring: IntercomRing;
   let ringCounter = 0;
   let publicUrl = "";
-  let payload = {
-    code: p.code,
-    id: "",
-  };
 
   // ---------------------------------------------------------------------------
   function cancel() {
