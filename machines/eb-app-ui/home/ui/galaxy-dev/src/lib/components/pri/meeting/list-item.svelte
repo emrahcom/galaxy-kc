@@ -15,6 +15,11 @@
   }
 
   const { p }: Props = $props();
+
+  // Create the session list without duplicated sessions. There may be
+  // duplicated sessions in the original list if multiple schedules are created
+  // for the same period.
+  const sessionList = $derived([...new Set(p.session_list)].slice(0, 3));
 </script>
 
 <!-- -------------------------------------------------------------------------->
@@ -47,7 +52,7 @@
       <div class="card-text fw-bold">
         {#if p.schedule_type === "scheduled"}
           {#if p.session_at}
-            {#each p.session_list.slice(0, 3) as at (at)}
+            {#each sessionList as at (at)}
               {#if isOnline(at)}
                 <p class="text-primary my-0">{showLocaleDatetime(at)}</p>
               {:else if isToday(at)}
