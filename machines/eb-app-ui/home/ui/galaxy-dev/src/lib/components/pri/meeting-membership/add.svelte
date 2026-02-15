@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { SvelteMap } from "svelte/reactivity";
   import { FORM_WIDTH } from "$lib/config";
   import { action, get, list } from "$lib/api";
   import type { MeetingInvite111, Profile } from "$lib/types";
@@ -17,11 +18,24 @@
 
   const { invite, isExist }: Props = $props();
 
-  const schedules = $derived.by(() => {
-    let _schedules = "";
+  // Create the session list without duplicated sessions. There may be
+  // duplicated sessions in the original list if multiple schedules are created
+  // for the same period.
+  const sessionList = $derived.by(() => {
+    const map = new SvelteMap<string, [string, string]>();
 
     for (const s of invite.session_list) {
+      map.set(s[0], s);
+    }
+
+    return [...map.values()];
+  });
+
+  const schedules = $derived.by(() => {
+    const _schedules = sessionList.map((s) => {
       const startTime = new Date(s[0]);
+      const endTime = new Date(s[1]);
+
       const localStartTime = startTime.toLocaleString(undefined, {
         year: "numeric",
         month: "2-digit",
@@ -29,14 +43,14 @@
         hour: "2-digit",
         minute: "2-digit",
       });
-      const endTime = new Date(s[1]);
+
       const diff = endTime.getTime() - startTime.getTime();
       const minutes = Math.round(diff / (1000 * 60));
 
-      _schedules = `${_schedules}\n${localStartTime} (${minutes} min)`;
-    }
+      return `${localStartTime} (${minutes} min)`;
+    });
 
-    return _schedules.trim();
+    return _schedules.join("\n");
   });
 
   let warning = $state(false);
@@ -107,7 +121,7 @@
           disabled={true}
           readonly={true}
         />
-        {#if invite.session_list.length > 1}
+        {#if sessionList.length > 1}
           <Textarea
             name="meeting_schedule"
             label="Schedules"
@@ -115,7 +129,7 @@
             disabled={true}
             readonly={true}
           />
-        {:else if invite.session_list.length === 1}
+        {:else if sessionList.length === 1}
           <Text
             name="meeting_schedule"
             label="Schedule"
