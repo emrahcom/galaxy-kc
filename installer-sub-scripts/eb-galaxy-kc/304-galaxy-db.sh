@@ -25,8 +25,8 @@ curl -sf "$LOGGER/?text=$APP_TEMPLATE-galaxy-db" || true
 # ------------------------------------------------------------------------------
 # BACKUP
 # ------------------------------------------------------------------------------
-[[ -f $ROOTFS/etc/postgresql/15/main/pg_hba.conf ]] && \
-    cp $ROOTFS/etc/postgresql/15/main/pg_hba.conf \
+[[ -f $ROOTFS/etc/postgresql/17/main/pg_hba.conf ]] && \
+    cp $ROOTFS/etc/postgresql/17/main/pg_hba.conf \
         $OLD_FILES/pg_hba.conf.before_galaxy
 
 # ------------------------------------------------------------------------------
@@ -78,13 +78,14 @@ su -l postgres <<EOSS
 EOSS
 EOS
 
-cp $MACHINES/$TAG-app-api/home/api/galaxy/database/*.sql $ROOTFS/tmp/
+cp $MACHINES/$TAG-app-api/home/api/galaxy/database/*.sql $ROOTFS/usr/local/src/
 
 [[ -z "$IS_DB_EXIST" ]] && lxc-attach -n $TAG-postgres -- zsh <<EOS
 set -e
 su -l postgres <<EOSS
     createdb -T template0 -O galaxy -E UTF-8 -l en_US.UTF-8 galaxy
-    psql -v ON_ERROR_STOP=1 -d galaxy -e -f /tmp/02-create-galaxy-tables.sql
+    psql -v ON_ERROR_STOP=1 -d galaxy -e \
+      -f /usr/local/src/02-create-galaxy-tables.sql
 EOSS
 EOS
 
@@ -116,11 +117,11 @@ EOS
 # ------------------------------------------------------------------------------
 lxc-attach -n $TAG-postgres -- zsh <<EOS
 set -e
-sed -i '/galaxy/d' /etc/postgresql/15/main/pg_hba.conf
+sed -i '/galaxy/d' /etc/postgresql/17/main/pg_hba.conf
 EOS
 
-cat etc/postgresql/15/main/pg_hba.conf.galaxy \
-    >>$ROOTFS/etc/postgresql/15/main/pg_hba.conf
+cat etc/postgresql/17/main/pg_hba.conf.galaxy \
+    >>$ROOTFS/etc/postgresql/17/main/pg_hba.conf
 
 # ------------------------------------------------------------------------------
 # RESTART POSTGRESQL SERVICE
