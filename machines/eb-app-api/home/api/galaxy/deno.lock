@@ -2,27 +2,19 @@
   "version": "5",
   "specifiers": {
     "jsr:@db/postgres@~0.19.5": "0.19.5",
-    "jsr:@emrahcom/jwt@~0.4.7": "0.4.7",
+    "jsr:@emrahcom/jwt@~0.4.8": "0.4.8",
     "jsr:@std/bytes@^1.0.5": "1.0.6",
     "jsr:@std/bytes@^1.0.6": "1.0.6",
-    "jsr:@std/cli@^1.0.21": "1.0.22",
     "jsr:@std/crypto@^1.0.4": "1.0.5",
     "jsr:@std/crypto@^1.0.5": "1.0.5",
     "jsr:@std/encoding@^1.0.10": "1.0.10",
     "jsr:@std/encoding@^1.0.9": "1.0.10",
-    "jsr:@std/fmt@^1.0.6": "1.0.8",
-    "jsr:@std/fmt@^1.0.8": "1.0.8",
-    "jsr:@std/fs@^1.0.19": "1.0.19",
-    "jsr:@std/html@^1.0.4": "1.0.4",
-    "jsr:@std/http@^1.0.20": "1.0.20",
-    "jsr:@std/internal@^1.0.9": "1.0.10",
-    "jsr:@std/media-types@^1.1.0": "1.1.0",
-    "jsr:@std/net@^1.0.4": "1.0.6",
-    "jsr:@std/path@^1.0.8": "1.1.1",
-    "jsr:@std/path@^1.1.1": "1.1.1",
-    "jsr:@std/streams@^1.0.10": "1.0.12",
-    "jsr:@std/uuid@^1.0.9": "1.0.9",
-    "npm:nodemailer@^7.0.6": "7.0.6"
+    "jsr:@std/fmt@^1.0.6": "1.0.9",
+    "jsr:@std/http@^1.0.24": "1.0.25",
+    "jsr:@std/internal@^1.0.12": "1.0.12",
+    "jsr:@std/path@^1.0.8": "1.1.4",
+    "jsr:@std/uuid@^1.1.0": "1.1.0",
+    "npm:nodemailer@^8.0.1": "8.0.1"
   },
   "jsr": {
     "@db/postgres@0.19.5": {
@@ -31,12 +23,12 @@
         "jsr:@std/bytes@^1.0.5",
         "jsr:@std/crypto@^1.0.4",
         "jsr:@std/encoding@^1.0.9",
-        "jsr:@std/fmt@^1.0.6",
-        "jsr:@std/path@^1.0.8"
+        "jsr:@std/fmt",
+        "jsr:@std/path"
       ]
     },
-    "@emrahcom/jwt@0.4.7": {
-      "integrity": "565dd11c8ef420664d3c566beba2331c1e67d03db7125ec0326724f1e72ffb30",
+    "@emrahcom/jwt@0.4.8": {
+      "integrity": "6df4948e2b1aa5f2947d8a5bd2f5b96235a75da7efd4eddf47b228b3c67934ff",
       "dependencies": [
         "jsr:@std/encoding@^1.0.10"
       ]
@@ -44,58 +36,29 @@
     "@std/bytes@1.0.6": {
       "integrity": "f6ac6adbd8ccd99314045f5703e23af0a68d7f7e58364b47d2c7f408aeb5820a"
     },
-    "@std/cli@1.0.22": {
-      "integrity": "50d1e4f87887cb8a8afa29b88505ab5081188f5cad3985460c3b471fa49ff21a"
-    },
     "@std/crypto@1.0.5": {
       "integrity": "0dcfbb319fe0bba1bd3af904ceb4f948cde1b92979ec1614528380ed308a3b40"
     },
     "@std/encoding@1.0.10": {
       "integrity": "8783c6384a2d13abd5e9e87a7ae0520a30e9f56aeeaa3bdf910a3eaaf5c811a1"
     },
-    "@std/fmt@1.0.8": {
-      "integrity": "71e1fc498787e4434d213647a6e43e794af4fd393ef8f52062246e06f7e372b7"
+    "@std/fmt@1.0.9": {
+      "integrity": "2487343e8899fb2be5d0e3d35013e54477ada198854e52dd05ed0422eddcabe0"
     },
-    "@std/fs@1.0.19": {
-      "integrity": "051968c2b1eae4d2ea9f79a08a3845740ef6af10356aff43d3e2ef11ed09fb06"
+    "@std/http@1.0.25": {
+      "integrity": "577b4252290af1097132812b339fffdd55fb0f4aeb98ff11bdbf67998aa17193"
     },
-    "@std/html@1.0.4": {
-      "integrity": "eff3497c08164e6ada49b7f81a28b5108087033823153d065e3f89467dd3d50e"
+    "@std/internal@1.0.12": {
+      "integrity": "972a634fd5bc34b242024402972cd5143eac68d8dffaca5eaa4dba30ce17b027"
     },
-    "@std/http@1.0.20": {
-      "integrity": "b5cc33fc001bccce65ed4c51815668c9891c69ccd908295997e983d8f56070a1",
-      "dependencies": [
-        "jsr:@std/cli",
-        "jsr:@std/encoding@^1.0.10",
-        "jsr:@std/fmt@^1.0.8",
-        "jsr:@std/fs",
-        "jsr:@std/html",
-        "jsr:@std/media-types",
-        "jsr:@std/net",
-        "jsr:@std/path@^1.1.1",
-        "jsr:@std/streams"
-      ]
-    },
-    "@std/internal@1.0.10": {
-      "integrity": "e3be62ce42cab0e177c27698e5d9800122f67b766a0bea6ca4867886cbde8cf7"
-    },
-    "@std/media-types@1.1.0": {
-      "integrity": "c9d093f0c05c3512932b330e3cc1fe1d627b301db33a4c2c2185c02471d6eaa4"
-    },
-    "@std/net@1.0.6": {
-      "integrity": "110735f93e95bb9feb95790a8b1d1bf69ec0dc74f3f97a00a76ea5efea25500c"
-    },
-    "@std/path@1.1.1": {
-      "integrity": "fe00026bd3a7e6a27f73709b83c607798be40e20c81dde655ce34052fd82ec76",
+    "@std/path@1.1.4": {
+      "integrity": "1d2d43f39efb1b42f0b1882a25486647cb851481862dc7313390b2bb044314b5",
       "dependencies": [
         "jsr:@std/internal"
       ]
     },
-    "@std/streams@1.0.12": {
-      "integrity": "ae925fa1dc459b1abf5cbaa28cc5c7b0485853af3b2a384b0dc22d86e59dfbf4"
-    },
-    "@std/uuid@1.0.9": {
-      "integrity": "44b627bf2d372fe1bd099e2ad41b2be41a777fc94e62a3151006895a037f1642",
+    "@std/uuid@1.1.0": {
+      "integrity": "6268db2ccf172849c9be80763354ca305d49ef4af41fe995623d44fcc3f7457c",
       "dependencies": [
         "jsr:@std/bytes@^1.0.6",
         "jsr:@std/crypto@^1.0.5"
@@ -103,18 +66,18 @@
     }
   },
   "npm": {
-    "nodemailer@7.0.6": {
-      "integrity": "sha512-F44uVzgwo49xboqbFgBGkRaiMgtoBrBEWCVincJPK9+S9Adkzt/wXCLKbf7dxucmxfTI5gHGB+bEmdyzN6QKjw=="
+    "nodemailer@8.0.1": {
+      "integrity": "sha512-5kcldIXmaEjZcHR6F28IKGSgpmZHaF1IXLWFTG+Xh3S+Cce4MiakLtWY+PlBU69fLbRa8HlaGIrC/QolUpHkhg=="
     }
   },
   "workspace": {
     "dependencies": [
       "jsr:@db/postgres@~0.19.5",
-      "jsr:@emrahcom/jwt@~0.4.7",
+      "jsr:@emrahcom/jwt@~0.4.8",
       "jsr:@std/encoding@^1.0.10",
-      "jsr:@std/http@^1.0.20",
-      "jsr:@std/uuid@^1.0.9",
-      "npm:nodemailer@^7.0.6"
+      "jsr:@std/http@^1.0.24",
+      "jsr:@std/uuid@^1.1.0",
+      "npm:nodemailer@^8.0.1"
     ]
   }
 }
