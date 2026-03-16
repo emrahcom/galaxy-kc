@@ -3,16 +3,14 @@ FROM denoland/deno
 WORKDIR /app
 
 COPY home/api/galaxy /app
-RUN deno fmt --check
-RUN deno lint
-RUN deno cache /app/index-adm.ts
-RUN deno check /app/index-adm.ts
+COPY adm.docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN \
+  deno fmt --check && \
+  deno lint && \
+  deno cache /app/index-adm.ts && \
+  deno check /app/index-adm.ts && \
+  chmod +x /usr/local/bin/docker-entrypoint.sh
 
 USER deno
 EXPOSE 8000
-
-CMD \
-    [ "$ALLOW_UNSECURE_CERT" = "1" ] && \
-        IGNORE_CERT_ERRORS="--unsafely-ignore-certificate-errors"; \
-\
-    deno run --allow-net --allow-env $IGNORE_CERT_ERRORS index-adm.ts
+ENTRYPOINT ["docker-entrypoint.sh"]
