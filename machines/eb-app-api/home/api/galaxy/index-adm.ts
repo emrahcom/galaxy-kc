@@ -1,5 +1,6 @@
 import { HOSTNAME, PORT_ADMIN } from "./config.ts";
 import { methodNotAllowed, notFound } from "./lib/http/response.ts";
+import { Timers } from "./lib/adm/types.ts";
 import migrate from "./lib/adm/migration.ts";
 import doit from "./lib/adm/housekeeping.ts";
 import cronjob from "./lib/adm/cronjob.ts";
@@ -8,6 +9,11 @@ import config from "./lib/adm/config-kc.ts";
 import identity from "./lib/adm/identity-kc.ts";
 
 const PRE = "/api/adm";
+
+const timers: Timers = {
+  housekeeping: 0,
+  cronjobRemindMeetingSession: 0,
+};
 
 // -----------------------------------------------------------------------------
 async function migration() {
@@ -22,13 +28,19 @@ async function migration() {
 }
 
 // -----------------------------------------------------------------------------
-async function housekeeping() {
+async function housekeeping(t: Timers, signal: AbortSignal) {
+  if (signal.aborted) return;
+
   try {
     await doit();
-  } finally {
-    // rerun in 10 min
-    setTimeout(housekeeping, 10 * 60 * 1000);
+  } catch {
+    // do nothing
   }
+
+  if (signal.aborted) return;
+
+  // rerun in 10 min
+  t.housekeeping = setTimeout(() => housekeeping(t, signal), 10 * 60 * 1000);
 }
 
 // -----------------------------------------------------------------------------
@@ -59,21 +71,39 @@ async function handler(req: Request): Promise<Response> {
 
 // -----------------------------------------------------------------------------
 async function main() {
-  // migrate the database before starting if needed
+  // ensure database schema is up-to-date before starting
   const isMigrated = await migration();
   if (!isMigrated) Deno.exit(1);
 
-  // start the housekeeping cycle
-  housekeeping();
+  const controller = new AbortController();
+  const shutdown = () => {
+    controller.abort();
+    clearTimeout(timers.housekeeping);
+    clearTimeout(timers.cronjobRemindMeetingSession);
+  };
+  Deno.addSignalListener("SIGINT", shutdown);
+  Deno.addSignalListener("SIGTERM", shutdown);
 
-  // start the cronjob cycle
-  cronjob();
+  try {
+    // start the housekeeping cycle
+    housekeeping(timers, controller.signal);
 
-  // start API
-  Deno.serve({
-    hostname: HOSTNAME,
-    port: PORT_ADMIN,
-  }, handler);
+    // start the cronjob cycle
+    cronjob(timers, controller.signal);
+
+    // start the API server
+    const server = Deno.serve({
+      hostname: HOSTNAME,
+      port: PORT_ADMIN,
+      signal: controller.signal,
+    }, handler);
+
+    // wait the server until the clean shutdown.
+    await server.finished;
+  } finally {
+    Deno.removeSignalListener("SIGINT", shutdown);
+    Deno.removeSignalListener("SIGTERM", shutdown);
+  }
 }
 
 // -----------------------------------------------------------------------------
