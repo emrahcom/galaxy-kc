@@ -7,7 +7,7 @@
   import "bootstrap/dist/js/bootstrap.bundle.min.js";
   import Brand from "$lib/components/nav/brand.svelte";
   import NavBarPri from "$lib/components/nav/bar-pri.svelte";
-  import NavBarPub from "$lib/components/nav/bar-pub-kc.svelte";
+  import NavBarPub from "$lib/components/nav/bar-pub-oidc.svelte";
   import Messages from "$lib/components/pri/message/list.svelte";
   import type { IntercomMessage222 } from "$lib/types";
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import Brand from "$lib/components/nav/brand.svelte";
-  import ButtonAccount from "$lib/components/nav/button-account-kc.svelte";
+  import ButtonAccount from "$lib/components/nav/button-account-oidc.svelte";
   import ButtonMenu from "$lib/components/nav/button-menu.svelte";
 </script>
 
