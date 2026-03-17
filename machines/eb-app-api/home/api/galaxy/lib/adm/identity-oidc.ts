@@ -1,17 +1,15 @@
 import { v5 as uuid } from "@std/uuid";
 import { setCookie } from "@std/http/cookie";
+import { encodeBase64 } from "@std/encoding/base64";
 import { notFound, ok, unauthorized } from "../http/response.ts";
 import { adm as wrapper } from "../http/wrapper-oidc.ts";
+import { getTokenEndpoint, getUserinfoEndpoint } from "../common/oidc.ts";
 import { generateAPIToken } from "../common/token-oidc.ts";
 import { addIdentity } from "../database/identity-oidc.ts";
 import { setIdentityEmail } from "../database/identity.ts";
 import { addProfile } from "../database/profile.ts";
-import {
-  GALAXY_FQDN,
-  KEYCLOAK_CLIENT_ID,
-  KEYCLOAK_ORIGIN,
-  KEYCLOAK_REALM,
-} from "../../config.ts";
+import { GALAXY_FQDN } from "../../config.ts";
+import { OIDC_CLIENT_ID, OIDC_CLIENT_SECRET } from "../../config.oidc.ts";
 
 const PRE = "/api/adm/identity";
 const UUID_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
@@ -43,31 +41,41 @@ async function add(
 }
 
 // -----------------------------------------------------------------------------
-// Get the access token from Keycloak by using the short-term auth code
+// Get the access token from the OIDC provider by using the short-term auth code
 // -----------------------------------------------------------------------------
 async function getToken(code: string): Promise<string | undefined> {
-  const url = `${KEYCLOAK_ORIGIN}/realms/${KEYCLOAK_REALM}` +
-    `/protocol/openid-connect/token`;
-  const redirectURI = `https://${GALAXY_FQDN}/oidc/validate`;
-
-  const data = new URLSearchParams();
-  data.append("client_id", KEYCLOAK_CLIENT_ID);
-  data.append("grant_type", "authorization_code");
-  data.append("redirect_uri", redirectURI);
-  data.append("code", code);
-
   try {
+    const url = await getTokenEndpoint();
+    if (!url) throw "missing token endpoint";
+
+    const redirectURI = `https://${GALAXY_FQDN}/oidc/validate`;
+
+    const headers = new Headers();
+    headers.append("Accept", "application/json");
+
+    const data = new URLSearchParams();
+    data.append("grant_type", "authorization_code");
+    data.append("redirect_uri", redirectURI);
+    data.append("code", code);
+
+    if (OIDC_CLIENT_SECRET) {
+      headers.append(
+        "Authorization",
+        "Basic " + encodeBase64(`${OIDC_CLIENT_ID}:${OIDC_CLIENT_SECRET}`),
+      );
+    } else {
+      data.append("client_id", OIDC_CLIENT_ID);
+    }
+
     const res = await fetch(url, {
-      headers: {
-        "Accept": "application/json",
-      },
+      headers: headers,
       method: "POST",
       body: data,
     });
     const json = await res.json();
     const token = json.access_token;
 
-    if (!token) throw "cannot get Keycloak token";
+    if (!token) throw "cannot get the OIDC token";
 
     return token;
   } catch {
@@ -76,14 +84,15 @@ async function getToken(code: string): Promise<string | undefined> {
 }
 
 // -----------------------------------------------------------------------------
-// Get the user info from Keycloak by using the access token
+// Get the user info from the OIDC provider by using the access token
 // -----------------------------------------------------------------------------
 async function getUserInfo(
   token: string,
 ): Promise<Record<string, unknown> | undefined> {
   try {
-    const url = `${KEYCLOAK_ORIGIN}/realms/${KEYCLOAK_REALM}` +
-      `/protocol/openid-connect/userinfo`;
+    const url = await getUserinfoEndpoint();
+    if (!url) throw "missing userinfo endpoint";
+
     const res = await fetch(url, {
       headers: {
         "Accept": "application/json",
@@ -95,7 +104,7 @@ async function getUserInfo(
 
     if (!userInfo.sub) throw "no user info";
 
-    return await userInfo;
+    return userInfo;
   } catch {
     return undefined;
   }
@@ -108,11 +117,12 @@ async function getByCode(req: Request): Promise<Response> {
   const pl = await req.json();
   const code = pl.code;
 
-  // Get the access token from Keycloak if the short-term auth code is valid
+  // Get the access token from the OIDC provider if the short-term auth code is
+  // valid
   const token = await getToken(code);
   if (!token) return unauthorized();
 
-  // Get the user info from Keycloak by using the access token
+  // Get the user info from the OIDC provider by using the access token
   const userInfo = await getUserInfo(token);
   if (!userInfo) return unauthorized();
   if (typeof userInfo.sub !== "string") return unauthorized();

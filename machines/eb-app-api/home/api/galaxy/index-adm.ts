@@ -48,7 +48,7 @@ async function route(req: Request, path: string): Promise<Response> {
   if (path === `${PRE}/hello`) {
     return hello();
   } else if (path === `${PRE}/config`) {
-    return config();
+    return await config();
   } else if (path.match(`^${PRE}/identity/`)) {
     return await identity(req, path);
   } else {

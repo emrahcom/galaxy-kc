@@ -19,13 +19,6 @@ export const MAX_LIST_SIZE = Number(Deno.env.get("MAX_LIST_SIZE") || 2000);
 
 // application
 export const GALAXY_FQDN = Deno.env.get("GALAXY_FQDN") || "";
-export const API_SECRET = Deno.env.get("API_SECRET") || "mysecret";
-export const API_TIMEOUT = Number(Deno.env.get("API_TIMEOUT") || 86400);
-
-// keycloak
-export const KEYCLOAK_ORIGIN = Deno.env.get("KEYCLOAK_ORIGIN") || "";
-export const KEYCLOAK_REALM = Deno.env.get("KEYCLOAK_REALM") || "";
-export const KEYCLOAK_CLIENT_ID = Deno.env.get("KEYCLOAK_CLIENT_ID") || "";
 
 // contact
 export const CONTACT_EMAIL = Deno.env.get("CONTACT_EMAIL") || "";

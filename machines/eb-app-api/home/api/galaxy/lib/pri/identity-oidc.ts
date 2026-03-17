@@ -1,7 +1,7 @@
 import { getCookies } from "@std/http/cookie";
 import { verify } from "@emrahcom/jwt";
 import { generateCryptoKeyHS } from "../common/token.ts";
-import { API_SECRET } from "../../config.ts";
+import { API_SECRET } from "../../config.oidc.ts";
 
 // -----------------------------------------------------------------------------
 export async function getIdentityId(req: Request): Promise<string | undefined> {
