@@ -5,28 +5,29 @@ import { post } from "$lib/http";
 export async function load() {
   const target = globalThis.location.pathname;
 
-  // Dont continue if the target is the audience pages.
-  // The audience pages dont need authentication.
+  // No need to authenticate if the target is the audience pages.
   if (target.match("^/aud/")) return;
 
-  // Get Keycloak related parameters if they are not available in the storage
+  // Get OIDC related parameters if they are not available in the storage
   if (
     !globalThis.localStorage.getItem("contact_email") ||
     !globalThis.localStorage.getItem("galaxy_fqdn") ||
-    !globalThis.localStorage.getItem("keycloak_client_id") ||
-    !globalThis.localStorage.getItem("keycloak_origin") ||
-    !globalThis.localStorage.getItem("keycloak_realm")
+    !globalThis.localStorage.getItem("oidc_auth_endpoint") ||
+    !globalThis.localStorage.getItem("oidc_client_id") ||
+    !globalThis.localStorage.getItem("oidc_logout_endpoint") ||
+    !globalThis.localStorage.getItem("oidc_scopes")
   ) {
-    const config = await get("/api/adm/config");
+    const c = await get("/api/adm/config");
 
-    globalThis.localStorage.setItem("contact_email", config.contact_email);
-    globalThis.localStorage.setItem("galaxy_fqdn", config.galaxy_fqdn);
+    globalThis.localStorage.setItem("contact_email", c.contact_email);
+    globalThis.localStorage.setItem("galaxy_fqdn", c.galaxy_fqdn);
+    globalThis.localStorage.setItem("oidc_auth_endpoint", c.oidc_auth_endpoint);
+    globalThis.localStorage.setItem("oidc_client_id", c.oidc_client_id);
     globalThis.localStorage.setItem(
-      "keycloak_client_id",
-      config.keycloak_client_id,
+      "oidc_logout_endpoint",
+      c.oidc_logout_endpoint,
     );
-    globalThis.localStorage.setItem("keycloak_origin", config.keycloak_origin);
-    globalThis.localStorage.setItem("keycloak_realm", config.keycloak_realm);
+    globalThis.localStorage.setItem("oidc_scopes", c.oidc_scopes);
   }
 
   // Am I authenticated?
