@@ -191,7 +191,7 @@ sed -i \
 sed -i \
   -e "s~API_SECRET =.*~API_SECRET = \"$API_SECRET\";~" \
   -e "s~OIDC_ISSUER_URL =.*~OIDC_ISSUER_URL = \"$OIDC_ISSUER_URL\";~" \
-  -e "s~OIDC_CLIENT_ID =.*~. = \"$OIDC_CLIENT_ID\";~" \
+  -e "s~OIDC_CLIENT_ID =.*~OIDC_CLIENT_ID = \"$OIDC_CLIENT_ID\";~" \
   -e "s~OIDC_CLIENT_SECRET =.*~OIDC_CLIENT_SECRET = \"$OIDC_CLIENT_SECRET\";~" \
   -e "s~OIDC_SCOPES =.*~OIDC_SCOPES = \"$OIDC_SCOPES\";~" \
   $ROOTFS/home/api/galaxy/config.oidc.ts
