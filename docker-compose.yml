@@ -23,9 +23,10 @@ services:
       - DB_HOST
       - DB_PASSWD
       - GALAXY_FQDN
-      - KEYCLOAK_CLIENT_ID
-      - KEYCLOAK_ORIGIN
-      - KEYCLOAK_REALM
+      - OIDC_CLIENT_ID
+      - OIDC_CLIENT_SECRET
+      - OIDC_ISSUER_URL
+      - OIDC_SCOPES
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api-adm-http.entrypoints=reverse-proxy-http"

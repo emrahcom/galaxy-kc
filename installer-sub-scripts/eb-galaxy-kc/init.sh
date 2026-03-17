@@ -111,35 +111,35 @@ EOF
   false
 fi
 
-if [[ -z "$KEYCLOAK_ORIGIN" ]]; then
+if [[ -z "$OIDC_ISSUER_URL" ]]; then
   cat <<EOF
-Error: KEYCLOAK_ORIGIN not found
+Error: OIDC_ISSUER_URL not found
 
-Please set KEYCLOAK_ORIGIN before installation, e.g.
+Please set OIDC_ISSUER_URL before installation, e.g.
 
-    export KEYCLOAK_ORIGIN="https://ucs-sso-ng.mydomain.corp"
+    export OIDC_ISSUER_URL="https://id.mydomain.corp/realms/myrealm"
 EOF
   false
 fi
 
-if [[ -z "$KEYCLOAK_REALM" ]]; then
+if [[ -z "$OIDC_CLIENT_ID" ]]; then
   cat <<EOF
-Error: KEYCLOAK_REALM not found
+Error: OIDC_CLIENT_ID not found
 
-Please set KEYCLOAK_REALM before installation, e.g.
+Please set OIDC_CLIENT_ID before installation, e.g.
 
-    export KEYCLOAK_REALM="ucs"
+    export OIDC_CLIENT_ID="galaxy"
 EOF
   false
 fi
 
-if [[ -z "$KEYCLOAK_CLIENT_ID" ]]; then
+if [[ -z "$OIDC_SCOPES" ]]; then
   cat <<EOF
-Error: KEYCLOAK_CLIENT_ID not found
+Error: OIDC_SCOPES not found
 
-Please set KEYCLOAK_CLIENT_ID before installation, e.g.
+Please set OIDC_SCOPES before installation, e.g.
 
-    export KEYCLOAK_CLIENT_ID="galaxy"
+    export OIDC_SCOPES="openid profile email"
 EOF
   false
 fi

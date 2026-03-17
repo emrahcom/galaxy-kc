@@ -186,11 +186,15 @@ sed -i \
   -e "s~DB_PASSWD =.*~DB_PASSWD = \"$DB_PASSWD\";~" \
   -e "s~GALAXY_FQDN =.*~GALAXY_FQDN = \"$GALAXY_FQDN\";~" \
   -e "s~CONTACT_EMAIL =.*~CONTACT_EMAIL = \"$CONTACT_EMAIL\";~" \
-  -e "s~API_SECRET =.*~API_SECRET = \"$API_SECRET\";~" \
-  -e "s~KEYCLOAK_ORIGIN =.*~KEYCLOAK_ORIGIN = \"$KEYCLOAK_ORIGIN\";~" \
-  -e "s~KEYCLOAK_REALM =.*~KEYCLOAK_REALM = \"$KEYCLOAK_REALM\";~" \
-  -e "s~KEYCLOAK_CLIENT_ID =.*~KEYCLOAK_CLIENT_ID = \"$KEYCLOAK_CLIENT_ID\";~" \
   $ROOTFS/home/api/galaxy/config.ts
+
+sed -i \
+  -e "s~API_SECRET =.*~API_SECRET = \"$API_SECRET\";~" \
+  -e "s~OIDC_ISSUER_URL =.*~OIDC_ISSUER_URL = \"$OIDC_ISSUER_URL\";~" \
+  -e "s~OIDC_CLIENT_ID =.*~. = \"$OIDC_CLIENT_ID\";~" \
+  -e "s~OIDC_CLIENT_SECRET =.*~OIDC_CLIENT_SECRET = \"$OIDC_CLIENT_SECRET\";~" \
+  -e "s~OIDC_SCOPES =.*~OIDC_SCOPES = \"$OIDC_SCOPES\";~" \
+  $ROOTFS/home/api/galaxy/config.oidc.ts
 
 sed -i \
   -e "s~host:.*~host: \"$MAILER_HOST\",~" \

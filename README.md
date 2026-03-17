@@ -3,7 +3,7 @@
 `Galaxy-kc` is a web application for `Jitsi` admins and users to organize their
 Jitsi meetings, meeting schedules and attendees.
 
-This version uses `Keycloak` as the identity provider. Check
+This version uses an OIDC provider such as `Keycloak`. Check
 [Galaxy](https://github.com/emrahcom/galaxy) for version with a built-in
 identity management system.
 
@@ -19,7 +19,7 @@ needing to open any websites.
 
 ### Features
 
-- Use `Keycloak` as the identity management system
+- Use an OIDC provider to manage the identities (users)
 - Add as many Jitsi servers as you want
 - Allow your partners to access your Jitsi server for different use-cases:
   - `domain partnership`: allow them to access the whole Jitsi server without
@@ -79,7 +79,7 @@ docker compose up -d
 - Allow the following ports if the server is behind a firewall
   - `TCP/80` (_needed for Let's Encrypt certificate_)
   - `TCP/443`
-- A `Keycloak` server
+- An OIDC provider
 
 #### Installation
 
@@ -87,7 +87,7 @@ Run the following commands as `root`:
 
 - Update `GALAXY_FQDN` according to your domain name.
 
-- Update `KEYCLOAK_*` parameters according to your `Keycloak` configuration.
+- Update `OIDC_*` parameters according to your OIDC configuration.
 
 - Update `MAILER_*` parameters according to your email system.
 
@@ -100,7 +100,7 @@ Run the following commands as `root`:
   export SKIP_DNS_CHECK=true
   ```
 
-- If this is a test setup and your `Keycloak` doesn't have a trusted
+- If this is a test setup and your OIDC provider doesn't have a trusted
   certificate, please set `IGNORE_CERT_ERRORS` before installation.
 
   ```bash
@@ -112,9 +112,10 @@ wget https://raw.githubusercontent.com/emrahcom/lxc-trixie-base/main/installer/e
 wget https://raw.githubusercontent.com/emrahcom/galaxy-kc/main/installer/eb-galaxy-kc.conf
 
 export GALAXY_FQDN="app.galaxy.corp"
-export KEYCLOAK_ORIGIN="https://ucs-sso-ng.mydomain.corp"
-export KEYCLOAK_REALM="ucs"
-export KEYCLOAK_CLIENT_ID="galaxy"
+export OIDC_ISSUER_URL="https://id.mydomain.corp/realms/myrealm"
+export OIDC_CLIENT_ID="myclientid"
+export OIDC_CLIENT_SECRET=""
+export OIDC_SCOPES="openid profile email"
 export MAILER_HOST="mail.galaxy.corp"
 export MAILER_PORT=465
 export MAILER_SECURE=true
@@ -136,7 +137,8 @@ set-letsencrypt-cert app.galaxy.corp
 
 ### Keycloak config
 
-Create the client and users inside the realm:
+If the OIDC provider is Keycloak then create the client and users inside the
+realm:
 
 - Create the realm (_e.g. `ucs`_)
 - Switch to the newly created realm
@@ -149,7 +151,8 @@ Create the client and users inside the realm:
   - Authentication flow
     - `Standard flow`
     - `Direct access grants`
-  - Add Galaxy URL into `Valid redirect URIs` (_e.g. `https:/app.galaxy.corp/*`_)
+  - Add Galaxy URL into `Valid redirect URIs` (_e.g.
+    `https:/app.galaxy.corp/*`_)
   - Valid post logout redirect URIs: `+`
   - Web origins: `+`
   - For Keycloak versions < 20.x, set Access type to `public`:

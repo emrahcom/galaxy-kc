@@ -173,7 +173,7 @@ cp etc/nginx/sites-available/$TAG-app-wss.conf \
 ln -s ../sites-available/$TAG-app-wss.conf $ROOTFS/etc/nginx/sites-enabled/
 
 sed -i "s~___GALAXY_FQDN___~$GALAXY_FQDN~g" $ROOTFS/etc/nginx/sites-available/*
-sed -i "s~___KEYCLOAK_ORIGIN___~$KEYCLOAK_ORIGIN~g" $ROOTFS/etc/nginx/sites-available/*
+sed -i "s~___OIDC_ISSUER_URL___~$OIDC_ISSUER_URL~g" $ROOTFS/etc/nginx/sites-available/*
 
 lxc-attach -n $MACH -- systemctl stop nginx.service
 lxc-attach -n $MACH -- systemctl start nginx.service
