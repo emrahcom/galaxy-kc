@@ -1,9 +1,9 @@
 import { v5 as uuid } from "@std/uuid";
 import { setCookie } from "@std/http/cookie";
 import { notFound, ok, unauthorized } from "../http/response.ts";
-import { adm as wrapper } from "../http/wrapper-kc.ts";
-import { generateAPIToken } from "../common/token-kc.ts";
-import { addIdentity } from "../database/identity-kc.ts";
+import { adm as wrapper } from "../http/wrapper-oidc.ts";
+import { generateAPIToken } from "../common/token-oidc.ts";
+import { addIdentity } from "../database/identity-oidc.ts";
 import { setIdentityEmail } from "../database/identity.ts";
 import { addProfile } from "../database/profile.ts";
 import {

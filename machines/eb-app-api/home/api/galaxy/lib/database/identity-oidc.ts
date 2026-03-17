@@ -2,7 +2,7 @@ import { fetch } from "./common.ts";
 import type { Id } from "./types.ts";
 
 // -----------------------------------------------------------------------------
-// if already exist, do nothing in Keycloak version
+// if already exist, do nothing in the OIDC version
 // -----------------------------------------------------------------------------
 export async function addIdentity(identityId: string) {
   const sql = {

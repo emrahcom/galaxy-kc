@@ -5,8 +5,8 @@ import migrate from "./lib/adm/migration.ts";
 import doit from "./lib/adm/housekeeping.ts";
 import cronjob from "./lib/adm/cronjob.ts";
 import hello from "./lib/adm/hello.ts";
-import config from "./lib/adm/config-kc.ts";
-import identity from "./lib/adm/identity-kc.ts";
+import config from "./lib/adm/config-oidc.ts";
+import identity from "./lib/adm/identity-oidc.ts";
 
 const PRE = "/api/adm";
 
