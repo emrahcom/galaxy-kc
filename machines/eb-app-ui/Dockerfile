@@ -10,9 +10,10 @@ COPY home/ui/galaxy-dev/yarn.lock /app/
 RUN yarn install
 
 COPY home/ui/galaxy-dev/ /app/
-RUN yarn run check
-RUN yarn run lint
-RUN yarn run build
+RUN \
+  yarn run check && \
+  yarn run lint && \
+  yarn run build
 
 # ------------------------------------------------------------------------------
 # prod
