@@ -40,8 +40,8 @@ fi
 
 # get CONTACT_EMAIL
 [[ -z "$CONTACT_EMAIL" ]] && \
-    CONTACT_EMAIL=$(ack "^export const API_SECRET =" \
-        /home/api/galaxy/config.oidc.ts | cut -d'"' -f2)
+    CONTACT_EMAIL=$(ack "^export const CONTACT_EMAIL =" \
+        /home/api/galaxy/config.ts | cut -d'"' -f2)
 if [[ -z "$CONTACT_EMAIL" ]]; then
     echo "error: CONTACT_EMAIL is not found"
     exit 1
