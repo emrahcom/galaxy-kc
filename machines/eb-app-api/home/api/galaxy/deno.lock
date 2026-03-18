@@ -10,7 +10,7 @@
     "jsr:@std/encoding@^1.0.10": "1.0.10",
     "jsr:@std/encoding@^1.0.9": "1.0.10",
     "jsr:@std/fmt@^1.0.6": "1.0.9",
-    "jsr:@std/http@^1.0.24": "1.0.25",
+    "jsr:@std/http@^1.0.25": "1.0.25",
     "jsr:@std/internal@^1.0.12": "1.0.12",
     "jsr:@std/path@^1.0.8": "1.1.4",
     "jsr:@std/uuid@^1.1.0": "1.1.0",
@@ -75,7 +75,7 @@
       "jsr:@db/postgres@~0.19.5",
       "jsr:@emrahcom/jwt@~0.4.8",
       "jsr:@std/encoding@^1.0.10",
-      "jsr:@std/http@^1.0.24",
+      "jsr:@std/http@^1.0.25",
       "jsr:@std/uuid@^1.1.0",
       "npm:nodemailer@^8.0.1"
     ]
