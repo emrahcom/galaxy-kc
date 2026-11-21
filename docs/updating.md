@@ -73,8 +73,6 @@
 
 - Merge changes to `main` branch
 
-- Check the result of GitHub actions
-
-- Run a system using `docker-compose` and test it
+- Release it. See [releasing](releasing.md).
 
 - Switch back to `dev` branch in the local repo for future updates
