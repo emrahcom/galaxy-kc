@@ -1,4 +1,4 @@
-FROM denoland/deno
+FROM --platform=$BUILDPLATFORM denoland/deno AS builder
 
 WORKDIR /app
 
@@ -8,6 +8,13 @@ RUN \
   deno lint && \
   deno cache /app/index-pri.ts && \
   deno check /app/index-pri.ts
+
+FROM denoland/deno
+
+WORKDIR /app
+
+COPY --from=builder /deno-dir /deno-dir
+COPY --from=builder /app /app
 
 USER deno
 EXPOSE 8001
