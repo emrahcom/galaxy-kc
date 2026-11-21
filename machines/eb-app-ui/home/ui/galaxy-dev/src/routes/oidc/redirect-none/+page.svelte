@@ -6,11 +6,16 @@
     const OIDC_AUTH_ENDPOINT =
       globalThis.localStorage.getItem("oidc_auth_endpoint");
 
+    // Random state against CSRF. /oidc/validate checks it.
+    const state = globalThis.crypto.randomUUID();
+    globalThis.sessionStorage.setItem("oidc_state", state);
+
     const target =
       `${OIDC_AUTH_ENDPOINT}` +
       `?client_id=${OIDC_CLIENT_ID}` +
       `&scope=${OIDC_SCOPES}` +
       `&response_type=code&prompt=none` +
+      `&state=${state}` +
       `&redirect_uri=https://${GALAXY_FQDN}/oidc/validate`;
 
     globalThis.location.href = `${target}`;
