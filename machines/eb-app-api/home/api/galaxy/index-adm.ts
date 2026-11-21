@@ -11,8 +11,8 @@ import identity from "./lib/adm/identity-oidc.ts";
 const PRE = "/api/adm";
 
 const timers: Timers = {
-  housekeeping: 0,
-  cronjobRemindMeetingSession: 0,
+  housekeeping: undefined,
+  cronjobRemindMeetingSession: undefined,
 };
 
 // -----------------------------------------------------------------------------
